@@ -17,13 +17,26 @@ services:
           condition: service_healthy
         cassandra:
           condition: service_healthy
+      volumes:
+      - ./fastapi-app:/app
+      - ./shared:/app/shared
       healthcheck:
         test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
         interval: 10s
         timeout: 5s
         retries: 5
         start_period: 10s
-      command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+      # ▶️ Run Uvicorn in reload mode, watching /app for changes
+      command:
+        - uvicorn
+        - main:app
+        - --host
+        - "0.0.0.0"
+        - --port
+        - "8000"
+        - --reload
+        - --reload-dir
+        - /app
 
   angular:
     build:

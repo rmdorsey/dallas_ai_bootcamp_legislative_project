@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from endpoints.helloworld import router as helloworld_router
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="Dallas AI Summer Program: Legislative Project!",)
+app = FastAPI(title="Dallas AI Summer Program: Legislative Project",)
 
 @app.get("/healthz", tags=["Health"])
 async def healthz():
