@@ -1,0 +1,14 @@
+# react-app/Dockerfile.dev
+FROM node:22-alpine
+
+WORKDIR /app
+
+# install deps
+COPY react-app/package*.json ./
+RUN npm install
+
+# copy rest (won't matter once we volume-mount)
+COPY react-app/ .
+
+# start the dev server with HMR exposed on all interfaces
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
