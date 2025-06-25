@@ -21,4 +21,4 @@ COPY shared/config.py /app/shared/config.py
 # Make config.py importable as shared.config
 ENV PYTHONPATH="${PYTHONPATH}:/app"
 
-CMD ["uvicorn","main:app","--host","0.0.0.0","--port","8000"]
+CMD ["uvicorn","main:app","--host","0.0.0.0","--port","8000", "--reload", "--reload-dir", "/app"]
