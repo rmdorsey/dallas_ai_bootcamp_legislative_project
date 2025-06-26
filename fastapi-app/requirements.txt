@@ -3,3 +3,6 @@ uvicorn[standard]==0.34.3
 chromadb==1.0.12
 sentence-transformers==4.1.0
 langchain-text-splitters==0.3.8
+python-multipart
+PyPDF2
+pdfplumber

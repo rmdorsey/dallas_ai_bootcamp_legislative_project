@@ -1,21 +1,27 @@
-from fastapi import FastAPI
-from endpoints.helloworld import router as helloworld_router
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from endpoints.helloworld import router as helloworld_router
+from endpoints.bills import router as bills_router
 
-app = FastAPI(title="Dallas AI Summer Program: Legislative Project",)
+import PyPDF2
+import io
+
+app = FastAPI(title="Dallas AI Summer Program: Legislative Project")
 
 @app.get("/healthz", tags=["Health"])
 async def healthz():
     return {"status": "ok"}
 
-# Include routers for each table
+# Include routers for each endppoint
 app.include_router(helloworld_router, prefix="/hello_world", tags=["Hello World"])
+app.include_router(bills_router, prefix="/bills", tags=["Bills"])
 
 origins = [
     # "http://localhost:4200",  # Angular app
     # "http://localhost:5173",  # Vite default port
     # "http://localhost:8050", # The current dashboard
-    "*", # allow all origins
+    "*",  # allow all origins
 ]
 
 app.add_middleware(
