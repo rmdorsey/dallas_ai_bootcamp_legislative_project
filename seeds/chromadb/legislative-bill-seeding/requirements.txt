@@ -1,3 +1,8 @@
 langchain
 langchain-community
 pypdf
+sentence-transformers
+langchain-huggingface
+chromadb-client
+PyYAML
+langchain-chroma
