@@ -1,7 +1,27 @@
 import re
+import os
+import yaml
+import chromadb
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.docstore.document import Document
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
 from typing import List, Tuple, Dict
+
+def load_config(config_path: str = 'config.yaml') -> Dict:
+    """
+    Loads configuration settings from a YAML file.
+
+    Args:
+        config_path: The path to the YAML configuration file.
+
+    Returns:
+        A dictionary containing the configuration settings.
+    """
+    print(f"Loading configuration from {config_path}...")
+    with open(config_path, 'r') as f:
+        config = yaml.safe_load(f)
+    return config
 
 def load_and_preprocess_pdf(pdf_path: str) -> Tuple[str, List[Tuple[int, int]]]:
     """
@@ -19,7 +39,7 @@ def load_and_preprocess_pdf(pdf_path: str) -> Tuple[str, List[Tuple[int, int]]]:
         - A single string with the full text of the document.
         - A page_map list of tuples, where each tuple is (start_char_index, page_number).
     """
-    print(f"Loading document from: {pdf_path}")
+    print(f"\nLoading document from: {pdf_path}")
     # Use PyPDFLoader to load the document. It creates one Document object per page.
     loader = PyPDFLoader(pdf_path)
     pages = loader.load()
@@ -36,7 +56,7 @@ def load_and_preprocess_pdf(pdf_path: str) -> Tuple[str, List[Tuple[int, int]]]:
         # Append the page's content to the full text string
         full_text += page_doc.page_content + "\n"
         
-    print(f"Successfully loaded and preprocessed {len(pages)} pages.")
+    print(f"Successfully loaded and preprocessed {len(pages)} pages from {os.path.basename(pdf_path)}.")
     return full_text, page_map
 
 def clean_chunk_text(text: str) -> str:
@@ -83,10 +103,9 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
     Returns:
         A list of LangChain Document objects, each representing a section.
     """
-    print("Identifying articles and splitting document by logical sections...")
+    print(f"Identifying articles and splitting sections for {os.path.basename(pdf_path)}...")
 
     # Step 1: Find all ARTICLE headings and their positions.
-    # This pattern looks for lines starting with "ARTICLE", a number, and an all-caps title.
     article_pattern = re.compile(r'^\s*(ARTICLE\s+(\d+)\.\s+([A-Z\s,]+))$', re.MULTILINE)
     articles = []
     for match in article_pattern.finditer(full_text):
@@ -97,49 +116,40 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
         })
 
     # Step 2: Split the document by SECTION headings.
-    # This pattern looks for "SECTION" or "Sec." at the start of a line.
     section_pattern = r'(?=^\s*(?:SECTION|Sec\.)\s+[\d\w])'
     text_chunks = re.split(section_pattern, full_text, flags=re.MULTILINE)
 
     documents = []
     current_pos = 0
     
-    # Process each chunk (which is now a section)
     for chunk in text_chunks:
         chunk_content = chunk.strip()
-        if len(chunk_content) < 50:  # Filter out small/empty splits
+        if len(chunk_content) < 50:
             continue
         
-        # Clean the chunk content to remove PDF artifacts
         cleaned_content = clean_chunk_text(chunk_content)
             
-        # Extract only the section's number from the beginning of the cleaned chunk
         section_number = None
         section_header_pattern = r'(?:SECTION|Sec\.)\s*([\d\w\.]+)'
         section_match = re.match(section_header_pattern, cleaned_content)
         
         if section_match:
-            # Get the captured group (the number) and clean it.
             section_number = section_match.group(1).strip().rstrip('.')
 
-        # Find the starting position of the original chunk in the full text
         chunk_start_index = full_text.find(chunk_content, current_pos)
         
-        # Determine the page number for this chunk
         page_number = 0
         for start_index, page_num in reversed(page_map):
             if chunk_start_index >= start_index:
                 page_number = page_num
                 break
         
-        # Determine which article this chunk belongs to
         current_article = {'number': None, 'title': None}
         for article in reversed(articles):
             if chunk_start_index >= article['start_index']:
                 current_article = {'number': article['number'], 'title': article['title']}
                 break
 
-        # Create the metadata dictionary
         metadata = {
             'source': pdf_path,
             'page': page_number,
@@ -148,40 +158,91 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
             'section_number': section_number
         }
 
-        # Create a LangChain Document object for the chunk using the cleaned content
         doc = Document(page_content=cleaned_content, metadata=metadata)
         documents.append(doc)
         
-        # Update search position for the next chunk
         current_pos = chunk_start_index + len(chunk_content)
         
-    print(f"Successfully split the bill into {len(documents)} structured documents.")
+    print(f"Successfully split {os.path.basename(pdf_path)} into {len(documents)} structured documents.")
     return documents
+
+def upsert_to_chroma(documents: List[Document], collection_name: str, embedding_model_name: str, chroma_host: str, chroma_port: int):
+    """
+    Vectorizes documents and upserts them into a ChromaDB collection.
+
+    Args:
+        documents: A list of LangChain Document objects to be upserted.
+        collection_name: The name of the ChromaDB collection.
+        embedding_model_name: The name of the Hugging Face model for embeddings.
+        chroma_host: The hostname or IP address of the ChromaDB server.
+        chroma_port: The port number of the ChromaDB server.
+    """
+    print(f"\nInitializing embedding model: {embedding_model_name}")
+    # Initialize the embedding model from Hugging Face.
+    embeddings = HuggingFaceEmbeddings(model_name=embedding_model_name)
+    
+    print(f"Connecting to ChromaDB at {chroma_host}:{chroma_port}")
+    # Initialize the ChromaDB client.
+    client = chromadb.HttpClient(host=chroma_host, port=chroma_port)
+
+    print(f"Upserting {len(documents)} documents to collection '{collection_name}'. This may take a moment...")
+    # Use LangChain's Chroma vector store to handle the embedding and upserting.
+    # This will create the collection if it doesn't exist.
+    Chroma.from_documents(
+        client=client,
+        collection_name=collection_name,
+        documents=documents,
+        embedding=embeddings,
+    )
+    
+    print("Successfully upserted documents to ChromaDB.")
 
 # --- Main Execution ---
 if __name__ == "__main__":
-    pdf_file_path = "HB00002F.pdf"
+    # Load configuration from the YAML file
+    config = load_config()
+    
+    # Extract settings from the config dictionary
+    chroma_config = config.get('chromadb', {})
+    embedding_config = config.get('embedding', {})
+    source_dir_config = config.get('source_directory', {})
 
-    # Step 1: Load and preprocess the PDF to get the full text and page map.
-    bill_text, page_to_char_map = load_and_preprocess_pdf(pdf_file_path)
+    source_directory = source_dir_config.get('path', 'docs/')
+    embedding_model_name = embedding_config.get('model_name', 'nlpaueb/legal-bert-base-uncased')
+    chroma_collection_name = chroma_config.get('collection_name', 'legislation-89-r')
+    chroma_server_host = chroma_config.get('host', 'localhost')
+    chroma_server_port = chroma_config.get('port', 8001)
 
-    # Step 2: Split the preprocessed text into structured documents by section.
-    structured_docs = split_bill_by_section(bill_text, page_to_char_map, pdf_file_path)
+    all_docs_to_upsert = []
 
-    # Step 3: Display a few results to verify the process worked correctly.
-    if structured_docs:
-        print(f"\nTotal chunks created: {len(structured_docs)}")
-        
-        print("\n--- Example of a chunk from Article 1 ---")
-        for doc in structured_docs:
-            if doc.metadata.get('article_number') == '1':
-                print(f"Full Content:\n{doc.page_content}")
-                print(f"Metadata: {doc.metadata}\n")
-                break
+    # Iterate through all files in the source directory
+    if not os.path.isdir(source_directory):
+        print(f"Error: Source directory '{source_directory}' not found.")
+    else:
+        for filename in os.listdir(source_directory):
+            if filename.lower().endswith('.pdf'):
+                pdf_file_path = os.path.join(source_directory, filename)
                 
-        print("--- Example of a chunk from Article 4 ---")
-        for doc in structured_docs:
-            if doc.metadata.get('article_number') == '4':
-                print(f"Full Content:\n{doc.page_content}")
-                print(f"Metadata: {doc.metadata}\n")
-                break
+                # Step 1: Load and preprocess the PDF.
+                bill_text, page_to_char_map = load_and_preprocess_pdf(pdf_file_path)
+
+                # Step 2: Split the text into structured documents.
+                structured_docs = split_bill_by_section(bill_text, page_to_char_map, pdf_file_path)
+                
+                # Add the processed documents to our main list
+                all_docs_to_upsert.extend(structured_docs)
+
+    # Step 3: Vectorize and upsert all collected documents to ChromaDB in one batch.
+    if all_docs_to_upsert:
+        upsert_to_chroma(
+            documents=all_docs_to_upsert,
+            collection_name=chroma_collection_name,
+            embedding_model_name=embedding_model_name,
+            chroma_host=chroma_server_host,
+            chroma_port=chroma_server_port
+        )
+        
+        # Step 4: Display final summary.
+        print(f"\nProcess complete. Total chunks created and upserted from all files: {len(all_docs_to_upsert)}")
+    else:
+        print("No PDF files found in the source directory to process.")

@@ -1,0 +1,13 @@
+# Configuration for ChromaDB connection and collection
+chromadb:
+  host: "localhost"
+  port: 8001
+  collection_name: "legislation-89-r"
+
+# Configuration for the embedding model
+embedding:
+  model_name: "nlpaueb/legal-bert-base-uncased"
+
+# UPDATED: Configuration for the source directory containing PDFs
+source_directory:
+  path: "docs/"
