@@ -10,6 +10,7 @@ async def healthz():
 
 # Include routers for each table
 app.include_router(helloworld_router, prefix="/hello_world", tags=["Hello World"])
+app.include_router(bills_router, prefix="/bills", tags=["Bills"])
 
 origins = [
     # "http://localhost:4200",  # Angular app
