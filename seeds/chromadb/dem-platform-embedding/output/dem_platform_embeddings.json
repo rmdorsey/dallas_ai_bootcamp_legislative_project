@@ -1,12 +1,23 @@
 {
   "config": {
-    "url": "https://www.texasdemocrats.org/platform",
-    "model_name": "sentence-transformers/all-mpnet-base-v2",
-    "chunk_size": 300,
-    "output_dir": "output",
-    "platform_file": "dem_platform.txt",
-    "embeddings_file": "dem_platform_embeddings.json",
-    "test_query": "What do Democrats say about public education?"
+    "platform": {
+      "url": "https://www.texasdemocrats.org/platform",
+      "chunk_size": 300,
+      "test_query": "What do Democrats say about public education?"
+    },
+    "embedding": {
+      "model_name": "sentence-transformers/all-mpnet-base-v2"
+    },
+    "output": {
+      "directory": "output",
+      "platform_file": "dem_platform.txt",
+      "embeddings_file": "dem_platform_embeddings.json"
+    },
+    "chromadb": {
+      "host": "localhost",
+      "port": 8001,
+      "collection_name": "dem_platform_chunks"
+    }
   },
   "chunks": [
     {
