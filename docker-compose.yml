@@ -10,13 +10,13 @@ services:
         - "8000:8000"
       networks:
         - legislative_analysis_network
-      depends_on:
-        zookeeper:
-          condition: service_healthy
-        kafka:
-          condition: service_healthy
-        cassandra:
-          condition: service_healthy
+      # depends_on:
+      #   zookeeper:
+      #     condition: service_healthy
+      #   kafka:
+      #     condition: service_healthy
+      #   cassandra:
+      #     condition: service_healthy
       volumes:
       - ./fastapi-app:/app
       - ./shared:/app/shared
@@ -97,63 +97,63 @@ services:
     depends_on:
       - fastapi 
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.4.0
-    container_name: zookeeper
-    ports:
-      - "2181:2181"
-    networks:
-      - legislative_analysis_network
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    healthcheck:
-      test: ["CMD", "bash", "-c", "echo srvr | nc -w 2 localhost 2181 | grep -q 'Mode:'"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+  # zookeeper:
+  #   image: confluentinc/cp-zookeeper:7.4.0
+  #   container_name: zookeeper
+  #   ports:
+  #     - "2181:2181"
+  #   networks:
+  #     - legislative_analysis_network
+  #   environment:
+  #     ZOOKEEPER_CLIENT_PORT: 2181
+  #     ZOOKEEPER_TICK_TIME: 2000
+  #   healthcheck:
+  #     test: ["CMD", "bash", "-c", "echo srvr | nc -w 2 localhost 2181 | grep -q 'Mode:'"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 30s
 
-  kafka:
-    image: confluentinc/cp-kafka:7.4.0
-    container_name: kafka
-    ports:
-      - "9092:9092"
-      - "9093:9093"
-    networks:
-      - legislative_analysis_network
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9093
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:9093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    depends_on:
-      zookeeper:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "bash", "-c", "kafka-broker-api-versions --bootstrap-server localhost:9092 > /dev/null 2>&1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+  # kafka:
+  #   image: confluentinc/cp-kafka:7.4.0
+  #   container_name: kafka
+  #   ports:
+  #     - "9092:9092"
+  #     - "9093:9093"
+  #   networks:
+  #     - legislative_analysis_network
+  #   environment:
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9093
+  #     KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:9093
+  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+  #     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  #   depends_on:
+  #     zookeeper:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: ["CMD", "bash", "-c", "kafka-broker-api-versions --bootstrap-server localhost:9092 > /dev/null 2>&1"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 30s
 
-  cassandra:
-    image: cassandra:4.1
-    container_name: cassandra
-    ports:
-      - "9042:9042"
-    networks:
-      - legislative_analysis_network
-    environment:
-      CASSANDRA_CLUSTER_NAME: "LegislativeCluster"
-    healthcheck:
-      test: ["CMD", "bash", "-c", "cqlsh -e 'describe keyspaces'"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+  # cassandra:
+  #   image: cassandra:4.1
+  #   container_name: cassandra
+  #   ports:
+  #     - "9042:9042"
+  #   networks:
+  #     - legislative_analysis_network
+  #   environment:
+  #     CASSANDRA_CLUSTER_NAME: "LegislativeCluster"
+  #   healthcheck:
+  #     test: ["CMD", "bash", "-c", "cqlsh -e 'describe keyspaces'"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 30s
 
 networks:
   legislative_analysis_network:
