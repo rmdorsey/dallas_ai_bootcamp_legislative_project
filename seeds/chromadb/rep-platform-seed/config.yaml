@@ -1,0 +1,21 @@
+chromadb:
+  host: localhost
+  port: 8001
+collection: platforms-republican-texas
+
+model:
+  name: sentence-transformers/all-mpnet-base-v2
+
+search:
+  top_k: 3
+  include:
+    - documents
+    - distances
+
+data:
+  raw_document_path: docs/rpt_platform.md
+
+preprocessing:
+  do_character_split_after_split_by_markdown: False
+  chunk_size: 800
+  chunk_overlap: 200
