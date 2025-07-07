@@ -1,0 +1,13 @@
+# NOTE: Had to use this to get the GPU-enabled PyTorch wheels: pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+# tell pip to look in the PyTorch CUDA 11.8 wheel index as well as PyPI
+# --extra-index-url https://download.pytorch.org/whl/cu118
+
+# # CUDA‑enabled PyTorch
+# torch>=2.2.2
+# torchvision>=0.15.3
+# torchaudio>=2.2.0
+
+chromadb==1.0.12
+langchain-text-splitters==0.3.8
+sentence-transformers==4.1.0
+datasets==3.6.0
