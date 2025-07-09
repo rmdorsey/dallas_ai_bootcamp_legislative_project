@@ -1,0 +1,21 @@
+chromadb:
+  host: localhost
+  port: 8001
+collection: rpt_platform_2024_pdf
+
+model:
+  name: sentence-transformers/all-mpnet-base-v2
+
+search:
+  top_k: 3
+  include:
+    - documents
+    - distances
+
+data:
+  raw_document_path: docs/2024-RPT-Platform.pdf
+
+preprocessing:
+  do_character_split_after_split_by_markdown: False
+  chunk_size: 800
+  chunk_overlap: 200
