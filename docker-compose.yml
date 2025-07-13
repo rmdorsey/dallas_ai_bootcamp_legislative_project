@@ -97,6 +97,54 @@ services:
     depends_on:
       - fastapi 
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    networks:
+      - legislative_analysis_network
+    tty: true
+    restart: always
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    volumes:
+      - open-webui:/app/backend/data
+    depends_on:
+      - ollama
+    ports:
+      - 3000:8080
+    environment:
+      - 'OLLAMA_BASE_URL=http://ollama:11434'
+      - 'WEBUI_SECRET_KEY='
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    networks:
+      - legislative_analysis_network
+    restart: unless-stopped
+  
+  # open-webui:
+  #   image: ghcr.io/open-webui/open-webui:main
+  #   container_name: open-webui
+  #   ports:
+  #     - "3000:8080"
+  #   environment:
+  #     - 'OLLAMA_BASE_URL=http://ollama:11434'
+  #     - 'WEBUI_SECRET_KEY='
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  #   volumes:
+  #     - ollama-webui:/app/backend/data
+  #   depends_on:
+  #     - ollama
+  #   networks:
+  #     - legislative_analysis_network
+  #   restart: always
+
   # zookeeper:
   #   image: confluentinc/cp-zookeeper:7.4.0
   #   container_name: zookeeper
@@ -158,3 +206,7 @@ services:
 networks:
   legislative_analysis_network:
     driver: bridge
+
+volumes:
+  ollama: {}
+  open-webui: {}
