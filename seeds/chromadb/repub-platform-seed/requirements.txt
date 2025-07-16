@@ -1,0 +1,5 @@
+pyyaml
+chromadb
+sentence-transformers
+PyMuPDF
+uuid
