@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LegislAItive - Bill Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1e2e2e;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            padding: 8px 12px;
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            background-color: #e2e8f0;
+            color: #1e2e2e;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e2e2e;
+        }
+
+        .logo .ai-highlight {
+            color: #34676d;
+        }
+
+        .bill-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bill-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e2e2e;
+        }
+
+        .bill-meta {
+            font-size: 14px;
+            color: #64748b;
+            background-color: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-button {
+            padding: 8px 16px;
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-button:hover {
+            background-color: #f8fafc;
+            border-color: #34676d;
+        }
+
+        .action-button.primary {
+            background-color: #34676d;
+            color: white;
+            border-color: #34676d;
+        }
+
+        .action-button.primary:hover {
+            background-color: #13282a;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* PDF Panel */
+        .pdf-panel {
+            width: 50%;
+            background-color: #ffffff;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pdf-toolbar {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pdf-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pdf-btn {
+            padding: 6px 12px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .pdf-btn:hover {
+            background-color: #f1f5f9;
+        }
+
+        .page-info {
+            font-size: 12px;
+            color: #64748b;
+            margin: 0 12px;
+        }
+
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pdf-viewer {
+            flex: 1;
+            background-color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: auto;
+        }
+
+        .pdf-document {
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 4px;
+            width: 90%;
+            max-width: 600px;
+            height: 85%;
+            padding: 40px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .bill-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+
+        .bill-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e2e2e;
+            margin-bottom: 8px;
+        }
+
+        .bill-session {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .bill-full-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e2e2e;
+            line-height: 1.4;
+        }
+
+        .bill-section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e2e2e;
+            margin-bottom: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section-content {
+            color: #374151;
+            line-height: 1.7;
+        }
+
+        .subsection {
+            margin: 16px 0;
+            padding-left: 20px;
+        }
+
+        .subsection-label {
+            font-weight: 600;
+            color: #1e2e2e;
+        }
+
+        /* Chat Panel */
+        .chat-panel {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background-color: #ffffff;
+        }
+
+        .chat-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e2e2e;
+            margin-bottom: 4px;
+        }
+
+        .chat-subtitle {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #f8fafc;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.assistant {
+            justify-content: flex-start;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background-color: #34676d;
+            color: white;
+        }
+
+        .message.assistant .message-avatar {
+            background-color: #1e2e2e;
+            color: white;
+        }
+
+        .message-content {
+            max-width: 75%;
+            background-color: #ffffff;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .message.user .message-content {
+            background-color: #34676d;
+            color: white;
+            border-color: #34676d;
+        }
+
+        .message-text {
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .suggestion-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .suggestion-btn {
+            padding: 8px 12px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: #64748b;
+        }
+
+        .suggestion-btn:hover {
+            background-color: #34676d;
+            color: white;
+            border-color: #34676d;
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            background-color: #ffffff;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .input-field {
+            flex: 1;
+            min-height: 44px;
+            max-height: 120px;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: #34676d;
+            box-shadow: 0 0 0 3px rgba(52, 103, 109, 0.1);
+        }
+
+        .send-btn {
+            padding: 12px 16px;
+            background-color: #34676d;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .send-btn:hover {
+            background-color: #13282a;
+        }
+
+        .send-btn:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        /* Icons */
+        .icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .pdf-panel, .chat-panel {
+                width: 100%;
+                height: 50%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 16px;
+            }
+
+            .bill-title {
+                font-size: 16px;
+            }
+
+            .header-actions {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <a href="#" class="back-btn">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Back to Search
+                </a>
+                <div class="logo">legisl<span class="ai-highlight">AI</span>tive</div>
+            </div>
+
+            <div class="bill-info">
+                <div class="bill-title">Senate Bill 7</div>
+                <div class="bill-meta">87th Legislature • Regular Session</div>
+            </div>
+
+            <div class="header-actions">
+                <button class="action-button">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 17l4 4 4-4M12 1v20"/>
+                    </svg>
+                    Download PDF
+                </button>
+                <button class="action-button">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-2-4 2"/>
+                    </svg>
+                    Share
+                </button>
+                <button class="action-button primary">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                    Full Analysis
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- PDF Panel -->
+            <div class="pdf-panel">
+                <div class="pdf-toolbar">
+                    <div class="pdf-controls">
+                        <button class="pdf-btn">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M15 18l-6-6 6-6"/>
+                            </svg>
+                        </button>
+                        <span class="page-info">Page 1 of 12</span>
+                        <button class="pdf-btn">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="zoom-controls">
+                        <button class="pdf-btn">-</button>
+                        <span class="page-info">100%</span>
+                        <button class="pdf-btn">+</button>
+                    </div>
+                </div>
+
+                <div class="pdf-viewer">
+                    <div class="pdf-document">
+                        <div class="bill-header">
+                            <div class="bill-number">S.B. 7</div>
+                            <div class="bill-session">87th Legislature, Regular Session, 2021</div>
+                            <div class="bill-full-title">
+                                AN ACT relating to restrictions on taxpayer-funded lobbying and requiring disclosure of lobbying expenditures by government entities
+                            </div>
+                        </div>
+
+                        <div class="bill-section">
+                            <div class="section-title">SECTION 1. SHORT TITLE</div>
+                            <div class="section-content">
+                                This Act may be cited as the "Taxpayer Protection from Government Lobbying Act."
+                            </div>
+                        </div>
+
+                        <div class="bill-section">
+                            <div class="section-title">SECTION 2. FINDINGS AND PURPOSE</div>
+                            <div class="section-content">
+                                <div class="subsection">
+                                    <span class="subsection-label">(a) FINDINGS.</span> The Legislature finds that:
+                                    <br><br>
+                                    (1) taxpayer funds should be used for essential government services and not for lobbying activities that may conflict with taxpayer interests;
+                                    <br><br>
+                                    (2) the use of public funds to hire lobbyists creates an unequal playing field in the democratic process;
+                                    <br><br>
+                                    (3) transparency in government spending on lobbying activities is essential for public accountability.
+                                </div>
+                                <div class="subsection">
+                                    <span class="subsection-label">(b) PURPOSE.</span> The purpose of this Act is to prohibit the use of taxpayer funds for lobbying activities and ensure transparency in any government interaction with lobbyists.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bill-section">
+                            <div class="section-title">SECTION 3. DEFINITIONS</div>
+                            <div class="section-content">
+                                For purposes of this Act:
+                                <br><br>
+                                <div class="subsection">
+                                    <span class="subsection-label">(1) "Government entity"</span> means a state agency, department, board, commission, or other state governmental entity, and includes any political subdivision of the state.
+                                </div>
+                                <div class="subsection">
+                                    <span class="subsection-label">(2) "Lobbying"</span> means direct communication with a member of the legislative or executive branch for the purpose of influencing legislative or administrative action.
+                                </div>
+                                <div class="subsection">
+                                    <span class="subsection-label">(3) "Public funds"</span> means money received from taxes, fees, federal grants, or other revenue sources by a government entity.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bill-section">
+                            <div class="section-title">SECTION 4. PROHIBITION ON USE OF PUBLIC FUNDS</div>
+                            <div class="section-content">
+                                <div class="subsection">
+                                    <span class="subsection-label">(a)</span> A government entity may not use public funds to:
+                                    <br><br>
+                                    (1) employ or contract with a person to engage in lobbying;
+                                    <br><br>
+                                    (2) pay membership dues to an organization that engages in lobbying; or
+                                    <br><br>
+                                    (3) directly or indirectly support lobbying activities.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Panel -->
+            <div class="chat-panel">
+                <div class="chat-header">
+                    <div class="chat-title">Bill Analyzer</div>
+                    <div class="chat-subtitle">AI-powered legislative analysis for S.B. 7</div>
+                </div>
+
+                <div class="chat-messages">
+                    <div class="message assistant">
+                        <div class="message-avatar">AI</div>
+                        <div class="message-content">
+                            <div class="message-text">
+                                Welcome to the Bill Analyzer! I have loaded <strong>SB7</strong>. You can ask me to summarize sections, define terms, or explain what the bill does. What would you like to know?
+                            </div>
+                            <div class="suggestion-buttons">
+                                <button class="suggestion-btn">Summarize the whole bill</button>
+                                <button class="suggestion-btn">Explain Section 4</button>
+                                <button class="suggestion-btn">Define "lobbying"</button>
+                                <button class="suggestion-btn">What are the penalties?</button>
+                                <button class="suggestion-btn">Who does this affect?</button>
+                                <button class="suggestion-btn">Compare to current law</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <div class="input-container">
+                        <textarea class="input-field" placeholder="Ask about any aspect of this bill..." rows="1"></textarea>
+                        <button class="send-btn">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 12l3-3 3 3"/>
+                                <path d="m8 12h13"/>
+                            </svg>
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const textarea = document.querySelector('.input-field');
+            const sendBtn = document.querySelector('.send-btn');
+            const suggestionBtns = document.querySelectorAll('.suggestion-btn');
+
+            // Auto-resize textarea
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+
+            // Enable/disable send button based on input
+            textarea.addEventListener('input', function() {
+                sendBtn.disabled = this.value.trim() === '';
+            });
+
+            // Handle suggestion button clicks
+            suggestionBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    textarea.value = this.textContent;
+                    textarea.style.height = 'auto';
+                    textarea.style.height = textarea.scrollHeight + 'px';
+                    sendBtn.disabled = false;
+                    textarea.focus();
+                });
+            });
+
+            // Send message simulation
+            sendBtn.addEventListener('click', function() {
+                if (textarea.value.trim()) {
+                    console.log('Analyzing:', textarea.value);
+                    textarea.value = '';
+                    textarea.style.height = 'auto';
+                    sendBtn.disabled = true;
+                }
+            });
+
+            // Enter key handling
+            textarea.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (this.value.trim()) {
+                        sendBtn.click();
+                    }
+                }
+            });
+
+            // PDF navigation simulation
+            const prevBtn = document.querySelector('.pdf-controls .pdf-btn:first-child');
+            const nextBtn = document.querySelector('.pdf-controls .pdf-btn:last-child');
+            const pageInfo = document.querySelector('.page-info');
+            let currentPage = 1;
+            const totalPages = 12;
+
+            prevBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+                }
+            });
+
+            nextBtn.addEventListener('click', function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
