@@ -134,140 +134,13 @@
             overflow: hidden;
         }
 
-        /* PDF Panel */
-        .pdf-panel {
-            width: 50%;
-            background-color: #ffffff;
-            border-right: 1px solid #e2e8f0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .pdf-toolbar {
-            padding: 12px 16px;
-            border-bottom: 1px solid #e2e8f0;
-            background-color: #f8fafc;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .pdf-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .pdf-btn {
-            padding: 6px 12px;
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.2s;
-        }
-
-        .pdf-btn:hover {
-            background-color: #f1f5f9;
-        }
-
-        .page-info {
-            font-size: 12px;
-            color: #64748b;
-            margin: 0 12px;
-        }
-
-        .zoom-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .pdf-viewer {
-            flex: 1;
-            background-color: #f8fafc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: auto;
-        }
-
-        .pdf-document {
-            background-color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            border-radius: 4px;
-            width: 90%;
-            max-width: 600px;
-            height: 85%;
-            padding: 40px;
-            overflow-y: auto;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .bill-header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 20px;
-        }
-
-        .bill-number {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1e2e2e;
-            margin-bottom: 8px;
-        }
-
-        .bill-session {
-            font-size: 14px;
-            color: #64748b;
-            margin-bottom: 12px;
-        }
-
-        .bill-full-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1e2e2e;
-            line-height: 1.4;
-        }
-
-        .bill-section {
-            margin-bottom: 25px;
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1e2e2e;
-            margin-bottom: 12px;
-            padding: 8px 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .section-content {
-            color: #374151;
-            line-height: 1.7;
-        }
-
-        .subsection {
-            margin: 16px 0;
-            padding-left: 20px;
-        }
-
-        .subsection-label {
-            font-weight: 600;
-            color: #1e2e2e;
-        }
-
-        /* Chat Panel */
+        /* Chat Panel - Now on the left */
         .chat-panel {
             width: 50%;
             display: flex;
             flex-direction: column;
             background-color: #ffffff;
+            border-right: 1px solid #e2e8f0;
         }
 
         .chat-header {
@@ -431,6 +304,133 @@
             cursor: not-allowed;
         }
 
+        /* PDF Panel - Now on the right */
+        .pdf-panel {
+            width: 50%;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pdf-toolbar {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pdf-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pdf-btn {
+            padding: 6px 12px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .pdf-btn:hover {
+            background-color: #f1f5f9;
+        }
+
+        .page-info {
+            font-size: 12px;
+            color: #64748b;
+            margin: 0 12px;
+        }
+
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pdf-viewer {
+            flex: 1;
+            background-color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: auto;
+        }
+
+        .pdf-document {
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 4px;
+            width: 90%;
+            max-width: 600px;
+            height: 85%;
+            padding: 40px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .bill-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 20px;
+        }
+
+        .bill-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e2e2e;
+            margin-bottom: 8px;
+        }
+
+        .bill-session {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .bill-full-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e2e2e;
+            line-height: 1.4;
+        }
+
+        .bill-section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e2e2e;
+            margin-bottom: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section-content {
+            color: #374151;
+            line-height: 1.7;
+        }
+
+        .subsection {
+            margin: 16px 0;
+            padding-left: 20px;
+        }
+
+        .subsection-label {
+            font-weight: 600;
+            color: #1e2e2e;
+        }
+
         /* Icons */
         .icon {
             width: 16px;
@@ -508,7 +508,47 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <!-- PDF Panel -->
+            <!-- Chat Panel - Now on the left -->
+            <div class="chat-panel">
+                <div class="chat-header">
+                    <div class="chat-title">Bill Analyzer</div>
+                    <div class="chat-subtitle">AI-powered legislative analysis for S.B. 7</div>
+                </div>
+
+                <div class="chat-messages">
+                    <div class="message assistant">
+                        <div class="message-avatar">AI</div>
+                        <div class="message-content">
+                            <div class="message-text">
+                                Welcome to the Bill Analyzer! I have loaded <strong>SB7</strong>. You can ask me to summarize sections, define terms, or explain what the bill does. What would you like to know?
+                            </div>
+                            <div class="suggestion-buttons">
+                                <button class="suggestion-btn">Summarize the whole bill</button>
+                                <button class="suggestion-btn">Explain Section 4</button>
+                                <button class="suggestion-btn">Define "lobbying"</button>
+                                <button class="suggestion-btn">What are the penalties?</button>
+                                <button class="suggestion-btn">Who does this affect?</button>
+                                <button class="suggestion-btn">Compare to current law</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <div class="input-container">
+                        <textarea class="input-field" placeholder="Ask about any aspect of this bill..." rows="1"></textarea>
+                        <button class="send-btn">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 12l3-3 3 3"/>
+                                <path d="m8 12h13"/>
+                            </svg>
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PDF Panel - Now on the right -->
             <div class="pdf-panel">
                 <div class="pdf-toolbar">
                     <div class="pdf-controls">
@@ -597,46 +637,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chat Panel -->
-            <div class="chat-panel">
-                <div class="chat-header">
-                    <div class="chat-title">Bill Analyzer</div>
-                    <div class="chat-subtitle">AI-powered legislative analysis for S.B. 7</div>
-                </div>
-
-                <div class="chat-messages">
-                    <div class="message assistant">
-                        <div class="message-avatar">AI</div>
-                        <div class="message-content">
-                            <div class="message-text">
-                                Welcome to the Bill Analyzer! I have loaded <strong>SB7</strong>. You can ask me to summarize sections, define terms, or explain what the bill does. What would you like to know?
-                            </div>
-                            <div class="suggestion-buttons">
-                                <button class="suggestion-btn">Summarize the whole bill</button>
-                                <button class="suggestion-btn">Explain Section 4</button>
-                                <button class="suggestion-btn">Define "lobbying"</button>
-                                <button class="suggestion-btn">What are the penalties?</button>
-                                <button class="suggestion-btn">Who does this affect?</button>
-                                <button class="suggestion-btn">Compare to current law</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="input-area">
-                    <div class="input-container">
-                        <textarea class="input-field" placeholder="Ask about any aspect of this bill..." rows="1"></textarea>
-                        <button class="send-btn">
-                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M2 12l3-3 3 3"/>
-                                <path d="m8 12h13"/>
-                            </svg>
-                            Send
-                        </button>
                     </div>
                 </div>
             </div>
