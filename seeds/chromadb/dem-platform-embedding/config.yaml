@@ -1,0 +1,22 @@
+
+# Configuration for platform text processing
+platform:
+  url: "https://www.texasdemocrats.org/platform"
+  chunk_size: 300
+  test_query: "What do Democrats say about public education?"
+
+# Configuration for the embedding model
+embedding:
+  model_name: "sentence-transformers/all-mpnet-base-v2"
+
+# Configuration for output files and directories
+output:
+  directory: "output"
+  platform_file: "dem_platform.txt"
+  embeddings_file: "dem_platform_embeddings.json"
+
+# Configuration for ChromaDB connection and collection
+chromadb:
+  host: "localhost"
+  port: 8001
+  collection_name: "dem_platform_chunks"
