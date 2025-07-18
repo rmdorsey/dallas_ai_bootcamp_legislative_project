@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from endpoints.helloworld import router as helloworld_router
 from endpoints.bills import router as bills_router
+from endpoints.chunk_recall import router as chunk_recall
 
 import PyPDF2
 import io
@@ -16,6 +17,7 @@ async def healthz():
 # Include routers for each endppoint
 app.include_router(helloworld_router, prefix="/hello_world", tags=["Hello World"])
 app.include_router(bills_router, prefix="/bills", tags=["Bills"])
+app.include_router(chunk_recall, prefix="/chunck", tags=["Chunck Recall"])
 
 origins = [
     # "http://localhost:4200",  # Angular app
