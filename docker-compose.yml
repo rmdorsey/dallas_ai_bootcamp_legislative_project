@@ -108,24 +108,24 @@ services:
   #     - fastapi
 
   react:
-    build:
-      context: .
-      dockerfile: react-app/Dockerfile.dev   # a "Dockerfile.dev" that just does `npm install` + `npm run dev`
-    container_name: react-dev
-    volumes:
-      - ./react-app:/app             # your source in
-      - /app/node_modules            # keep container’s node_modules
-    ports:
-      - "8050:5173"                  # map host:container (Vite default 5173)  
-        # (If you’re on CRA swap to "8050:3000")
-    networks:
-      - legislative_analysis_network
-    depends_on:
-      - fastapi
-    environment:
-      - CHOKIDAR_USEPOLLING=true     # (optional) if file‐watching flakes out
-      - CHOKIDAR_INTERVAL=100
-    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+     build:
+       context: .
+       dockerfile: react-app/Dockerfile.dev   # a "Dockerfile.dev" that just does `npm install` + `npm run dev`
+     container_name: react-dev
+     volumes:
+       - ./react-app:/app             # your source in
+       - /app/node_modules            # keep container’s node_modules
+     ports:
+       - "8050:5173"                  # map host:container (Vite default 5173)
+         # (If you’re on CRA swap to "8050:3000")
+     networks:
+       - legislative_analysis_network
+     depends_on:
+       - fastapi
+     environment:
+       - CHOKIDAR_USEPOLLING=true     # (optional) if file‐watching flakes out
+       - CHOKIDAR_INTERVAL=100
+     command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 
   # open-webui:
   #   image: ghcr.io/open-webui/open-webui:main
