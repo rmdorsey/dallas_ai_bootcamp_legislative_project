@@ -46,6 +46,16 @@ export interface ChatInputProps {
   disabled?: boolean;
 }
 
+// Authentication types
+export interface User {
+  name: string;
+  email: string;
+  type: 'demo' | 'google';
+  loginTime: string;
+  picture?: string; // For Google users
+  googleId?: string; // For Google users
+}
+
 // New types for Bill Analyzer
 export interface BillAnalyzerData {
   id: string;

@@ -1,4 +1,4 @@
-// components/layout/MainContent.tsx
+// components/layout/MainContent.tsx - Fixed version
 import React from 'react';
 import type { Conversation } from '../../types';
 import { ChatHeader } from '../chat/ChatHeader';
@@ -31,6 +31,7 @@ export const MainContent: React.FC<MainContentProps> = ({
         messages={activeConversation?.messages || []}
         onAddressSubmit={onAddressSubmit}
         onBillAction={onBillAction}
+        onSendMessage={onSendMessage} // Pass the onSendMessage prop
       />
 
       <ChatInput
