@@ -10,16 +10,16 @@ services:
         - "8000:8000"
       networks:
         - legislative_analysis_network
-      # depends_on:
-      #   zookeeper:
-      #     condition: service_healthy
-      #   kafka:
-      #     condition: service_healthy
-      #   cassandra:
-      #     condition: service_healthy
       volumes:
-      - ./fastapi-app:/app
-      - ./shared:/app/shared
+        - ./fastapi-app:/app
+        - ./shared:/app/shared
+      environment:
+        - DATABASE_URL=postgresql://user:password@db:5432/civicdb
+      depends_on: # MODIFIED - FastAPI now depends on the databases
+        db:
+          condition: service_healthy
+        chromadb:
+          condition: service_healthy
       healthcheck:
         test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
         interval: 10s
@@ -37,6 +37,26 @@ services:
         - --reload
         - --reload-dir
         - /app
+
+  db:
+    image: postgres:16-alpine
+    container_name: postgres-db
+    restart: always
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password # CHANGE THESE credentials
+      - POSTGRES_DB=civicdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d civicdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - legislative_analysis_network
 
   chromadb:
     image: chromadb/chroma:1.0.12
@@ -57,8 +77,6 @@ services:
       start_period: 10s
     networks:
       - legislative_analysis_network
-    depends_on:
-      - fastapi 
 
   ollama:
     image: ollama/ollama:latest
@@ -72,40 +90,23 @@ services:
     tty: true
     restart: always
 
-  open-webui:
-    image: ghcr.io/open-webui/open-webui:main
-    container_name: open-webui
-    volumes:
-      - open-webui:/app/backend/data
-    depends_on:
-      - ollama
-    ports:
-      - 3000:8080
-    environment:
-      - 'OLLAMA_BASE_URL=http://ollama:11434'
-      - 'WEBUI_SECRET_KEY='
-    extra_hosts:
-      - host.docker.internal:host-gateway
-    networks:
-      - legislative_analysis_network
-    restart: unless-stopped
-  
-  # angular:
-  #   build:
-  #     context: .
-  #     dockerfile: angular-app/Dockerfile.dev
-  #   container_name: angular-dev
-  #   ports:
-  #     - "4200:4200"
+  # open-webui:
+  #   image: ghcr.io/open-webui/open-webui:main
+  #   container_name: open-webui
   #   volumes:
-  #     - ./angular-app:/app           # your code in
-  #     - /app/node_modules            # keep container’s node_modules
+  #     - open-webui:/app/backend/data
+  #   depends_on:
+  #     - ollama
+  #   ports:
+  #     - 3000:8080
   #   environment:
-  #     - CHOKIDAR_USEPOLLING=true
+  #     - 'OLLAMA_BASE_URL=http://ollama:11434'
+  #     - 'WEBUI_SECRET_KEY='
+  #   extra_hosts:
+  #     - host.docker.internal:host-gateway
   #   networks:
   #     - legislative_analysis_network
-  #   depends_on:
-  #     - fastapi
+  #   restart: unless-stopped
 
   react:
      build:
@@ -127,86 +128,11 @@ services:
        - CHOKIDAR_INTERVAL=100
      command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 
-  # open-webui:
-  #   image: ghcr.io/open-webui/open-webui:main
-  #   container_name: open-webui
-  #   ports:
-  #     - "3000:8080"
-  #   environment:
-  #     - 'OLLAMA_BASE_URL=http://ollama:11434'
-  #     - 'WEBUI_SECRET_KEY='
-  #   extra_hosts:
-  #     - "host.docker.internal:host-gateway"
-  #   volumes:
-  #     - ollama-webui:/app/backend/data
-  #   depends_on:
-  #     - ollama
-  #   networks:
-  #     - legislative_analysis_network
-  #   restart: always
-
-  # zookeeper:
-  #   image: confluentinc/cp-zookeeper:7.4.0
-  #   container_name: zookeeper
-  #   ports:
-  #     - "2181:2181"
-  #   networks:
-  #     - legislative_analysis_network
-  #   environment:
-  #     ZOOKEEPER_CLIENT_PORT: 2181
-  #     ZOOKEEPER_TICK_TIME: 2000
-  #   healthcheck:
-  #     test: ["CMD", "bash", "-c", "echo srvr | nc -w 2 localhost 2181 | grep -q 'Mode:'"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #     start_period: 30s
-
-  # kafka:
-  #   image: confluentinc/cp-kafka:7.4.0
-  #   container_name: kafka
-  #   ports:
-  #     - "9092:9092"
-  #     - "9093:9093"
-  #   networks:
-  #     - legislative_analysis_network
-  #   environment:
-  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9093
-  #     KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:9093
-  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-  #     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-  #   depends_on:
-  #     zookeeper:
-  #       condition: service_healthy
-  #   healthcheck:
-  #     test: ["CMD", "bash", "-c", "kafka-broker-api-versions --bootstrap-server localhost:9092 > /dev/null 2>&1"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #     start_period: 30s
-
-  # cassandra:
-  #   image: cassandra:4.1
-  #   container_name: cassandra
-  #   ports:
-  #     - "9042:9042"
-  #   networks:
-  #     - legislative_analysis_network
-  #   environment:
-  #     CASSANDRA_CLUSTER_NAME: "LegislativeCluster"
-  #   healthcheck:
-  #     test: ["CMD", "bash", "-c", "cqlsh -e 'describe keyspaces'"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #     start_period: 30s
-
 networks:
   legislative_analysis_network:
     driver: bridge
 
 volumes:
+  pgdata: {}
   ollama: {}
   open-webui: {}
