@@ -28,3 +28,10 @@ transformers>=4.30.0
 pytest>=7.4.0
 httpx>=0.25.0
 pytest-asyncio>=0.21.0
+
+# LangChain and LangGraph Core
+langchain
+langchain-community
+langchain-core
+langchain-ollama # Or your preferred LLM integration
+langgraph
