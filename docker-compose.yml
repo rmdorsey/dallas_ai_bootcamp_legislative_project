@@ -58,6 +58,27 @@ services:
     networks:
       - legislative_analysis_network
 
+# NEW - This service runs the seeding script and then exits.
+  seeder:
+    build:
+      context: .
+      dockerfile: fastapi-app/Dockerfile # Re-uses the fastapi image environment
+    container_name: db-seeder
+    depends_on:
+      db:
+        condition: service_healthy # Ensures DB is ready before trying to seed
+    volumes:
+      # Mount the entire seeds directory from your project root into the container
+      - ./seeds:/app/seeds
+    # Set the working directory to where the script is located inside the container
+    working_dir: /app/seeds/postgresqldb/legislators
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/civicdb
+    # This command now runs the script from the correct working directory
+    command: ["python", "seed_db.py"]
+    networks:
+      - legislative_analysis_network
+
   chromadb:
     image: chromadb/chroma:1.0.12
     container_name: chromadb

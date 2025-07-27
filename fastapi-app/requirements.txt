@@ -1,16 +1,24 @@
+# Core FastAPI libraries
 fastapi==0.115.9
 uvicorn[standard]==0.34.3
+python-multipart
+
+# Vector DB and AI libraries
 chromadb==1.0.12
 sentence-transformers==4.1.0
 langchain-text-splitters==0.3.8
-python-multipart
+pydantic>=2.5.0
+
+# Database Seeding and Operations
+SQLAlchemy>=2.0.0
+psycopg2-binary>=2.9.0
+
+# Document processing
 PyPDF2
 pdfplumber
-pydantic>=2.5.0
 
 # For chunk recall evaluation
 numpy>=1.24.0
-sentence-transformers>=2.2.2
 
 # Optional: For better performance and additional ML features
 torch>=2.0.0
