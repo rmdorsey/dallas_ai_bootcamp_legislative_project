@@ -37,6 +37,33 @@ services:
         - --reload
         - --reload-dir
         - /app
+  chunk_testing_framework:
+    build:
+      context: ./chunk_testing_framework
+      dockerfile: Dockerfile
+    container_name: chunk_testing_framework
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./chunk_testing_framework:/app
+    networks:
+      - legislative_analysis_network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/healthz" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    command:
+      - uvicorn
+      - app.main:app
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8000"
+      - --reload
+      - --reload-dir
+      - /app
 
   chromadb:
     image: chromadb/chroma:1.0.12

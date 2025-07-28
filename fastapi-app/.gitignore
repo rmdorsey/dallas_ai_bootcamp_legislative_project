@@ -1,3 +1,6 @@
 # ignore all .pyc files
 *.pyc
 testinputs
+#ignore all __pycache__ directories
+__pycache__/
+endpoints/__pycache__/
