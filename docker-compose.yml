@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   fastapi:
       build:
@@ -10,16 +8,18 @@ services:
         - "8000:8000"
       networks:
         - legislative_analysis_network
-      # depends_on:
-      #   zookeeper:
-      #     condition: service_healthy
-      #   kafka:
-      #     condition: service_healthy
-      #   cassandra:
-      #     condition: service_healthy
       volumes:
-      - ./fastapi-app:/app
-      - ./shared:/app/shared
+        - ./fastapi-app:/app
+        - ./shared:/app/shared
+      environment:
+        - DATABASE_URL=postgresql://user:password@db:5432/civicdb
+      env_file:
+        - ./.env
+      depends_on: # MODIFIED - FastAPI now depends on the databases
+        db:
+          condition: service_healthy
+        # ollama-setup:
+        #   condition: service_completed_successfully
       healthcheck:
         test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
         interval: 10s
@@ -37,6 +37,50 @@ services:
         - --reload
         - --reload-dir
         - /app
+      restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: postgres-db
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    env_file:
+      - ./.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - legislative_analysis_network
+
+# NEW - This service runs the seeding script and then exits.
+  seeder:
+    build:
+      context: .
+      dockerfile: fastapi-app/Dockerfile # Re-uses the fastapi image environment
+    container_name: db-seeder
+    depends_on:
+      db:
+        condition: service_healthy # Ensures DB is ready before trying to seed
+    volumes:
+      # Mount the entire seeds directory from your project root into the container
+      - ./seeds:/app/seeds
+    # Set the working directory to where the script is located inside the container
+    working_dir: /app/seeds/postgresqldb/legislators
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/civicdb
+    # This command now runs the script from the correct working directory
+    command: ["python", "seed_db.py"]
+    networks:
+      - legislative_analysis_network
 
   chromadb:
     image: chromadb/chroma:1.0.12
@@ -58,10 +102,14 @@ services:
     networks:
       - legislative_analysis_network
     depends_on:
-      - fastapi 
+      - fastapi
+    restart: unless-stopped
 
   ollama:
-    image: ollama/ollama:latest
+    # Build the custom image from the ollama/Dockerfile
+    build:
+      context: .
+      dockerfile: ollama/Dockerfile
     container_name: ollama
     ports:
       - "11434:11434"
@@ -69,43 +117,25 @@ services:
       - ollama:/root/.ollama
     networks:
       - legislative_analysis_network
-    tty: true
     restart: always
-
-  open-webui:
-    image: ghcr.io/open-webui/open-webui:main
-    container_name: open-webui
-    volumes:
-      - open-webui:/app/backend/data
-    depends_on:
-      - ollama
-    ports:
-      - 3000:8080
     environment:
-      - 'OLLAMA_BASE_URL=http://ollama:11434'
-      - 'WEBUI_SECRET_KEY='
-    extra_hosts:
-      - host.docker.internal:host-gateway
-    networks:
-      - legislative_analysis_network
-    restart: unless-stopped
-  
-  # angular:
-  #   build:
-  #     context: .
-  #     dockerfile: angular-app/Dockerfile.dev
-  #   container_name: angular-dev
-  #   ports:
-  #     - "4200:4200"
-  #   volumes:
-  #     - ./angular-app:/app           # your code in
-  #     - /app/node_modules            # keep container’s node_modules
-  #   environment:
-  #     - CHOKIDAR_USEPOLLING=true
-  #   networks:
-  #     - legislative_analysis_network
-  #   depends_on:
-  #     - fastapi
+      - OLLAMA_HOST=0.0.0.0
+      # if you have an NVIDIA GPU, uncomment the next line
+      # - NVIDIA_VISIBLE_DEVICES=none
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:11434 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    # if you don't have an NVIDIA GPU, comment out the deploy section
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
   react:
      build:
@@ -126,87 +156,12 @@ services:
        - CHOKIDAR_USEPOLLING=true     # (optional) if file‐watching flakes out
        - CHOKIDAR_INTERVAL=100
      command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
-
-  # open-webui:
-  #   image: ghcr.io/open-webui/open-webui:main
-  #   container_name: open-webui
-  #   ports:
-  #     - "3000:8080"
-  #   environment:
-  #     - 'OLLAMA_BASE_URL=http://ollama:11434'
-  #     - 'WEBUI_SECRET_KEY='
-  #   extra_hosts:
-  #     - "host.docker.internal:host-gateway"
-  #   volumes:
-  #     - ollama-webui:/app/backend/data
-  #   depends_on:
-  #     - ollama
-  #   networks:
-  #     - legislative_analysis_network
-  #   restart: always
-
-  # zookeeper:
-  #   image: confluentinc/cp-zookeeper:7.4.0
-  #   container_name: zookeeper
-  #   ports:
-  #     - "2181:2181"
-  #   networks:
-  #     - legislative_analysis_network
-  #   environment:
-  #     ZOOKEEPER_CLIENT_PORT: 2181
-  #     ZOOKEEPER_TICK_TIME: 2000
-  #   healthcheck:
-  #     test: ["CMD", "bash", "-c", "echo srvr | nc -w 2 localhost 2181 | grep -q 'Mode:'"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #     start_period: 30s
-
-  # kafka:
-  #   image: confluentinc/cp-kafka:7.4.0
-  #   container_name: kafka
-  #   ports:
-  #     - "9092:9092"
-  #     - "9093:9093"
-  #   networks:
-  #     - legislative_analysis_network
-  #   environment:
-  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9093
-  #     KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:9093
-  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-  #     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-  #   depends_on:
-  #     zookeeper:
-  #       condition: service_healthy
-  #   healthcheck:
-  #     test: ["CMD", "bash", "-c", "kafka-broker-api-versions --bootstrap-server localhost:9092 > /dev/null 2>&1"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #     start_period: 30s
-
-  # cassandra:
-  #   image: cassandra:4.1
-  #   container_name: cassandra
-  #   ports:
-  #     - "9042:9042"
-  #   networks:
-  #     - legislative_analysis_network
-  #   environment:
-  #     CASSANDRA_CLUSTER_NAME: "LegislativeCluster"
-  #   healthcheck:
-  #     test: ["CMD", "bash", "-c", "cqlsh -e 'describe keyspaces'"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #     start_period: 30s
+     restart: unless-stopped
 
 networks:
   legislative_analysis_network:
     driver: bridge
 
 volumes:
+  pgdata: {}
   ollama: {}
-  open-webui: {}

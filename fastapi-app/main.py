@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from endpoints.helloworld import router as helloworld_router
 from endpoints.bills import router as bills_router
 from endpoints.chunk_recall import router as chunk_recall
+from endpoints.state_legislators import router as state_legislators_router
 
 import PyPDF2
 import io
@@ -18,6 +19,7 @@ async def healthz():
 app.include_router(helloworld_router, prefix="/hello_world", tags=["Hello World"])
 app.include_router(bills_router, prefix="/bills", tags=["Bills"])
 app.include_router(chunk_recall, prefix="/chunck", tags=["Chunck Recall"])
+app.include_router(state_legislators_router, prefix="/state_legislators", tags=["State Legislators"])
 
 origins = [
     # "http://localhost:4200",  # Angular app
