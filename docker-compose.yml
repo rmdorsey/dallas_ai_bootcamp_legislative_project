@@ -12,8 +12,8 @@ services:
         - ./fastapi-app:/app
         - ./shared:/app/shared
       environment:
-        - DATABASE_URL=postgresql://user:password@db:5432/civicdb
-        - GOOGLE_CIVIC_API_KEY=AIzaSyA6ex-EONeX3i81Xeb608bdlmJ3z9S45Bc
+        - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}
+        - GOOGLE_CIVIC_API_KEY=${GOOGLE_CIVIC_API_KEY}
       env_file:
         - ./.env
       depends_on: # MODIFIED - FastAPI now depends on the databases
@@ -77,7 +77,7 @@ services:
     # Set the working directory to where the script is located inside the container
     working_dir: /app/seeds/postgresqldb/legislators
     environment:
-      - DATABASE_URL=postgresql://user:password@db:5432/civicdb
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}
     # This command now runs the script from the correct working directory
     command: ["python", "seed_db.py"]
     networks:
