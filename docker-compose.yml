@@ -13,6 +13,7 @@ services:
         - ./shared:/app/shared
       environment:
         - DATABASE_URL=postgresql://user:password@db:5432/civicdb
+        - GOOGLE_CIVIC_API_KEY=AIzaSyA6ex-EONeX3i81Xeb608bdlmJ3z9S45Bc
       env_file:
         - ./.env
       depends_on: # MODIFIED - FastAPI now depends on the databases
