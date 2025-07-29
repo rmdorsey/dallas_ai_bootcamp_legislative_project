@@ -35,3 +35,12 @@ langchain-community
 langchain-core
 langchain-ollama # Or your preferred LLM integration
 langgraph
+
+# Google API Client
+google-api-python-client
+
+# For PostgreSQL database interaction
+psycopg2-binary
+
+# Miscellaneous utilities
+python-dotenv
