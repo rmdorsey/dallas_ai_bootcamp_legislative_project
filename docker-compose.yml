@@ -1,54 +1,47 @@
 services:
   fastapi:
-      build:
-        context: .
-        dockerfile: fastapi-app/Dockerfile
-      container_name: fastapi
-      ports:
-        - "8000:8000"
-      networks:
-        - legislative_analysis_network
-      volumes:
-        - ./fastapi-app:/app
-        - ./shared:/app/shared
-      environment:
-        - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}
-        - GOOGLE_CIVIC_API_KEY=${GOOGLE_CIVIC_API_KEY}
-      env_file:
-        - ./.env
-      depends_on:
-        db:
-          condition: service_healthy
-        # chromadb:
-        #   condition: service_healthy
-      healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
-        # test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
-        start_period: 10s
-      # Run Uvicorn in reload mode, watching /app for changes
-      command:
-        - uvicorn
-        - main:app
-        - --host
-        - "0.0.0.0"
-        - --port
-        - "8000"
-        - --reload
-        - --reload-dir
-        - /app
-      restart: unless-stopped
+    build:
+      context: .
+      dockerfile: fastapi-app/Dockerfile
+    container_name: fastapi
+    ports:
+      - "8000:8000"
+    networks:
+      - legislative_analysis_network
+    volumes:
+      - ./fastapi-app:/app
+      - ./shared:/app/shared
+    env_file:
+      - ./.env
+    depends_on:
+      db:
+        condition: service_healthy
+    # chromadb:
+    #   condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      # test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    # Run Uvicorn in reload mode, watching /app for changes
+    command:
+      - uvicorn
+      - main:app
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8000"
+      - --reload
+      - --reload-dir
+      - /app
+    restart: unless-stopped
 
   db:
     image: postgres:16-alpine
     container_name: postgres-db
     restart: always
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
     env_file:
       - ./.env
     volumes:
@@ -56,14 +49,15 @@ services:
     ports:
       - "${DB_PORT}:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      # Use $$ to escape the variables for shell expansion inside the container
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
       - legislative_analysis_network
 
-# NEW - This service runs the seeding script and then exits.
+  # NEW - This service runs the seeding script and then exits.
   seeder:
     build:
       context: .
@@ -72,6 +66,8 @@ services:
     depends_on:
       db:
         condition: service_healthy # Ensures DB is ready before trying to seed
+    env_file:
+      - ./.env
     volumes:
       # Mount the entire seeds directory from your project root into the container
       - ./seeds:/app/seeds
@@ -124,43 +120,43 @@ services:
     restart: always
     environment:
       - OLLAMA_HOST=0.0.0.0
-      # if you have an NVIDIA GPU, uncomment the next line
-      # - NVIDIA_VISIBLE_DEVICES=none
+    # if you have an NVIDIA GPU, uncomment the next line
+    # - NVIDIA_VISIBLE_DEVICES=none
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:11434"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
-    # if you don't have an NVIDIA GPU, comment out the deploy section
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+  # if you don't have an NVIDIA GPU, comment out the deploy section
+  # deploy:
+  #   resources:
+  #     reservations:
+  #       devices:
+  #         - driver: nvidia
+  #           count: 1
+  #           capabilities: [gpu]
 
   react:
-     build:
-       context: .
-       dockerfile: react-app/Dockerfile.dev   # a "Dockerfile.dev" that just does `npm install` + `npm run dev`
-     container_name: react-dev
-     volumes:
-       - ./react-app:/app             # your source in
-       - /app/node_modules            # keep container’s node_modules
-     ports:
-       - "8050:5173"                  # map host:container (Vite default 5173)
-         # (If you’re on CRA swap to "8050:3000")
-     networks:
-       - legislative_analysis_network
-     depends_on:
-       - fastapi
-     environment:
-       - CHOKIDAR_USEPOLLING=true     # (optional) if file‐watching flakes out
-       - CHOKIDAR_INTERVAL=100
-     command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
-     restart: unless-stopped
+    build:
+      context: .
+      dockerfile: react-app/Dockerfile.dev   # a "Dockerfile.dev" that just does `npm install` + `npm run dev`
+    container_name: react-dev
+    volumes:
+      - ./react-app:/app             # your source in
+      - /app/node_modules            # keep container’s node_modules
+    ports:
+      - "8050:5173"                  # map host:container (Vite default 5173)
+    # (If you’re on CRA swap to "8050:3000")
+    networks:
+      - legislative_analysis_network
+    depends_on:
+      - fastapi
+    environment:
+      - CHOKIDAR_USEPOLLING=true     # (optional) if file‐watching flakes out
+      - CHOKIDAR_INTERVAL=100
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    restart: unless-stopped
 
 networks:
   legislative_analysis_network:
