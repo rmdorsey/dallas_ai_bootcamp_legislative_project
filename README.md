@@ -1,4 +1,4 @@
-# 🏛️ Legislative Bill Analysis AI
+# 🏛️ LegislAItive: Legislative Bill Analysis AI
 
 A project built during the Dallas AI Bootcamp 2025 to analyze and predict legislative bill approval using Retrieval-Augmented Generation (RAG), embeddings, and AI agents. It empowers activists, lobbyists, and civic tech users by enabling searchable access to legislative content, political platforms, and lawmaking processes in Texas.
 
