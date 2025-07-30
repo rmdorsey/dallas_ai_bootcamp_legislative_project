@@ -3,6 +3,8 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # 1) Copy only requirements and install deps
 COPY fastapi-app/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt

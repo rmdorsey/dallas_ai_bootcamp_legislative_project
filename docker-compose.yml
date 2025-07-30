@@ -16,13 +16,14 @@ services:
         - GOOGLE_CIVIC_API_KEY=${GOOGLE_CIVIC_API_KEY}
       env_file:
         - ./.env
-      depends_on: # MODIFIED - FastAPI now depends on the databases
+      depends_on:
         db:
           condition: service_healthy
-        # ollama-setup:
-        #   condition: service_completed_successfully
+        # chromadb:
+        #   condition: service_healthy
       healthcheck:
         test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+        # test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
         interval: 10s
         timeout: 5s
         retries: 5
@@ -83,28 +84,30 @@ services:
     networks:
       - legislative_analysis_network
 
-  chromadb:
-    image: chromadb/chroma:1.0.12
-    container_name: chromadb
-    ports:
-      - "8001:8000"                # map host 8001 → container 8000
-    volumes:
-      - ./chromadb:/chroma/chroma # persist data locally
-    environment:
-      - IS_PERSISTENT=TRUE
-      - PERSIST_DIRECTORY=/chroma/chroma
-      - ANONYMIZED_TELEMETRY=FALSE
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8000/healthz || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    networks:
-      - legislative_analysis_network
-    depends_on:
-      - fastapi
-    restart: unless-stopped
+  # chromadb:
+  #   build:
+  #     context: .
+  #     dockerfile: chromadb/Dockerfile
+  #   container_name: chromadb
+  #   ports:
+  #     - "8001:8000"                # map host 8001 → container 8000
+  #   volumes:
+  #     - ./chromadb:/chroma/chroma # persist data locally
+  #   environment:
+  #     - IS_PERSISTENT=TRUE
+  #     - PERSIST_DIRECTORY=/chroma/chroma
+  #     - ANONYMIZED_TELEMETRY=FALSE
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 10s
+  #   networks:
+  #     - legislative_analysis_network
+  #   depends_on:
+  #     - fastapi
+  #   restart: unless-stopped
 
   ollama:
     # Build the custom image from the ollama/Dockerfile
@@ -124,7 +127,7 @@ services:
       # if you have an NVIDIA GPU, uncomment the next line
       # - NVIDIA_VISIBLE_DEVICES=none
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:11434 || exit 1"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:11434"]
       interval: 10s
       timeout: 5s
       retries: 5
