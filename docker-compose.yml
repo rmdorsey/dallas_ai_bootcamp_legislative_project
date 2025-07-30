@@ -121,7 +121,7 @@ services:
     environment:
       - OLLAMA_HOST=0.0.0.0
     # if you have an NVIDIA GPU, uncomment the next line
-    # - NVIDIA_VISIBLE_DEVICES=none
+      - NVIDIA_VISIBLE_DEVICES=none
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:11434"]
       interval: 10s
@@ -129,13 +129,13 @@ services:
       retries: 5
       start_period: 30s
   # if you don't have an NVIDIA GPU, comment out the deploy section
-  # deploy:
-  #   resources:
-  #     reservations:
-  #       devices:
-  #         - driver: nvidia
-  #           count: 1
-  #           capabilities: [gpu]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
   react:
     build:

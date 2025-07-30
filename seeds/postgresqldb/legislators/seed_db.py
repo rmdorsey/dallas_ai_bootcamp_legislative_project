@@ -104,7 +104,6 @@ def create_tables(engine):
 def seed_data(engine, table_name, csv_file_path):
     """
     Seeds data from a given CSV file into a specified table.
-    This version includes robust type conversion for integer fields.
     This entire function operates within a single transaction.
     """
     try:
@@ -120,44 +119,22 @@ def seed_data(engine, table_name, csv_file_path):
                 print(f"Seeding data into '{table_name}' from '{csv_file_path}'...")
                 with open(csv_file_path, mode='r', encoding='utf-8') as csvfile:
                     reader = csv.DictReader(csvfile)
-                    
+                    sanitized_rows = [
+                        {sanitize_key(k): v for k, v in row.items()}
+                        for row in reader
+                    ]
+
                     inspector = inspect(engine)
-                    columns_in_db = {c['name'] for c in inspector.get_columns(table_name)}
+                    columns_in_db = [c['name'] for c in inspector.get_columns(table_name)]
 
-                    for row in reader:
-                        # Sanitize keys first
-                        sanitized_row = {sanitize_key(k): v for k, v in row.items()}
-                        
-                        # --- FIX START: Process and clean the data before insertion ---
-                        processed_row = {}
-                        for key, value in sanitized_row.items():
-                            if key not in columns_in_db:
-                                continue # Skip columns that don't exist in the database table
+                    for row in sanitized_rows:
+                        # Filter the row to only include keys that match columns in the database
+                        filtered_row = {k: v for k, v in row.items() if k in columns_in_db}
 
-                            # Specifically handle the district_number conversion
-                            if key == 'district_number':
-                                try:
-                                    # If value is a non-empty string, convert to int.
-                                    # If it's an empty string, this will result in None.
-                                    processed_row[key] = int(value) if value else None
-                                except (ValueError, TypeError):
-                                    # If conversion fails for any other reason (e.g., non-numeric text)
-                                    print(f"⚠️ Warning: Could not convert district_number '{value}' to int. Setting to NULL. Row: {row}")
-                                    processed_row[key] = None
-                            else:
-                                # For all other columns, just assign the string value
-                                processed_row[key] = value
-                        # --- FIX END ---
-
-                        # Ensure we don't try to insert an empty row
-                        if not processed_row:
-                            continue
-
-                        # Prepare and execute the insert statement with the cleaned data
-                        columns = ", ".join(processed_row.keys())
-                        placeholders = ", ".join([f":{key}" for key in processed_row.keys()])
+                        columns = ", ".join(filtered_row.keys())
+                        placeholders = ", ".join([f":{key}" for key in filtered_row.keys()])
                         insert_stmt = text(f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})")
-                        connection.execute(insert_stmt, processed_row)
+                        connection.execute(insert_stmt, filtered_row)
 
                 print(f"✅ Successfully seeded '{table_name}'.")
     except FileNotFoundError:
