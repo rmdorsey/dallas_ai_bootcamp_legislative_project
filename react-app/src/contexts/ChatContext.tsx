@@ -13,6 +13,8 @@ interface ChatContextType {
   handleSendMessage: (messageContent: string) => void;
   handleAddressSubmit: (address: string) => void;
   handleBillAction: (billId: string, action: 'view' | 'analyze') => void;
+  handleConversationDelete: (conversationId: string) => void;
+  handleConversationEdit: (conversationId: string, newTitle: string) => void; // Added edit function
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -47,6 +49,54 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     );
     setActiveConversationId(conversationId);
   }, []);
+
+  // Handle conversation editing
+  const handleConversationEdit = useCallback((conversationId: string, newTitle: string) => {
+    if (!newTitle.trim()) return; // Don't allow empty titles
+
+    setConversations(prev =>
+      prev.map(conv =>
+        conv.id === conversationId
+          ? { ...conv, title: newTitle.trim() }
+          : conv
+      )
+    );
+  }, []);
+
+  // Handle conversation deletion
+  const handleConversationDelete = useCallback((conversationId: string) => {
+    setConversations(prev => {
+      const filteredConversations = prev.filter(conv => conv.id !== conversationId);
+
+      // If we deleted the active conversation, select another one
+      if (conversationId === activeConversationId && filteredConversations.length > 0) {
+        const newActiveConversation = filteredConversations[0];
+        newActiveConversation.isActive = true;
+        setActiveConversationId(newActiveConversation.id);
+
+        return filteredConversations.map(conv => ({
+          ...conv,
+          isActive: conv.id === newActiveConversation.id
+        }));
+      }
+
+      // If no conversations left, create a new one
+      if (filteredConversations.length === 0) {
+        const newConversation: Conversation = {
+          id: Date.now().toString(),
+          title: 'New Conversation',
+          preview: 'Start a new analysis...',
+          date: new Date().toLocaleString(),
+          isActive: true,
+          messages: []
+        };
+        setActiveConversationId(newConversation.id);
+        return [newConversation];
+      }
+
+      return filteredConversations;
+    });
+  }, [activeConversationId]);
 
   // Handle new analysis
   const handleNewAnalysis = useCallback(() => {
@@ -84,7 +134,11 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
               ...conv,
               messages: [...conv.messages, newMessage],
               preview: messageContent.substring(0, 80) + (messageContent.length > 80 ? '...' : ''),
-              date: new Date().toLocaleString()
+              date: new Date().toLocaleString(),
+              // Update title if it's still "New Conversation"
+              title: conv.title === 'New Conversation'
+                ? messageContent.substring(0, 30) + (messageContent.length > 30 ? '...' : '')
+                : conv.title
             }
           : conv
       )
@@ -325,7 +379,9 @@ Would you like me to explain any specific section of this bill?`;
     handleNewAnalysis,
     handleSendMessage,
     handleAddressSubmit,
-    handleBillAction
+    handleBillAction,
+    handleConversationDelete,
+    handleConversationEdit // Added edit handler
   };
 
   return (
