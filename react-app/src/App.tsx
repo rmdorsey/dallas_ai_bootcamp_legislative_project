@@ -1,7 +1,8 @@
-// App.tsx - Refactored and Clean
+// App.tsx - Updated with Home Page
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import type { User } from './types';
+import { HomePage } from './components/home/HomePage';
 import { Login } from './components/auth/Login';
 import { BillAnalyzer } from './pages/BillAnalyzer/BillAnalyzer';
 import { Dashboard } from './pages/Dashboard/Dashboard';
@@ -31,6 +32,10 @@ const MainApp: React.FC = () => {
     alert('Google OAuth will be implemented in the next step. For now, use Demo Version!');
   };
 
+  const handleGetStarted = () => {
+    navigate('/login');
+  };
+
   // Show loading while checking authentication
   if (isAuthLoading) {
     return <LoadingScreen />;
@@ -38,11 +43,41 @@ const MainApp: React.FC = () => {
 
   return (
     <Routes>
+      {/* Home Route - Landing Page */}
+      <Route
+        path="/"
+        element={
+          isAuthLoading ? (
+            <LoadingScreen />
+          ) : isAuthenticated ? (
+            <Navigate to="/mainchat" replace />
+          ) : (
+            <HomePage onGetStarted={handleGetStarted} />
+          )
+        }
+      />
+
+      {/* Explicit Home Route */}
+      <Route
+        path="/home"
+        element={
+          isAuthLoading ? (
+            <LoadingScreen />
+          ) : isAuthenticated ? (
+            <Navigate to="/mainchat" replace />
+          ) : (
+            <HomePage onGetStarted={handleGetStarted} />
+          )
+        }
+      />
+
       {/* Login Route */}
       <Route
         path="/login"
         element={
-          !isAuthLoading && isAuthenticated ? (
+          isAuthLoading ? (
+            <LoadingScreen />
+          ) : isAuthenticated ? (
             <Navigate to="/mainchat" replace />
           ) : (
             <Login
@@ -57,8 +92,10 @@ const MainApp: React.FC = () => {
       <Route
         path="/mainchat"
         element={
-          !isAuthLoading && !isAuthenticated ? (
-            <Navigate to="/login" replace />
+          isAuthLoading ? (
+            <LoadingScreen />
+          ) : !isAuthenticated ? (
+            <Navigate to="/" replace />
           ) : (
             <ChatProvider>
               <Dashboard />
@@ -67,35 +104,31 @@ const MainApp: React.FC = () => {
         }
       />
 
-      {/* Root route - redirect to main chat if authenticated, login if not */}
-      <Route
-        path="/"
-        element={
-          !isAuthLoading && !isAuthenticated ? (
-            <Navigate to="/login" replace />
-          ) : (
-            <Navigate to="/mainchat" replace />
-          )
-        }
-      />
-
       {/* Protected Bill Analyzer */}
       <Route
         path="/bill-analyzer"
         element={
-          !isAuthLoading && !isAuthenticated ? (
-            <Navigate to="/login" replace />
+          isAuthLoading ? (
+            <LoadingScreen />
+          ) : !isAuthenticated ? (
+            <Navigate to="/" replace />
           ) : (
             <BillAnalyzer onBack={() => navigate('/mainchat')} />
           )
         }
       />
 
-      {/* Catch all - redirect based on auth status */}
+      {/* Catch all - redirect to home for unauthenticated, mainchat for authenticated */}
       <Route
         path="*"
         element={
-          <Navigate to={!isAuthLoading && isAuthenticated ? "/mainchat" : "/login"} replace />
+          isAuthLoading ? (
+            <LoadingScreen />
+          ) : isAuthenticated ? (
+            <Navigate to="/mainchat" replace />
+          ) : (
+            <Navigate to="/" replace />
+          )
         }
       />
     </Routes>

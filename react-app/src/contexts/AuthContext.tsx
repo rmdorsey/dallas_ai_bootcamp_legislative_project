@@ -72,8 +72,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log('Auth storage cleared, resetting authentication');
         setIsAuthenticated(false);
         setUser(null);
-        if (location.pathname !== '/login') {
-          navigate('/login');
+        // Only redirect if we're on a protected route
+        if (location.pathname.startsWith('/mainchat') || location.pathname.startsWith('/bill-analyzer')) {
+          navigate('/');
         }
       }
     };
@@ -86,8 +87,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log('Manual localStorage clear detected');
         setIsAuthenticated(false);
         setUser(null);
-        if (location.pathname !== '/login') {
-          navigate('/login');
+        // Only redirect if we're on a protected route
+        if (location.pathname.startsWith('/mainchat') || location.pathname.startsWith('/bill-analyzer')) {
+          navigate('/');
         }
       }
     };
@@ -139,8 +141,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('legislative_user');
     localStorage.removeItem('legislative_auth');
 
-    // Navigate to login
-    navigate('/login');
+    // Navigate to home page instead of login
+    navigate('/');
   }, [navigate]);
 
   const recheckAuth = useCallback(() => {
@@ -152,9 +154,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('No valid auth found, logging out');
       setIsAuthenticated(false);
       setUser(null);
-      navigate('/login');
+      // Only redirect if we're on a protected route
+      if (location.pathname.startsWith('/mainchat') || location.pathname.startsWith('/bill-analyzer')) {
+        navigate('/');
+      }
     }
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   // Expose recheckAuth to window for debugging
   useEffect(() => {
