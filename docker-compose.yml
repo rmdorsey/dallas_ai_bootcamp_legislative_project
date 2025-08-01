@@ -14,10 +14,8 @@ services:
     env_file:
       - ./.env
     depends_on:
-      db:
-        condition: service_healthy
-    # chromadb:
-    #   condition: service_healthy
+      - db
+      - chromadb
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
       # test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
@@ -80,30 +78,26 @@ services:
     networks:
       - legislative_analysis_network
 
-  # chromadb:
-  #   build:
-  #     context: .
-  #     dockerfile: chromadb/Dockerfile
-  #   container_name: chromadb
-  #   ports:
-  #     - "8001:8000"                # map host 8001 → container 8000
-  #   volumes:
-  #     - ./chromadb:/chroma/chroma # persist data locally
-  #   environment:
-  #     - IS_PERSISTENT=TRUE
-  #     - PERSIST_DIRECTORY=/chroma/chroma
-  #     - ANONYMIZED_TELEMETRY=FALSE
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #     start_period: 10s
-  #   networks:
-  #     - legislative_analysis_network
-  #   depends_on:
-  #     - fastapi
-  #   restart: unless-stopped
+  chromadb:
+    # build:
+    #   context: .
+    #   dockerfile: chromadb/Dockerfile
+    image: chromadb/chroma:1.0.12
+    container_name: chromadb
+    ports:
+      - "8001:8000"                # map host 8001 → container 8000
+    volumes:
+      - ./chromadb:/chroma/chroma # persist data locally
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma
+      - ANONYMIZED_TELEMETRY=FALSE
+    networks:
+      - legislative_analysis_network
+    # depends_on:
+    #   fastapi:
+    #     condition: service_healthy
+    restart: unless-stopped
 
   ollama:
     # Build the custom image from the ollama/Dockerfile
@@ -165,3 +159,4 @@ networks:
 volumes:
   pgdata: {}
   ollama: {}
+  chroma_data: {}
