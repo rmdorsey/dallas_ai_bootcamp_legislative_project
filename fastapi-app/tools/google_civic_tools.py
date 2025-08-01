@@ -6,10 +6,19 @@ from services.google_civic_api import get_divisions_by_address
 @tool
 def get_political_divisions_by_address(address: str) -> str:
     """
-    Use this tool to find all the political and administrative divisions for a given street address.
-    It returns a list of all relevant districts, such as congressional, state senate, state house, county, and city.
-    The input must be a single string containing a full street address.
+    Queries the Google Civic Information API to find divisions by address.
+
+    Args:
+        address (str): The address to search for (e.g., "1600 Pennsylvania Ave NW, Washington, DC").
+
+    Returns:
+        A dictionary containing the API response, or None if an error occurs.
     """
+    # """
+    # Use this tool to find all the political and administrative divisions for a given street address.
+    # It returns a list of all relevant districts, such as congressional, state senate, state house, county, and city.
+    # The input must be a single string containing a full street address.
+    # """
     if not address or not isinstance(address, str):
         return "Error: A valid street address string must be provided."
 
