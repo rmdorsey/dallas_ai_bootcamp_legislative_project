@@ -3,15 +3,15 @@ import os
 from dotenv import load_dotenv
 
 def get_divisions_by_address(address: str):
-    """
-    Queries the Google Civic Information API to find divisions by address.
+    # """
+    # Queries the Google Civic Information API to find divisions by address.
 
-    Args:
-        address (str): The address to search for (e.g., "1600 Pennsylvania Ave NW, Washington, DC").
+    # Args:
+    #     address (str): The address to search for (e.g., "1600 Pennsylvania Ave NW, Washington, DC").
 
-    Returns:
-        A dictionary containing the API response, or None if an error occurs.
-    """
+    # Returns:
+    #     A dictionary containing the API response, or None if an error occurs.
+    # """
     load_dotenv()
 
     api_key = os.getenv("GOOGLE_CIVIC_API_KEY")

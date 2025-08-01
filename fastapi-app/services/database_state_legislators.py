@@ -1,10 +1,25 @@
-import psycopg2
 import os
+import psycopg2
+from psycopg2 import sql # Import the 'sql' module for safe query composition
 
-def query_legislator(table_name: str, column: str, value):
+def query_legislator(table_name: str, column: str, value: str | int):
     """
     Finds a single legislator and returns their record as a dictionary.
+    This version includes security enhancements and case-insensitive searching.
     """
+    # --- 1. Security: Validate table and column names against an allowlist ---
+    # This prevents SQL injection by ensuring only known, safe names are used.
+    allowed_tables = {"house_representatives", "senate_senators"}
+    allowed_columns = {"district_number", "full_name"}
+
+    if table_name not in allowed_tables:
+        print(f"❌ Error: Invalid table name '{table_name}'. Aborting query.")
+        return None
+    if column not in allowed_columns:
+        print(f"❌ Error: Invalid column name '{column}'. Aborting query.")
+        return None
+
+    # --- Database Connection ---
     conn_params = {
         'dbname': os.getenv('POSTGRES_DB'),
         'user': os.getenv('POSTGRES_USER'),
@@ -13,42 +28,48 @@ def query_legislator(table_name: str, column: str, value):
         'port': os.getenv('DB_PORT')
     }
     
-    # This diagnostic print is helpful, you can keep it or remove it
-    print(f"🚨 ATTEMPTING TO CONNECT WITH: {conn_params}")
+    record_to_return = None
 
-    conn = None
-    record_to_return = None # Initialize the variable we will return
-
+    # --- 2. Idiomatic Python: Use 'with' statements for resource management ---
     try:
-        print("Connecting to the PostgreSQL database...")
-        conn = psycopg2.connect(**conn_params)
-        cur = conn.cursor()
-        
-        print(f"Querying table '{table_name}' where {column} = '{value}'...")
-        sql_query = f"SELECT * FROM {table_name} WHERE {column} = %s;"
-        cur.execute(sql_query, (value,))
-        
-        record = cur.fetchone()
-        
-        if record:
-            colnames = [desc[0] for desc in cur.description]
-            # Assign the found record to the variable we intend to return
-            record_to_return = dict(zip(colnames, record))
-            print(f"✅ Query successful! Record found: {record_to_return}")
-        else:
-            print(f"⚠️ Query successful, but no record found for {column} = '{value}'.")
-            
-        cur.close()
-        
+        # The 'with' statement ensures the connection is always closed properly.
+        with psycopg2.connect(**conn_params) as conn:
+            with conn.cursor() as cur:
+                
+                # --- 3. Case-Insensitive & Secure Query Construction ---
+                query_template = "SELECT * FROM {table} WHERE "
+                
+                # Apply LOWER() for text searches, but not for numeric searches
+                if column == 'full_name':
+                    query_template += "LOWER({col}) = LOWER(%s);"
+                else: # Assumes district_number or other non-text types
+                    query_template += "{col} = %s;"
+                
+                # Create the final, safe SQL query object using the sql module
+                sql_query = sql.SQL(query_template).format(
+                    table=sql.Identifier(table_name),
+                    col=sql.Identifier(column)
+                )
+                
+                print(f"Querying table '{table_name}' where {column} = '{value}'...")
+                cur.execute(sql_query, (value,))
+                
+                record = cur.fetchone()
+                
+                if record:
+                    colnames = [desc[0] for desc in cur.description]
+                    record_to_return = dict(zip(colnames, record))
+                    print(f"✅ Query successful! Record found.")
+                else:
+                    print(f"⚠️ Query successful, but no record found for {column} = '{value}'.")
+                    
     except psycopg2.Error as e:
         print(f"❌ Error connecting to PostgreSQL or executing query: {e}")
         
-    finally:
-        if conn is not None:
-            conn.close()
-            print("\nDatabase connection closed.")
-            
-    # CRITICAL: This return statement must be here at the end of the function.
+    # The 'with' statements handle closing, but we print for clarity
+    if 'conn' in locals() and conn.closed:
+        print("\nDatabase connection closed.")
+        
     return record_to_return
 
 def get_all_legislators_from_chamber(table_name: str):
