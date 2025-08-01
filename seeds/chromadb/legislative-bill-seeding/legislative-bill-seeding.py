@@ -116,7 +116,8 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
         })
 
     # Step 2: Split the document by SECTION headings.
-    section_pattern = r'(?=^\s*(?:SECTION|Sec\.)\s+[\d\w])'
+    # section_pattern = r'(?=^\s*(?:SECTION|Sec\.)\s+[\d\w])'
+    section_pattern = r'(?=^\s*SECTION\s+[\d\w])'
     text_chunks = re.split(section_pattern, full_text, flags=re.MULTILINE)
 
     documents = []
@@ -130,7 +131,8 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
         cleaned_content = clean_chunk_text(chunk_content)
             
         section_number = None
-        section_header_pattern = r'(?:SECTION|Sec\.)\s*([\d\w\.]+)'
+        # section_header_pattern = r'(?:SECTION|Sec\.)\s*([\d\w\.]+)'
+        section_header_pattern = r'SECTION\s*([\d\w\.]+)'
         section_match = re.match(section_header_pattern, cleaned_content)
         
         if section_match:
