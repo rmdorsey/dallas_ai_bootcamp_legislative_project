@@ -86,6 +86,27 @@ def clean_chunk_text(text: str) -> str:
     
     return cleaned_text
 
+def extract_author(full_text: str) -> str:
+    """
+    Extracts the author from the beginning of the bill's text.
+    """
+    author = "None listed"
+
+    # Limit the search to the first 1500 characters
+    search_area = full_text[:1500]
+
+    # --- CORRECTED REGEX ---
+    # This pattern captures everything after "By:" but stops before it sees the
+    # bill number pattern (H.B. or S.B.), which is a more reliable delimiter.
+    author_match = re.search(r"By:\s+([\s\S]+?)(?=\s*(?:H\.B\.|S\.B\.))", search_area, re.IGNORECASE)
+    if author_match:
+        raw_author = author_match.group(1)
+        # Clean up newlines, artifacts, and extra spaces
+        author = ' '.join(raw_author.split()).strip()
+        author = re.sub(r'^\s*A{1,2}\s+', '', author).strip()
+    
+    return author
+
 def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_path: str) -> List[Document]:
     """
     Splits the legislative bill text into chunks based on SECTION markers
@@ -104,6 +125,22 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
         A list of LangChain Document objects, each representing a section.
     """
     print(f"Identifying articles and splitting sections for {os.path.basename(pdf_path)}...")
+
+    # --- NEW: Extract bill-level metadata once ---
+    author = extract_author(full_text)
+    # -------------------------------------------
+
+    # --- Extract bill number from the filename ---
+    bill_number = "Unknown"
+    filename = os.path.basename(pdf_path)
+    # This regex captures the letters (SB or HB) and the digits separately
+    match = re.search(r"(SB|HB)(\d+)", filename, re.IGNORECASE)
+    if match:
+        bill_type = match.group(1).upper()  # e.g., "SB"
+        bill_digits = int(match.group(2)) # e.g., 7 from "00007", removes leading zeros
+        
+        # Reformat into the desired "S.B. No. 7" style
+        bill_number = f"{bill_type[0]}.{bill_type[1]}. {bill_digits}"
 
     # Step 1: Find all ARTICLE headings and their positions.
     article_pattern = re.compile(r'^\s*(ARTICLE\s+(\d+)\.\s+([A-Z\s,]+))$', re.MULTILINE)
@@ -155,6 +192,8 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
         metadata = {
             'source': pdf_path,
             'page': page_number,
+            'author': author,
+            'bill_number': bill_number,
             'article_number': current_article['number'],
             'article_title': current_article['title'],
             'section_number': section_number
