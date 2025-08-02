@@ -1,20 +1,21 @@
 // contexts/ChatContext.tsx
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Conversation, Message } from '../types';
-import { mockConversations } from '../data/mockData';
 
 interface ChatContextType {
   conversations: Conversation[];
   activeConversationId: string;
   activeConversation: Conversation | null;
+  isLoading: boolean;
+  error: string | null;
   handleConversationSelect: (conversationId: string) => void;
   handleNewAnalysis: () => void;
   handleSendMessage: (messageContent: string) => void;
   handleAddressSubmit: (address: string) => void;
   handleBillAction: (billId: string, action: 'view' | 'analyze') => void;
   handleConversationDelete: (conversationId: string) => void;
-  handleConversationEdit: (conversationId: string, newTitle: string) => void; // Added edit function
+  handleConversationEdit: (conversationId: string, newTitle: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -31,13 +32,37 @@ interface ChatProviderProps {
   children: React.ReactNode;
 }
 
+// Get API URL from environment variables
+const API_URL = import.meta.env.VITE_FASTAPI_URL || 'http://localhost:8000';
+
 export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
-  const [conversations, setConversations] = useState<Conversation[]>(mockConversations);
-  const [activeConversationId, setActiveConversationId] = useState<string>('1');
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [activeConversationId, setActiveConversationId] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   // Get active conversation
   const activeConversation = conversations.find(conv => conv.id === activeConversationId) || null;
+
+  // Initialize with a default conversation on mount
+  useEffect(() => {
+    // Start with mock data for now, but you can modify this to load from API
+    // if you implement conversation persistence in your FastAPI backend
+    if (conversations.length === 0) {
+      const defaultConversation: Conversation = {
+        id: 'default-thread-id',
+        title: 'New Conversation',
+        preview: 'Start a new analysis...',
+        date: new Date().toLocaleString(),
+        isActive: true,
+        messages: []
+      };
+
+      setConversations([defaultConversation]);
+      setActiveConversationId('default-thread-id');
+    }
+  }, []);
 
   // Handle conversation selection
   const handleConversationSelect = useCallback((conversationId: string) => {
@@ -52,7 +77,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
   // Handle conversation editing
   const handleConversationEdit = useCallback((conversationId: string, newTitle: string) => {
-    if (!newTitle.trim()) return; // Don't allow empty titles
+    if (!newTitle.trim()) return;
 
     setConversations(prev =>
       prev.map(conv =>
@@ -83,7 +108,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       // If no conversations left, create a new one
       if (filteredConversations.length === 0) {
         const newConversation: Conversation = {
-          id: Date.now().toString(),
+          id: `thread-${Date.now()}`,
           title: 'New Conversation',
           preview: 'Start a new analysis...',
           date: new Date().toLocaleString(),
@@ -101,7 +126,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   // Handle new analysis
   const handleNewAnalysis = useCallback(() => {
     const newConversation: Conversation = {
-      id: Date.now().toString(),
+      id: `thread-${Date.now()}`,
       title: 'New Conversation',
       preview: 'Start a new analysis...',
       date: new Date().toLocaleString(),
@@ -116,14 +141,27 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     setActiveConversationId(newConversation.id);
   }, []);
 
-  // Handle sending a message
-  const handleSendMessage = useCallback((messageContent: string) => {
+  // Handle sending a message with streaming response
+  const handleSendMessage = useCallback(async (messageContent: string) => {
     if (!activeConversationId) return;
 
+    setIsLoading(true);
+    setError(null);
+
+    // Add user message immediately
     const newMessage: Message = {
       id: Date.now().toString(),
       type: 'user',
       content: messageContent,
+      timestamp: new Date()
+    };
+
+    // Create a temporary assistant message that will be updated with streaming content
+    const assistantMessageId = (Date.now() + 1).toString();
+    const initialAssistantMessage: Message = {
+      id: assistantMessageId,
+      type: 'assistant',
+      content: '',
       timestamp: new Date()
     };
 
@@ -132,7 +170,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         conv.id === activeConversationId
           ? {
               ...conv,
-              messages: [...conv.messages, newMessage],
+              messages: [...conv.messages, newMessage, initialAssistantMessage],
               preview: messageContent.substring(0, 80) + (messageContent.length > 80 ? '...' : ''),
               date: new Date().toLocaleString(),
               // Update title if it's still "New Conversation"
@@ -144,244 +182,168 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       )
     );
 
-    // Auto-scroll to bottom after adding message
-    setTimeout(() => {
-      const chatContainer = document.querySelector('.chat-messages-container');
-      if (chatContainer) {
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }
-    }, 100);
+    try {
+      // Send request to FastAPI streaming endpoint
+      const response = await fetch(`${API_URL}/agent/stream`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: messageContent,
+          thread_id: activeConversationId
+        })
+      });
 
-    // Simulate AI response with specific logic for different requests
-    setTimeout(() => {
-      let aiResponseContent = 'Thank you for your message. I\'m processing your request and will provide a detailed response about the legislation you\'re interested in.';
-      let hasAddressInput = false;
-      let hasBillsTable = false;
-      let bills = undefined;
-
-      // Check if the user is asking about representatives
-      const isRepresentativeRequest = messageContent.toLowerCase().includes('representative') ||
-                                    messageContent.toLowerCase().includes('congressman') ||
-                                    messageContent.toLowerCase().includes('senator') ||
-                                    messageContent.toLowerCase().includes('my rep');
-
-      // Check if the user is asking about bills or legislation
-      const isBillRequest = messageContent.toLowerCase().includes('bill') ||
-                           messageContent.toLowerCase().includes('legislation') ||
-                           messageContent.toLowerCase().includes('search') ||
-                           messageContent.toLowerCase().includes('climate') ||
-                           messageContent.toLowerCase().includes('analyze');
-
-      if (isRepresentativeRequest) {
-        aiResponseContent = 'I can help you with that. To find your specific representative, I\'ll need your street address.';
-        hasAddressInput = true;
-      } else if (isBillRequest) {
-        aiResponseContent = 'Found relevant bills:';
-        hasBillsTable = true;
-        bills = [
-          {
-            id: 'HR-1234',
-            name: 'Climate Action Now Act',
-            summary: 'A comprehensive bill to address climate change through renewable energy investments and carbon reduction targets.',
-            similarity: 95
-          },
-          {
-            id: 'S-567',
-            name: 'Green Infrastructure Investment Act',
-            summary: 'Legislation focused on building sustainable infrastructure and creating green jobs across the United States.',
-            similarity: 87
-          },
-          {
-            id: 'HR-890',
-            name: 'Environmental Protection Enhancement Act',
-            summary: 'Updates environmental regulations and strengthens EPA oversight of industrial emissions.',
-            similarity: 82
-          },
-          {
-            id: 'S-234',
-            name: 'Renewable Energy Transition Act',
-            summary: 'Provides tax incentives and federal support for transitioning to renewable energy sources.',
-            similarity: 78
-          }
-        ];
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        type: 'assistant',
-        content: aiResponseContent,
-        timestamp: new Date(),
-        hasAddressInput: hasAddressInput,
-        hasBillsTable: hasBillsTable,
-        bills: bills
-      };
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('No response body reader available');
+      }
 
-      setConversations(prev =>
-        prev.map(conv =>
-          conv.id === activeConversationId
-            ? {
-                ...conv,
-                messages: [...conv.messages, aiResponse]
+      const decoder = new TextDecoder();
+      let accumulatedContent = '';
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+
+                if (data.type === 'error') {
+                  throw new Error(data.content);
+                }
+
+                // Accumulate content from assistant messages
+                if (data.type === 'ai' || data.type === 'assistant') {
+                  accumulatedContent += data.content;
+
+                  // Update the assistant message with accumulated content
+                  setConversations(prev =>
+                    prev.map(conv =>
+                      conv.id === activeConversationId
+                        ? {
+                            ...conv,
+                            messages: conv.messages.map(msg =>
+                              msg.id === assistantMessageId
+                                ? { ...msg, content: accumulatedContent }
+                                : msg
+                            )
+                          }
+                        : conv
+                    )
+                  );
+                }
+
+                // Handle tool calls or other message types
+                if (data.tool_calls) {
+                  // You can handle tool calls here if needed
+                  console.log('Tool calls:', data.tool_calls);
+                }
+
+              } catch (parseError) {
+                console.error('Failed to parse SSE data:', parseError);
               }
-            : conv
-        )
-      );
+            }
+          }
+        }
+      } finally {
+        reader.releaseLock();
+      }
 
-      // Auto-scroll to bottom after AI response
+      // Auto-scroll to bottom after response completes
       setTimeout(() => {
         const chatContainer = document.querySelector('.chat-messages-container');
         if (chatContainer) {
           chatContainer.scrollTop = chatContainer.scrollHeight;
         }
       }, 100);
-    }, 1000);
+
+    } catch (error) {
+      console.error('Failed to send message to API:', error);
+      setError('Failed to send message. Please try again.');
+
+      // Update the assistant message with an error
+      setConversations(prev =>
+        prev.map(conv =>
+          conv.id === activeConversationId
+            ? {
+                ...conv,
+                messages: conv.messages.map(msg =>
+                  msg.id === assistantMessageId
+                    ? {
+                        ...msg,
+                        content: 'Sorry, I encountered an error while processing your request. Please try again.'
+                      }
+                    : msg
+                )
+              }
+            : conv
+        )
+      );
+    } finally {
+      setIsLoading(false);
+    }
   }, [activeConversationId]);
 
-  // Handle address submission
-  const handleAddressSubmit = useCallback((address: string) => {
+  // Handle address submission (can reuse the streaming logic)
+  const handleAddressSubmit = useCallback(async (address: string) => {
     if (!activeConversationId) return;
 
-    // Add user's address as a message
-    const addressMessage: Message = {
-      id: Date.now().toString(),
-      type: 'user',
-      content: `My address is: ${address}`,
-      timestamp: new Date()
-    };
-
-    setConversations(prev =>
-      prev.map(conv =>
-        conv.id === activeConversationId
-          ? {
-              ...conv,
-              messages: [...conv.messages, addressMessage],
-              preview: `Address provided: ${address.substring(0, 50)}...`,
-              date: new Date().toLocaleString()
-            }
-          : conv
-      )
-    );
-
-    // Auto-scroll to bottom
-    setTimeout(() => {
-      const chatContainer = document.querySelector('.chat-messages-container');
-      if (chatContainer) {
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }
-    }, 100);
-
-    // Simulate AI response with representative information
-    setTimeout(() => {
-      const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        type: 'assistant',
-        content: `Thank you for providing your address: ${address}. I'm now searching for your representative... 
-
-Based on your location, here's what I found:
-
-**Your Representative:**
-- **Name:** John Smith (Example)
-- **District:** 15th Congressional District
-- **Party:** Democratic
-- **Office:** 123 Capitol Building, Washington, DC 20515
-- **Phone:** (202) 225-1234
-- **Email:** rep.johnsmith@house.gov
-
-**Your Senators:**
-- **Senator Jane Doe** - (202) 224-5678
-- **Senator Bob Johnson** - (202) 224-9876
-
-Would you like me to help you draft a message to contact any of these representatives about specific legislation?`,
-        timestamp: new Date()
-      };
-
-      setConversations(prev =>
-        prev.map(conv =>
-          conv.id === activeConversationId
-            ? {
-                ...conv,
-                messages: [...conv.messages, aiResponse]
-              }
-            : conv
-        )
-      );
-
-      // Auto-scroll to bottom after AI response
-      setTimeout(() => {
-        const chatContainer = document.querySelector('.chat-messages-container');
-        if (chatContainer) {
-          chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-      }, 100);
-    }, 2000);
-  }, [activeConversationId]);
+    // Use the same streaming logic but with a formatted address question
+    const addressQuestion = `My address is: ${address}. Please find my representative information.`;
+    await handleSendMessage(addressQuestion);
+  }, [activeConversationId, handleSendMessage]);
 
   // Handle bill actions
-  const handleBillAction = useCallback((billId: string, action: 'view' | 'analyze') => {
+  const handleBillAction = useCallback(async (billId: string, action: 'view' | 'analyze') => {
     if (action === 'analyze') {
       // Navigate to the Bill Analyzer page
       navigate('/bill-analyzer');
       return;
     }
 
-    // Handle "view" action - show bill details in chat
+    // Handle "view" action by sending a question to the agent
     if (!activeConversationId) return;
 
-    const responseContent = `Here are the details for bill ${billId}:
+    const billQuestion = `Please provide detailed information about bill ${billId}, including its status, sponsors, summary, and key provisions.`;
+    await handleSendMessage(billQuestion);
+  }, [activeConversationId, navigate, handleSendMessage]);
 
-**Bill ${billId} - Full Details**
-
-**Status:** Currently in committee review
-**Sponsors:** Rep. Jane Smith (D-CA), Sen. John Doe (R-TX)
-**Last Action:** Referred to House Committee on Energy and Commerce
-**Summary:** This comprehensive legislation aims to address critical environmental challenges through innovative policy solutions and federal investment strategies.
-
-**Key Provisions:**
-• Establishes new renewable energy tax credits
-• Creates federal grants for green infrastructure projects
-• Sets new emissions standards for major industries
-• Funds research into clean energy technologies
-
-Would you like me to explain any specific section of this bill?`;
-
-    const responseMessage: Message = {
-      id: Date.now().toString(),
-      type: 'assistant',
-      content: responseContent,
-      timestamp: new Date()
-    };
-
-    setConversations(prev =>
-      prev.map(conv =>
-        conv.id === activeConversationId
-          ? {
-              ...conv,
-              messages: [...conv.messages, responseMessage]
-            }
-          : conv
-      )
-    );
-
-    // Auto-scroll to bottom
-    setTimeout(() => {
-      const chatContainer = document.querySelector('.chat-messages-container');
-      if (chatContainer) {
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }
-    }, 100);
-  }, [activeConversationId, navigate]);
+  // Clear error after a timeout
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   const value: ChatContextType = {
     conversations,
     activeConversationId,
     activeConversation,
+    isLoading,
+    error,
     handleConversationSelect,
     handleNewAnalysis,
     handleSendMessage,
     handleAddressSubmit,
     handleBillAction,
     handleConversationDelete,
-    handleConversationEdit // Added edit handler
+    handleConversationEdit
   };
 
   return (
