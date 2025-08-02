@@ -34,6 +34,12 @@ services:
       - --reload
       - --reload-dir
       - /app
+      - --reload-exclude
+      - ".venv"
+      - --reload-exclude
+      - "venv"
+      - --reload-exclude
+      - "__pycache__"
     restart: unless-stopped
 
   db:
@@ -56,11 +62,11 @@ services:
       - legislative_analysis_network
 
   # NEW - This service runs the seeding script and then exits.
-  seeder:
+  postgresql_seeder:
     build:
       context: .
       dockerfile: fastapi-app/Dockerfile # Re-uses the fastapi image environment
-    container_name: db-seeder
+    container_name: postgresql-seeder
     depends_on:
       db:
         condition: service_healthy # Ensures DB is ready before trying to seed
@@ -75,6 +81,29 @@ services:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}
     # This command now runs the script from the correct working directory
     command: ["python", "seed_db.py"]
+    networks:
+      - legislative_analysis_network
+
+  chroma_seeder:
+    build:
+      context: .
+      dockerfile: fastapi-app/Dockerfile
+    container_name: chroma-db-seeder
+    depends_on:
+      - chromadb  # Waits for chromadb to start, but not for a healthcheck
+    env_file:
+      - ./.env
+    volumes:
+      - ./seeds:/app/seeds
+    working_dir: /app/seeds/chromadb/legislative-bill-seeding
+    # This command now waits 60 seconds before running the script
+    command: >
+      sh -c "
+        echo 'Chroma seeder waiting for 60 seconds...' &&
+        sleep 60 &&
+        echo 'Starting ChromaDB seeding...' &&
+        python legislative-bill-seeding.py
+      "
     networks:
       - legislative_analysis_network
 
