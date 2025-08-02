@@ -1,13 +1,17 @@
 # Configuration for ChromaDB connection and collection
 chromadb:
-  host: "localhost"
-  port: 8001
-  collection_name: "legislation-89-r"
+  host: "chromadb"
+  # host: "localhost"
+  # port: 8001
+  port: 8000
+  collection_name: "legislation-89-1"
 
 # Configuration for the embedding model
 embedding:
-  model_name: "nlpaueb/legal-bert-base-uncased"
+  # model_name: "nlpaueb/legal-bert-base-uncased"
+  model_name: "sentence-transformers/all-mpnet-base-v2"
 
 # UPDATED: Configuration for the source directory containing PDFs
 source_directory:
-  path: "docs/"
+  # path: "docks/"
+  path: "docs/_89_1_house_senate_bills/"

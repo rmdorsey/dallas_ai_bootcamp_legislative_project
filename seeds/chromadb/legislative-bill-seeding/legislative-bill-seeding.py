@@ -86,6 +86,27 @@ def clean_chunk_text(text: str) -> str:
     
     return cleaned_text
 
+def extract_author(full_text: str) -> str:
+    """
+    Extracts the author from the beginning of the bill's text.
+    """
+    author = "None listed"
+
+    # Limit the search to the first 1500 characters
+    search_area = full_text[:1500]
+
+    # --- CORRECTED REGEX ---
+    # This pattern captures everything after "By:" but stops before it sees the
+    # bill number pattern (H.B. or S.B.), which is a more reliable delimiter.
+    author_match = re.search(r"By:\s+([\s\S]+?)(?=\s*(?:H\.B\.|S\.B\.))", search_area, re.IGNORECASE)
+    if author_match:
+        raw_author = author_match.group(1)
+        # Clean up newlines, artifacts, and extra spaces
+        author = ' '.join(raw_author.split()).strip()
+        author = re.sub(r'^\s*A{1,2}\s+', '', author).strip()
+    
+    return author
+
 def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_path: str) -> List[Document]:
     """
     Splits the legislative bill text into chunks based on SECTION markers
@@ -105,6 +126,22 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
     """
     print(f"Identifying articles and splitting sections for {os.path.basename(pdf_path)}...")
 
+    # --- NEW: Extract bill-level metadata once ---
+    author = extract_author(full_text)
+    # -------------------------------------------
+
+    # --- Extract bill number from the filename ---
+    bill_number = "Unknown"
+    filename = os.path.basename(pdf_path)
+    # This regex captures the letters (SB or HB) and the digits separately
+    match = re.search(r"(SB|HB)(\d+)", filename, re.IGNORECASE)
+    if match:
+        bill_type = match.group(1).upper()  # e.g., "SB"
+        bill_digits = int(match.group(2)) # e.g., 7 from "00007", removes leading zeros
+        
+        # Reformat into the desired "S.B. No. 7" style
+        bill_number = f"{bill_type[0]}.{bill_type[1]}. {bill_digits}"
+
     # Step 1: Find all ARTICLE headings and their positions.
     article_pattern = re.compile(r'^\s*(ARTICLE\s+(\d+)\.\s+([A-Z\s,]+))$', re.MULTILINE)
     articles = []
@@ -116,7 +153,8 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
         })
 
     # Step 2: Split the document by SECTION headings.
-    section_pattern = r'(?=^\s*(?:SECTION|Sec\.)\s+[\d\w])'
+    # section_pattern = r'(?=^\s*(?:SECTION|Sec\.)\s+[\d\w])'
+    section_pattern = r'(?=^\s*SECTION\s+[\d\w])'
     text_chunks = re.split(section_pattern, full_text, flags=re.MULTILINE)
 
     documents = []
@@ -130,7 +168,8 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
         cleaned_content = clean_chunk_text(chunk_content)
             
         section_number = None
-        section_header_pattern = r'(?:SECTION|Sec\.)\s*([\d\w\.]+)'
+        # section_header_pattern = r'(?:SECTION|Sec\.)\s*([\d\w\.]+)'
+        section_header_pattern = r'SECTION\s*([\d\w\.]+)'
         section_match = re.match(section_header_pattern, cleaned_content)
         
         if section_match:
@@ -153,6 +192,8 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
         metadata = {
             'source': pdf_path,
             'page': page_number,
+            'author': author,
+            'bill_number': bill_number,
             'article_number': current_article['number'],
             'article_title': current_article['title'],
             'section_number': section_number
@@ -198,6 +239,7 @@ def upsert_to_chroma(documents: List[Document], collection_name: str, embedding_
     print("Successfully upserted documents to ChromaDB.")
 
 # --- Main Execution ---
+# --- Main Execution ---
 if __name__ == "__main__":
     # Load configuration from the YAML file
     config = load_config()
@@ -215,25 +257,36 @@ if __name__ == "__main__":
 
     all_docs_to_upsert = []
 
+    # --- NEW: Connect to ChromaDB and delete the collection if it exists ---
+    print(f"\nConnecting to ChromaDB at {chroma_server_host}:{chroma_server_port}...")
+    try:
+        client = chromadb.HttpClient(host=chroma_server_host, port=chroma_server_port)
+        
+        print(f"Attempting to delete existing collection: '{chroma_collection_name}'...")
+        client.delete_collection(name=chroma_collection_name)
+        print("Collection deleted successfully.")
+
+    except Exception as e:
+        # This is expected if the collection doesn't exist on the first run.
+        print(f"Collection '{chroma_collection_name}' did not exist, skipping deletion.")
+    # -------------------------------------------------------------------------
+
     # Iterate through all files in the source directory
     if not os.path.isdir(source_directory):
         print(f"Error: Source directory '{source_directory}' not found.")
     else:
+        print("\nProcessing all PDF files in the source directory...")
         for filename in os.listdir(source_directory):
             if filename.lower().endswith('.pdf'):
                 pdf_file_path = os.path.join(source_directory, filename)
-                
-                # Step 1: Load and preprocess the PDF.
+                # Process the file as normal
                 bill_text, page_to_char_map = load_and_preprocess_pdf(pdf_file_path)
-
-                # Step 2: Split the text into structured documents.
                 structured_docs = split_bill_by_section(bill_text, page_to_char_map, pdf_file_path)
-                
-                # Add the processed documents to our main list
                 all_docs_to_upsert.extend(structured_docs)
 
-    # Step 3: Vectorize and upsert all collected documents to ChromaDB in one batch.
+    # Step 3: Vectorize and upsert all documents to a new, clean collection.
     if all_docs_to_upsert:
+        print(f"\nFound {len(all_docs_to_upsert)} document chunks to add.")
         upsert_to_chroma(
             documents=all_docs_to_upsert,
             collection_name=chroma_collection_name,
@@ -243,6 +296,6 @@ if __name__ == "__main__":
         )
         
         # Step 4: Display final summary.
-        print(f"\nProcess complete. Total chunks created and upserted from all files: {len(all_docs_to_upsert)}")
+        print(f"\nProcess complete. Total chunks upserted: {len(all_docs_to_upsert)}")
     else:
-        print("No PDF files found in the source directory to process.")
+        print("\nNo PDF files found in the source directory to process.")

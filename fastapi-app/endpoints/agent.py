@@ -9,7 +9,7 @@ from langchain_core.messages import HumanMessage
 from langgraph.prebuilt import create_react_agent
 
 # Import your tools
-from tools.database_state_legislator_tools import state_legislator_database_search
+from tools.database_state_legislator_tools import find_house_rep_by_district, find_senate_rep_by_district, find_house_rep_by_name, find_senate_rep_by_name
 from tools.google_civic_tools import get_political_divisions_by_address
 
 # --- Create all agent components once when the server starts ---
@@ -24,7 +24,7 @@ model = ChatOllama(
 
 # Define the list of tools the agent can use
 tools = [
-    state_legislator_database_search,
+    find_house_rep_by_district, find_senate_rep_by_district, find_house_rep_by_name, find_senate_rep_by_name,
     get_political_divisions_by_address
 ]
 

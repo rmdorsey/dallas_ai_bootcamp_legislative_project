@@ -80,6 +80,7 @@ def main():
                 # The 'score' is the L2 distance. A lower score is better.
                 print(f"\n--- Result {i+1} | Distance Score: {score:.4f} (Lower is better) ---")
                 print(f"Source: {metadata.get('source', 'N/A')}, Page: {metadata.get('page', 'N/A')}")
+                print(f"Bill: {metadata.get('bill_number', 'N/A')} | Author(s): {metadata.get('author', 'N/A')}")
                 print(f"Article: {metadata.get('article_number', 'N/A')} - {metadata.get('article_title', 'N/A')}")
                 print(f"Section: {metadata.get('section_number', 'N/A')}")
                 print("-" * 20)
