@@ -77,6 +77,55 @@ def process_and_dedupe_results(results: List[Document]) -> Tuple[List[Document],
 
     return final_docs, bill_counts
 
+def get_all_by_filter(vectorstore, filter_dict: Dict) -> List[Document]:
+    """
+    Retrieves ALL documents from the vector store that match a metadata filter.
+    This function does NOT perform a semantic search.
+
+    Args:
+        vectorstore: The Chroma vector store object.
+        filter_dict (Dict): The dictionary defining the metadata filter (e.g., {"author": "Curry"}).
+
+    Returns:
+        A list of all matching LangChain Document objects.
+    """
+    if not filter_dict:
+        print("Warning: An empty filter was provided. Returning no documents to prevent fetching the entire database.")
+        return []
+
+    print(f"\nFetching all documents matching filter: {filter_dict}")
+
+    # To get all results, we first need to know how many there are.
+    # We access the underlying Chroma collection to get the count.
+    collection = vectorstore._collection
+    count = collection.count(where=filter_dict)
+    
+    if count == 0:
+        print("Found 0 documents matching the filter.")
+        return []
+
+    print(f"Found {count} matching documents. Fetching all...")
+
+    # The .get() method performs the direct, filter-based retrieval.
+    # We must specify a limit and what data to include.
+    results = vectorstore.get(
+        where=filter_dict,
+        limit=count, # Ensure we get all of them
+        include=["metadatas", "documents"]
+    )
+
+    # The raw results from .get() are dictionaries, not Document objects.
+    # We need to re-format them into the LangChain Document structure.
+    documents = []
+    for i, doc_text in enumerate(results["documents"]):
+        doc = Document(
+            page_content=doc_text,
+            metadata=results["metadatas"][i]
+        )
+        documents.append(doc)
+    
+    return documents
+
 # ===================== HELPER FUNCTION END =====================
 # --- Configuration & Initialization ---
 embedding_model_name = 'sentence-transformers/all-mpnet-base-v2'
