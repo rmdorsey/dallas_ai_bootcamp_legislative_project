@@ -44,3 +44,10 @@ psycopg2-binary
 
 # Miscellaneous utilities
 python-dotenv
+
+# Additional libraries for seeding and document processing
+pypdf
+langchain-huggingface
+chromadb-client
+PyYAML
+langchain-chroma
