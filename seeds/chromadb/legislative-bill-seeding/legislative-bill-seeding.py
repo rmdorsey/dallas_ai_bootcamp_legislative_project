@@ -126,21 +126,26 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
     """
     print(f"Identifying articles and splitting sections for {os.path.basename(pdf_path)}...")
 
-    # --- NEW: Extract bill-level metadata once ---
+    # --- Extract bill-level metadata once ---
     author = extract_author(full_text)
-    # -------------------------------------------
-
-    # --- Extract bill number from the filename ---
+    
+    # --- MODIFIED: Extract bill number and chamber from filename ---
     bill_number = "Unknown"
+    chamber = "Unknown" # New: Initialize chamber
     filename = os.path.basename(pdf_path)
-    # This regex captures the letters (SB or HB) and the digits separately
+    
+    # This regex captures the letters (SB or HB) and the digits
     match = re.search(r"(SB|HB)(\d+)", filename, re.IGNORECASE)
     if match:
-        bill_type = match.group(1).upper()  # e.g., "SB"
-        bill_digits = int(match.group(2)) # e.g., 7 from "00007", removes leading zeros
+        bill_type = match.group(1).upper()
+        # Modified: Set bill_number to be just the numeric part
+        bill_number = int(match.group(2)) 
         
-        # Reformat into the desired "S.B. No. 7" style
-        bill_number = f"{bill_type[0]}.{bill_type[1]}. {bill_digits}"
+        # New: Determine the chamber based on the bill type
+        if bill_type == "SB":
+            chamber = "Senate"
+        elif bill_type == "HB":
+            chamber = "House"
 
     # Step 1: Find all ARTICLE headings and their positions.
     article_pattern = re.compile(r'^\s*(ARTICLE\s+(\d+)\.\s+([A-Z\s,]+))$', re.MULTILINE)
@@ -153,7 +158,6 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
         })
 
     # Step 2: Split the document by SECTION headings.
-    # section_pattern = r'(?=^\s*(?:SECTION|Sec\.)\s+[\d\w])'
     section_pattern = r'(?=^\s*SECTION\s+[\d\w])'
     text_chunks = re.split(section_pattern, full_text, flags=re.MULTILINE)
 
@@ -168,7 +172,6 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
         cleaned_content = clean_chunk_text(chunk_content)
             
         section_number = None
-        # section_header_pattern = r'(?:SECTION|Sec\.)\s*([\d\w\.]+)'
         section_header_pattern = r'SECTION\s*([\d\w\.]+)'
         section_match = re.match(section_header_pattern, cleaned_content)
         
@@ -189,11 +192,13 @@ def split_bill_by_section(full_text: str, page_map: List[Tuple[int, int]], pdf_p
                 current_article = {'number': article['number'], 'title': article['title']}
                 break
 
+        # --- MODIFIED: Add 'chamber' to metadata dictionary ---
         metadata = {
             'source': pdf_path,
             'page': page_number,
             'author': author,
-            'bill_number': bill_number,
+            'chamber': chamber, # New field
+            'bill_number': bill_number, # Value is now numeric
             'article_number': current_article['number'],
             'article_title': current_article['title'],
             'section_number': section_number
