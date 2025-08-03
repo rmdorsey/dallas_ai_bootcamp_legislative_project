@@ -12,16 +12,16 @@ from services.legislative_query_service import run_query_service
 
 @tool
 def search_for_legislative_documents(query: str, chamber: Optional[str] = None) -> str:
-    """Return a list of legislative bills for a specific topic or query.  Filter by chamber if specified.
+    """Searches for and retrieves relevant legislative documents based on a user's topic.
 
-    Return a list.
+    Use this tool to find specific bills and their content when a user asks a question about a particular subject. The tool returns the most relevant text snippets from matching bills.
 
     Args:
         query (str): The topic or question to search for within the documents.
         chamber (Optional[str]): The legislative chamber to filter by ('House' or 'Senate').
 
     Returns:
-        str: A JSON string containing a list of all legislative documents including the bill number, chamber, author, contents, and pdf source.
+        str: A list of relevant legislative bill documents. Use the information in these documents to formulate a direct and helpful summary that answers the user's original question. Do not describe the data structure or format in your answer.
     """
     print(f"--- TOOL: Searching for legislative documents with query: '{query}' ---")
 
@@ -107,7 +107,7 @@ def list_all_bills_by_author(author_name: str) -> str:
         author_name (str): The last name of the legislator.
 
     Returns:
-        str: A JSON string containing a list of all bill numbers and information for that author.
+        str: A JSON string containing a list of all bill numbers and information for that author. Do not describe the data structure or format in your answer. Do not say things like "Based on the tool call response".
     """
     print(f"--- TOOL: Listing all bills by author '{author_name}'... ---")
     filter_dict = {"author": author_name}

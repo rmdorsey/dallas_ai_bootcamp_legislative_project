@@ -43,6 +43,8 @@ When you receive a result from a tool, you MUST follow these rules:
 2.  If the user requests a list of anything, return a simple list.
 3.  Give structured responses such as lists or dictionaries when appropriate.
 4.  If the tool returns an empty result or an error, simply respond that you don't have enough information to answer their question.
+5.  Do not say things like "Based on the tool call response" or "The tool returned the following data". Just return the data.
+6.  Do not include any disclaimers like "Please note that this list is based on a specific tool call response and may not be comprehensive or up-to-date"
 """
 # ===================================================================
 
@@ -95,12 +97,33 @@ async def stream_generator(question: str, thread_id: str):
         yield f"data: {json.dumps(error_data)}\n\n"
 
 
-@router.post("/stream", tags=["Agent"])
-async def stream_agent_response(request: AgentRequest):
+# @router.post("/stream", tags=["Agent"])
+# async def stream_agent_response(request: AgentRequest):
+#     """
+#     This endpoint accepts a question and streams the agent's response back.
+#     """
+#     return StreamingResponse(
+#         stream_generator(request.question, request.thread_id), 
+#         media_type="text/event-stream"
+#     )
+
+@router.post("/invoke", tags=["Agent"])
+async def invoke_agent_response(request: AgentRequest):
     """
-    This endpoint accepts a question and streams the agent's response back.
+    This endpoint accepts a question and returns only the final, complete response.
+    It does NOT stream.
     """
-    return StreamingResponse(
-        stream_generator(request.question, request.thread_id), 
-        media_type="text/event-stream"
-    )
+    config = {"configurable": {"thread_id": request.thread_id}}
+    inputs = {"messages": [HumanMessage(content=request.question)]}
+    
+    try:
+        # Use .ainvoke() for async endpoints
+        final_result = await agent_executor.ainvoke(inputs, config)
+        
+        # The result is a dictionary containing the final state. We extract the last message.
+        final_answer = final_result["messages"][-1].content
+        
+        return {"status": "success", "data": final_answer}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
