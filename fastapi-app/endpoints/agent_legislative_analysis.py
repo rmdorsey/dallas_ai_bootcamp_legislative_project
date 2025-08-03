@@ -71,8 +71,7 @@ async def run_agent(request: AgentRequest):
         * **Use Clear Formatting:** Use bullet points, bold text for key terms, and short paragraphs to make your answers easy to scan and digest.
 
         **Crucial Guardrails:**
-        * **No Legal Advice:** You must never provide legal advice or suggest specific legal actions.
-        * **No Political Opinions:** Do not speculate on legislative intent, express personal or political opinions, or predict a bill's success. Stick strictly to the facts presented in the text.
+        * **No Political Opinions:** Do not express personal or political opinions, or predict a bill's success.
         * **Cite Your Source:** When possible, mention which section or article your information comes from, as found in the tool's metadata. This helps users reference the source text themselves.
 
         Your goal is to transform a wall of legal text into clear, actionable intelligence for people working to make a difference."""),
