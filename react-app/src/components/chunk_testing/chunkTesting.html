@@ -1,0 +1,111 @@
+{/* NEW: Chunk Testing Framework Details */}
+            <div className="mt-20">
+                <div className="text-center mb-12">
+                    <h3 className="text-2xl md:text-3xl font-semibold mb-4">Chunk Testing Framework</h3>
+                    <p className="text-gray-400 max-w-3xl mx-auto">
+                        Our comprehensive testing framework evaluates different chunking strategies to optimize
+                        retrieval performance for legislative documents and civic data.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                    {/* Chunking Strategies */}
+                    <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
+                        <h4 className="text-xl font-semibold text-cyan-300 mb-6 flex items-center gap-2">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                            </svg>
+                            Chunking Strategies
+                        </h4>
+                        <div className="space-y-4">
+                            <div className="p-4 rounded-lg border border-cyan-500/20 bg-cyan-500/5">
+                                <h5 className="font-medium text-cyan-200 mb-2">Plank-Structured</h5>
+                                <p className="text-sm text-gray-400">Preserves document hierarchy with custom PDF preprocessing for political platforms and resolutions.</p>
+                            </div>
+                            <div className="p-4 rounded-lg border border-cyan-500/20 bg-cyan-500/5">
+                                <h5 className="font-medium text-cyan-200 mb-2">Paragraph-Based</h5>
+                                <p className="text-sm text-gray-400">Splits content by paragraph boundaries for natural semantic groupings.</p>
+                            </div>
+                            <div className="p-4 rounded-lg border border-cyan-500/20 bg-cyan-500/5">
+                                <h5 className="font-medium text-cyan-200 mb-2">N-Sentence Chunking</h5>
+                                <p className="text-sm text-gray-400">Groups content by sentence count (3-sentence default) for consistent context windows.</p>
+                            </div>
+                            <div className="p-4 rounded-lg border border-cyan-500/20 bg-cyan-500/5">
+                                <h5 className="font-medium text-cyan-200 mb-2">Token-Based</h5>
+                                <p className="text-sm text-gray-400">Fixed token limits using BERT tokenization for embedding model compatibility.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Evaluation Metrics */}
+                    <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
+                        <h4 className="text-xl font-semibold text-orange-300 mb-6 flex items-center gap-2">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            Evaluation Metrics
+                        </h4>
+                        <div className="space-y-4">
+                            <div className="p-4 rounded-lg border border-orange-500/20 bg-orange-500/5">
+                                <h5 className="font-medium text-orange-200 mb-2">Chunk Recall</h5>
+                                <p className="text-sm text-gray-400">Measures how well the system retrieves relevant document chunks for given queries.</p>
+                            </div>
+                            <div className="p-4 rounded-lg border border-orange-500/20 bg-orange-500/5">
+                                <h5 className="font-medium text-orange-200 mb-2">Answer F1 Score</h5>
+                                <p className="text-sm text-gray-400">Evaluates precision and recall of generated answers against ground truth responses.</p>
+                            </div>
+                            <div className="p-4 rounded-lg border border-orange-500/20 bg-orange-500/5">
+                                <h5 className="font-medium text-orange-200 mb-2">Faithfulness</h5>
+                                <p className="text-sm text-gray-400">Ensures generated responses remain grounded in retrieved source material.</p>
+                            </div>
+                            <div className="p-4 rounded-lg border border-orange-500/20 bg-orange-500/5">
+                                <h5 className="font-medium text-orange-200 mb-2">Execution Time</h5>
+                                <p className="text-sm text-gray-400">Tracks processing speed for real-time performance optimization.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Framework Architecture */}
+                <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
+                    <h4 className="text-xl font-semibold text-purple-300 mb-6 text-center">Framework Architecture</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div className="text-center">
+                            <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
+                            <h5 className="font-semibold mb-2">Data Loader</h5>
+                            <p className="text-sm text-gray-400">Processes legislative PDFs and documents with custom preprocessing</p>
+                        </div>
+                        <div className="text-center">
+                            <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </div>
+                            <h5 className="font-semibold mb-2">Embeddings</h5>
+                            <p className="text-sm text-gray-400">SentenceTransformers with cosine similarity for semantic retrieval</p>
+                        </div>
+                        <div className="text-center">
+                            <div className="w-16 h-16 bg-yellow-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <svg className="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                            </div>
+                            <h5 className="font-semibold mb-2">Evaluation</h5>
+                            <p className="text-sm text-gray-400">Comprehensive metrics with ground truth comparison and benchmarking</p>
+                        </div>
+                        <div className="text-center">
+                            <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+                                </svg>
+                            </div>
+                            <h5 className="font-semibold mb-2">Analytics</h5>
+                            <p className="text-sm text-gray-400">Performance logging and strategy comparison for optimization</p>
+                        </div>
+                    </div>
+                </div>
+            </div>

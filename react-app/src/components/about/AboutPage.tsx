@@ -13,6 +13,18 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onGetStarted
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Function to navigate back to home and scroll to specific section
+  const navigateToHomeSection = (sectionId: string) => {
+    onBackToHome(); // This should switch to the home page
+    // Small delay to ensure the page has switched, then scroll to section
+    setTimeout(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Fixed Navigation */}
@@ -27,18 +39,30 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onGetStarted
                 legisl<span className="text-teal-400">AI</span>tive
               </button>
               <div className="hidden md:flex items-center gap-6 text-sm">
-                <a href="#problem" className="text-gray-400 hover:text-white transition-colors">
+                <button
+                  onClick={() => navigateToHomeSection('problem')}
+                  className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+                >
                   Problem
-                </a>
-                <a href="#features" className="text-gray-400 hover:text-white transition-colors">
+                </button>
+                <button
+                  onClick={() => navigateToHomeSection('features')}
+                  className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+                >
                   Features
-                </a>
-                <a href="#how-it-works" className="text-gray-400 hover:text-white transition-colors">
+                </button>
+                <button
+                  onClick={() => navigateToHomeSection('how-it-works')}
+                  className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+                >
                   How it Works
-                </a>
-                 <a href="#solution" className="text-gray-400 hover:text-white transition-colors">
+                </button>
+                <button
+                  onClick={() => navigateToHomeSection('solution')}
+                  className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+                >
                   Solution
-                </a>
+                </button>
                 <button
                   onClick={onAboutClick}
                   className="text-gray-400 hover:text-white transition-colors cursor-pointer"
@@ -72,8 +96,6 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onGetStarted
 
         <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
-
-
             {/* Main Headline */}
             <h1 className="mb-8 text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
               About
@@ -89,12 +111,28 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onGetStarted
       </section>
 
       {/* Dallas AI Bootcamp Section */}
-      <section className="py-32 border-t border-gray-800">
+      <section className="py-16 border-t border-gray-800">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
+            {/* Dallas AI Logo */}
+            <div className="mb-8 flex justify-center">
+              <img
+                src="/DallasAI_Logo-blue.webp"
+                alt="Dallas AI Logo"
+                className="h-20 w-auto hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Born at the
-              <span className="text-teal-400"> Dallas AI Summer Bootcamp</span>
+              <a
+                href="https://dallas-ai.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-teal-400 hover:text-teal-300 transition-colors underline decoration-2 decoration-teal-400/50 hover:decoration-teal-300"
+              >
+                {" "}Dallas AI Summer Bootcamp
+              </a>
             </h2>
             <p className="text-xl text-gray-400 mb-8 leading-relaxed">
               LegislAItive was conceived and developed during the intensive Dallas AI Summer Bootcamp,
@@ -135,32 +173,199 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onGetStarted
         </div>
       </section>
 
-      {/* Badge */}
+      {/* Meet the Creators Section */}
+      <section className="py-16 border-t border-gray-800">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="text-center mb-16">
+            {/* Badge */}
             <div className="mb-8">
               <div className="inline-flex items-center gap-2 rounded-full border border-gray-800 bg-gray-900/50 px-4 py-2 text-sm">
                 <div className="h-2 w-2 rounded-full bg-green-400"></div>
                 <span className="text-gray-300">Meet the Creators</span>
               </div>
             </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              The Team Behind
+              <span className="text-teal-400"> LegislAItive</span>
+            </h2>
+            <p className="text-xl text-gray-400 leading-relaxed max-w-3xl mx-auto">
+              Three passionate developers united by a vision to democratize access to legislative information through AI.
+            </p>
+          </div>
 
-      {/* Main Content */}
-      <section className="py-16">
+          {/* Creators Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+            {/* Creator 1 - Angela Cortes */}
+            <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
+              <div className="text-center mb-6">
+                <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-teal-500/20 to-blue-500/20 flex items-center justify-center">
+                  <div className="w-24 h-24 rounded-full bg-teal-500/30 flex items-center justify-center">
+                    <span className="text-2xl font-bold text-teal-400">AC</span>
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold mb-2">Angela Cortes</h3>
+                <p className="text-teal-400 mb-4">Lead Developer</p>
+                <a
+                  href="https://www.linkedin.com/in/angela-cortes-pabon/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                  LinkedIn
+                </a>
+              </div>
+              <div className="space-y-4 text-sm text-gray-300">
+                <div>
+                  <h4 className="font-semibold text-white mb-2">Bio</h4>
+                  <p className="leading-relaxed">
+                    [Add Angela's bio here - passion for civic tech, background, what drives her work]
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-white mb-2">Experience</h4>
+                  <p className="leading-relaxed">
+                    [Add professional experience and key achievements]
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-white mb-2">Education</h4>
+                  <p className="leading-relaxed">
+                    Dallas AI Summer Bootcamp, [Add other education details]
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Creator 2 */}
+            <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
+              <div className="text-center mb-6">
+                <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+                  <div className="w-24 h-24 rounded-full bg-blue-500/30 flex items-center justify-center">
+                    <span className="text-2xl font-bold text-blue-400">[XX]</span>
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold mb-2">[Creator 2 Name]</h3>
+                <p className="text-blue-400 mb-4">[Role/Title]</p>
+                <a
+                  href="[LinkedIn URL]"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                  LinkedIn
+                </a>
+              </div>
+              <div className="space-y-4 text-sm text-gray-300">
+                <div>
+                  <h4 className="font-semibold text-white mb-2">Bio</h4>
+                  <p className="leading-relaxed">
+                    [Add Creator 2's bio here]
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-white mb-2">Experience</h4>
+                  <p className="leading-relaxed">
+                    [Add professional experience and key achievements]
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-white mb-2">Education</h4>
+                  <p className="leading-relaxed">
+                    Dallas AI Summer Bootcamp, [Add other education details]
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Creator 3 */}
+            <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
+              <div className="text-center mb-6">
+                <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                  <div className="w-24 h-24 rounded-full bg-purple-500/30 flex items-center justify-center">
+                    <span className="text-2xl font-bold text-purple-400">[XX]</span>
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold mb-2">[Creator 3 Name]</h3>
+                <p className="text-purple-400 mb-4">[Role/Title]</p>
+                <a
+                  href="[LinkedIn URL]"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                  LinkedIn
+                </a>
+              </div>
+              <div className="space-y-4 text-sm text-gray-300">
+                <div>
+                  <h4 className="font-semibold text-white mb-2">Bio</h4>
+                  <p className="leading-relaxed">
+                    [Add Creator 3's bio here]
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-white mb-2">Experience</h4>
+                  <p className="leading-relaxed">
+                    [Add professional experience and key achievements]
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-white mb-2">Education</h4>
+                  <p className="leading-relaxed">
+                    Dallas AI Summer Bootcamp, [Add other education details]
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Meet the Leader Section */}
+      <section className="py-16 border-t border-gray-800">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Profile Image Placeholder */}
-            <div className="lg:col-span-1">
-              <div className="relative">
+          <div className="text-center mb-16">
+            {/* Badge */}
+            <div className="mb-8">
+              <div className="inline-flex items-center gap-2 rounded-full border border-gray-800 bg-gray-900/50 px-4 py-2 text-sm">
+                <div className="h-2 w-2 rounded-full bg-amber-400"></div>
+                <span className="text-gray-300">Meet the Leader</span>
+              </div>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Our
+              <span className="text-amber-400"> Guiding Force</span>
+            </h2>
+            <p className="text-xl text-gray-400 leading-relaxed max-w-3xl mx-auto">
+              The visionary leader who guided our team through the Dallas AI Summer Bootcamp journey.
+            </p>
+          </div>
+
+          {/* Leader Profile */}
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+              {/* Leader Image */}
+              <div className="lg:col-span-1">
                 <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8 text-center">
-                  <div className="w-48 h-48 mx-auto mb-6 rounded-full bg-gradient-to-br from-teal-500/20 to-blue-500/20 flex items-center justify-center">
-                    <div className="w-32 h-32 rounded-full bg-teal-500/30 flex items-center justify-center">
-                      <span className="text-4xl font-bold text-teal-400">AC</span>
+                  <div className="w-48 h-48 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
+                    <div className="w-32 h-32 rounded-full bg-amber-500/30 flex items-center justify-center">
+                      <span className="text-4xl font-bold text-amber-400">[XX]</span>
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold mb-2">Angela Cortes</h3>
-                  <p className="text-teal-400 mb-4">Creator & Developer</p>
+                  <h3 className="text-2xl font-bold mb-2">[Leader Name]</h3>
+                  <p className="text-amber-400 mb-4">[Leader Title/Role]</p>
                   <div className="flex justify-center">
                     <a
-                      href="https://www.linkedin.com/in/angela-cortes-pabon/"
+                      href="[LinkedIn URL]"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
@@ -173,53 +378,26 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onGetStarted
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Bio Content */}
-            <div className="lg:col-span-2 space-y-8">
-              <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
-                <h2 className="text-3xl font-bold mb-6 text-teal-400">My Story</h2>
-                <div className="space-y-4 text-gray-300 leading-relaxed">
-                  <p>
-                    Welcome! I'm Angela Cortes Pabon, the creator behind LegislAItive. My passion lies at the intersection of technology, democracy, and civic engagement.
-                  </p>
-                  <p>
-                    [Note: Please replace this section with your actual bio from LinkedIn. Include your professional background, education, key experiences, and what drives your passion for civic technology.]
-                  </p>
-                  <p>
-                    The idea for LegislAItive came from recognizing how difficult it can be for everyday citizens to understand complex legislation and engage meaningfully with the democratic process. I believe that AI can bridge this gap, making government more accessible and transparent for everyone.
-                  </p>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
-                <h2 className="text-3xl font-bold mb-6 text-teal-400">Professional Background</h2>
-                <div className="space-y-4 text-gray-300 leading-relaxed">
-                  <p>
-                    [Please add your professional experience, key skills, and notable achievements from your LinkedIn profile here.]
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                    <div className="bg-gray-800/50 rounded-lg p-4">
-                      <h4 className="font-semibold text-white mb-2">Key Skills</h4>
-                      <div className="space-y-1 text-sm">
-                        <div>• AI & Machine Learning</div>
-                        <div>• Full-Stack Development</div>
-                        <div>• Civic Technology</div>
-                        <div>• Product Strategy</div>
-                      </div>
-                    </div>
-                    <div className="bg-gray-800/50 rounded-lg p-4">
-                      <h4 className="font-semibold text-white mb-2">Education</h4>
-                      <div className="space-y-1 text-sm">
-                        <div>• Dallas AI Summer Bootcamp</div>
-                        <div>• [Add your education details]</div>
-                      </div>
-                    </div>
+              {/* Leader Bio Content */}
+              <div className="lg:col-span-2 space-y-8">
+                <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
+                  <h2 className="text-3xl font-bold mb-6 text-amber-400">Leadership & Vision</h2>
+                  <div className="space-y-4 text-gray-300 leading-relaxed">
+                    <p>
+                      [Add leader's bio here - their vision, leadership philosophy, and how they guided the team]
+                    </p>
+                    <p>
+                      [Include their role in the Dallas AI Summer Bootcamp and how they mentored the team]
+                    </p>
+                    <p>
+                      [Add what makes them an exceptional leader and their contribution to the project]
+                    </p>
                   </div>
                 </div>
+
+
               </div>
-
-
             </div>
           </div>
         </div>
