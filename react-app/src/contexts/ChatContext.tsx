@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Conversation, Message } from '../types';
+import { mockConversations } from '../data/mockData'; // Import mock conversations
 
 interface ChatContextType {
   conversations: Conversation[];
@@ -45,22 +46,24 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   // Get active conversation
   const activeConversation = conversations.find(conv => conv.id === activeConversationId) || null;
 
-  // Initialize with a default conversation on mount
+  // Initialize with mock conversations on mount
   useEffect(() => {
-    // Start with mock data for now, but you can modify this to load from API
-    // if you implement conversation persistence in your FastAPI backend
+    // Load mock conversations as default to show interesting content with bills table
     if (conversations.length === 0) {
-      const defaultConversation: Conversation = {
-        id: 'default-thread-id',
-        title: 'New Conversation',
-        preview: 'Start a new analysis...',
-        date: new Date().toLocaleString(),
-        isActive: true,
-        messages: []
-      };
+      console.log('🚀 Loading mock conversations with bills table...');
 
-      setConversations([defaultConversation]);
-      setActiveConversationId('default-thread-id');
+      // Load the mock conversations from mockData.ts
+      // The first conversation already contains a bills table
+      const conversationsWithActiveFlag = mockConversations.map((conv, index) => ({
+        ...conv,
+        isActive: index === 0 // Make the first conversation (with bills table) active
+      }));
+
+      setConversations(conversationsWithActiveFlag);
+      setActiveConversationId(conversationsWithActiveFlag[0].id);
+
+      console.log('✅ Loaded mock conversations:', conversationsWithActiveFlag);
+      console.log('📋 Active conversation ID:', conversationsWithActiveFlag[0].id);
     }
   }, []);
 
@@ -187,11 +190,11 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         thread_id: activeConversationId
       };
 
-      console.log('📤 Sending request to:', `${API_URL}/agent/invoke`);
+      console.log('📤 Sending request to:', `${API_URL}/agent_legislative_overview/agent_legislative_overview`);
       console.log('📦 Request body:', requestBody);
 
       // Send request to FastAPI invoke endpoint (non-streaming)
-      const response = await fetch(`${API_URL}/agent/invoke`, {
+      const response = await fetch(`${API_URL}/agent_legislative_overview/agent_legislative_overview`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -331,8 +334,11 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
   // Handle bill actions
   const handleBillAction = useCallback(async (billId: string, action: 'view' | 'analyze') => {
+    console.log(`🏛️ Bill action: ${action} for bill ${billId}`);
+
     if (action === 'analyze') {
       // Navigate to the Bill Analyzer page
+      console.log('📊 Navigating to bill analyzer...');
       navigate('/bill-analyzer');
       return;
     }

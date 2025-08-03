@@ -5,9 +5,6 @@ import type { BillAnalyzerHeaderProps } from '../../../types';
 export const BillAnalyzerHeader: React.FC<BillAnalyzerHeaderProps> = ({
   bill,
   onBack,
-  onDownload,
-  onShare,
-  onFullAnalysis
 }) => {
   return (
     <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm">
@@ -35,34 +32,9 @@ export const BillAnalyzerHeader: React.FC<BillAnalyzerHeaderProps> = ({
         </div>
       </div>
 
+      {/* Action buttons hidden - keeping empty div for layout consistency */}
       <div className="flex gap-3">
-        <button
-          onClick={onDownload}
-          className="px-4 py-2 border border-gray-200 bg-white rounded-md cursor-pointer text-sm font-medium transition-all duration-200 flex items-center gap-2 hover:bg-gray-50 hover:border-teal-700"
-        >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M8 17l4 4 4-4M12 1v20"/>
-          </svg>
-          Download PDF
-        </button>
-        <button
-          onClick={onShare}
-          className="px-4 py-2 border border-gray-200 bg-white rounded-md cursor-pointer text-sm font-medium transition-all duration-200 flex items-center gap-2 hover:bg-gray-50 hover:border-teal-700"
-        >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-2-4 2"/>
-          </svg>
-          Share
-        </button>
-        <button
-          onClick={onFullAnalysis}
-          className="px-4 py-2 bg-teal-700 text-white border border-teal-700 rounded-md cursor-pointer text-sm font-medium transition-all duration-200 flex items-center gap-2 hover:bg-teal-800"
-        >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-          Full Analysis
-        </button>
+        {/* Download, Share, and Full Analysis buttons removed */}
       </div>
     </div>
   );

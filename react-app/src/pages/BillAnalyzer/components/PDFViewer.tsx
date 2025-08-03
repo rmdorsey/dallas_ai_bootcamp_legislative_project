@@ -8,75 +8,48 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
   totalPages,
   zoomLevel
 }) => {
-  const formatContent = (content: string) => {
-    return content.split('\n').map((line, index) => (
-      <React.Fragment key={index}>
-        {line}
-        {index < content.split('\n').length - 1 && <br />}
-      </React.Fragment>
-    ));
-  };
+  // PDF file path - you can make this dynamic based on bill.id or bill.name
+  const pdfUrl = '/HB00094I.pdf';
+
+  // Construct PDF URL with page parameter for browsers that support it
+  const pdfUrlWithPage = `${pdfUrl}#page=${currentPage}&zoom=${zoomLevel}`;
 
   return (
-    <div
-      className="flex-1 bg-gray-50 flex items-center justify-center relative overflow-auto"
-      style={{
-        transform: `scale(${zoomLevel / 100})`,
-        transformOrigin: 'top center'
-      }}
-    >
-      <div className="bg-white shadow-lg rounded w-[90%] max-w-2xl h-[85%] p-10 overflow-y-auto text-sm leading-relaxed">
-        {/* Bill Header */}
-        <div className="text-center mb-8 border-b-2 border-gray-200 pb-5">
-          <div className="text-2xl font-bold text-gray-800 mb-2">
-            {bill.name}
-          </div>
-          <div className="text-sm text-gray-500 mb-3">
-            {bill.session}
-          </div>
-          <div className="text-base font-semibold text-gray-800 leading-snug">
-            {bill.fullTitle}
-          </div>
+    <div className="flex-1 bg-gray-50 flex flex-col relative overflow-hidden">
+      {/* PDF Container */}
+      <div className="flex-1 relative">
+        <iframe
+          src={pdfUrlWithPage}
+          className="w-full h-full border-none"
+          title={`${bill.name} - Legislative Document`}
+          style={{
+            minHeight: '100%',
+            background: 'white'
+          }}
+          onLoad={() => {
+            console.log('📄 PDF loaded successfully:', pdfUrl);
+          }}
+          onError={(error) => {
+            console.error('❌ Failed to load PDF:', error);
+          }}
+        />
+      </div>
+
+      {/* PDF Info Bar */}
+      <div className="bg-white border-t border-gray-200 px-4 py-2 flex items-center justify-between text-xs text-gray-500">
+        <div className="flex items-center gap-4">
+          <span>📄 {bill.name}</span>
+          <span>•</span>
+          <span>{bill.session}</span>
         </div>
-
-        {/* Bill Sections */}
-        {bill.content.map((section) => (
-          <div key={section.id} className="mb-6">
-            <div className="text-base font-semibold text-gray-800 mb-3 py-2 border-b border-gray-200">
-              {section.title}
-            </div>
-            <div className="text-gray-700 leading-relaxed">
-              {section.content && (
-                <div className="mb-4">
-                  {formatContent(section.content)}
-                </div>
-              )}
-
-              {section.subsections && (
-                <div>
-                  {section.subsections.map((subsection, index) => (
-                    <div key={index} className="my-4 pl-5">
-                      <span className="font-semibold text-gray-800">
-                        {subsection.label}
-                      </span>
-                      <div className="mt-2">
-                        {formatContent(subsection.content)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-
-        {/* Page indicator for visual feedback */}
-        <div className="text-center mt-8 pt-4 border-t border-gray-200">
-          <div className="text-xs text-gray-400">
-            Page {currentPage} of {totalPages}
-          </div>
+        <div className="flex items-center gap-2">
+          <span>Page {currentPage} of {totalPages}</span>
+          <span>•</span>
+          <span>{zoomLevel}% zoom</span>
         </div>
       </div>
+
+
     </div>
   );
 };

@@ -466,13 +466,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onGetStarted
         <h4 className="font-semibold text-white mb-2">Education</h4>
         <p className="leading-relaxed">
           <ul className="list-disc pl-5 space-y-4">
-    <li>
-      <strong>Belhaven University</strong> – M.S. Information Technology Management (Aug 2025 expected)
-      <br />
-      Focus: Project Management, Disaster Recovery, Financial Analysis<br />
-      GPA: 3.3/4
-    </li>
-    <li>
+     <li>
       <strong>Missouri University of Science and Technology</strong> – M.S. Computer Science (May 2024)
       <br />
       Focus: Database Systems, Machine Learning, Cloud and Big Data<br />

@@ -5,12 +5,12 @@ export const mockBills: Bill[] = [
   {
     id: '1',
     name: 'HB121',
-    summary: 'Prohibits use of public funds for lobbying activities by state agencies and local governments',
+    summary: 'AN ACT relating to restrictions on taxpayer-funded lobbying and requiring disclosure of lobbying expenditures by government entities',
     similarity: 98
   },
   {
     id: '2',
-    name: 'SB7',
+    name: 'HB 94',
     summary: 'Restricts taxpayer-funded lobbying and requires disclosure of lobbying expenditures',
     similarity: 91
   },

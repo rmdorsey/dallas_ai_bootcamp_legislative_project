@@ -1,6 +1,6 @@
 // pages/BillAnalyzer/components/ChatPanel.tsx
 import React, { useState, useRef, useEffect } from 'react';
-import type { ChatPanelProps } from '../../../types';
+import type { ChatPanelProps, SuggestionButton } from '../../../types';
 import { SuggestionButtons } from './SuggestionButtons';
 
 export const ChatPanel: React.FC<ChatPanelProps> = ({
@@ -42,18 +42,47 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
     }
   };
 
-  const handleSuggestionClick = (suggestion: any) => {
+  const handleSuggestionClick = (suggestion: SuggestionButton) => {
     setInputValue(suggestion.text);
     onSuggestionClick(suggestion);
   };
 
   const formatMessageContent = (content: string) => {
-    return content.split('\n').map((line, index) => (
-      <React.Fragment key={index}>
-        {line}
-        {index < content.split('\n').length - 1 && <br />}
-      </React.Fragment>
-    ));
+    // Auto-detect if content has markdown formatting (**text**)
+    const hasMarkdownFormatting = /\*\*[^*]+\*\*/g.test(content);
+
+    if (hasMarkdownFormatting) {
+      // Format markdown-style text with **bold** support
+      const parts = content.split(/(\*\*[^*]+\*\*)/g);
+
+      return (
+        <>
+          {parts.map((part, index) => {
+            if (part.startsWith('**') && part.endsWith('**')) {
+              // This is bold text
+              const boldText = part.slice(2, -2);
+              return <strong key={index} className="font-bold text-gray-900">{boldText}</strong>;
+            } else {
+              // Regular text - preserve line breaks
+              return part.split('\n').map((line, lineIndex, array) => (
+                <React.Fragment key={`${index}-${lineIndex}`}>
+                  {line}
+                  {lineIndex < array.length - 1 && <br />}
+                </React.Fragment>
+              ));
+            }
+          })}
+        </>
+      );
+    } else {
+      // Regular formatting for non-markdown messages
+      return content.split('\n').map((line, index) => (
+        <React.Fragment key={index}>
+          {line}
+          {index < content.split('\n').length - 1 && <br />}
+        </React.Fragment>
+      ));
+    }
   };
 
   return (

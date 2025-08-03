@@ -2,8 +2,8 @@
 import type { BillAnalyzerData, SuggestionButton, Message } from '../../../types';
 
 export const mockBillData: BillAnalyzerData = {
-  id: 'sb7',
-  name: 'S.B. 7',
+  id: 'HB94',
+  name: 'HB 94',
   fullTitle: 'AN ACT relating to restrictions on taxpayer-funded lobbying and requiring disclosure of lobbying expenditures by government entities',
   session: '87th Legislature, Regular Session, 2021',
   legislature: '87th Legislature • Regular Session',
@@ -30,33 +30,18 @@ export const mockBillData: BillAnalyzerData = {
     },
     {
       id: 'section3',
-      title: 'SECTION 3. DEFINITIONS',
-      content: 'For purposes of this Act:',
-      subsections: [
-        {
-          label: '(1) "Government entity"',
-          content: 'means a state agency, department, board, commission, or other state governmental entity, and includes any political subdivision of the state.'
-        },
-        {
-          label: '(2) "Lobbying"',
-          content: 'means direct communication with a member of the legislative or executive branch for the purpose of influencing legislative or administrative action.'
-        },
-        {
-          label: '(3) "Public funds"',
-          content: 'means money received from taxes, fees, federal grants, or other revenue sources by a government entity.'
-        }
-      ]
+      title: 'SECTION 3. RESTRICTION ON USE OF PUBLIC FUNDS BY CERTAIN PUBLIC ENTITIES FOR LOBBYING ACTIVITIES',
+      content: `This section applies to specific public entities such as political subdivisions, transit authorities, public institutions of higher education, etc. It prohibits spending public funds to hire lobbyists or pay associations that engage in lobbying, with several exemptions such as providing information to legislators or testifying upon request. Violations may result in injunctions, attorney fee recovery, and loss of state funding for two years.`
     },
     {
       id: 'section4',
-      title: 'SECTION 4. PROHIBITION ON USE OF PUBLIC FUNDS',
-      content: '',
-      subsections: [
-        {
-          label: '(a)',
-          content: 'A government entity may not use public funds to:\n\n(1) employ or contract with a person to engage in lobbying;\n\n(2) pay membership dues to an organization that engages in lobbying; or\n\n(3) directly or indirectly support lobbying activities.'
-        }
-      ]
+      title: 'SECTION 4. AMENDMENT TO SECTION 89.002, LOCAL GOVERNMENT CODE',
+      content: `Modifies existing code to align with lobbying restrictions, emphasizing that counties may fund associations only if they do not engage in prohibited lobbying or political activities. Taxpayers may seek injunctions against violations.`
+    },
+    {
+      id: 'section5',
+      title: 'SECTION 5. EFFECTIVE DATE',
+      content: 'This Act takes effect on the 91st day after the last day of the legislative session.'
     }
   ]
 };
@@ -74,7 +59,7 @@ export const mockBillAnalyzerMessages: Message[] = [
   {
     id: '1',
     type: 'assistant',
-    content: 'Welcome to the Bill Analyzer! I have loaded SB7. You can ask me to summarize sections, define terms, or explain what the bill does. What would you like to know?',
+    content: 'Welcome to the Bill Analyzer! I have loaded HB 94. You can ask me to summarize sections, define terms, or explain what the bill does. What would you like to know?',
     timestamp: new Date()
   }
 ];
