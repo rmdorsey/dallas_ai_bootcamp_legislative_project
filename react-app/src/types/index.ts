@@ -1,4 +1,4 @@
-// types/index.ts
+// types/index.ts (Updated ConversationListProps interface)
 export interface Message {
   id: string;
   type: 'user' | 'assistant';
@@ -28,6 +28,8 @@ export interface Conversation {
 export interface ConversationListProps {
   conversations: Conversation[];
   onConversationSelect: (conversationId: string) => void;
+  onConversationDelete?: (conversationId: string) => void;
+  onConversationEdit?: (conversationId: string, newTitle: string) => void; // Added edit function
 }
 
 export interface MessageProps {

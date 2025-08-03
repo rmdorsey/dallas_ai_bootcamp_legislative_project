@@ -6,15 +6,17 @@ import { Message } from './Message';
 
 export const ChatInterface: React.FC = () => {
   const { user, logout } = useAuth();
-  const { activeConversation, handleSendMessage, handleAddressSubmit, handleBillAction } = useChat();
-  const [isProcessing, setIsProcessing] = useState(false);
+  const {
+    activeConversation,
+    handleSendMessage,
+    handleAddressSubmit,
+    handleBillAction,
+    isLoading,
+    handleConversationEdit
+  } = useChat();
 
-  const handleSendMessageWithProcessing = async (message: string) => {
-    setIsProcessing(true);
-    handleSendMessage(message);
-    // Reset processing state after a short delay (simulating API call)
-    setTimeout(() => setIsProcessing(false), 1000);
-  };
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
 
   return (
     <div className="flex-1 flex flex-col bg-white min-h-0">
@@ -22,8 +24,21 @@ export const ChatInterface: React.FC = () => {
       <div className="p-5 border-b border-gray-200 bg-white flex-shrink-0">
         <div className="flex justify-between items-center">
           <div>
-            <div className="text-lg font-semibold text-gray-800 mb-1">
-              {activeConversation?.title || 'New Conversation'}
+            <div className="flex items-center gap-2">
+              <div className="text-lg font-semibold text-gray-800">
+                {activeConversation?.title || 'New Conversation'}
+              </div>
+              <button
+                onClick={() => {
+                  setNewTitle(activeConversation?.title || 'New Conversation');
+                  setIsEditingTitle(true);
+                }}
+                className="text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+              </button>
             </div>
             <div className="text-sm text-gray-500">
               {activeConversation?.title ? 'Civic advocacy and legislative research' : 'Start a new analysis'}
@@ -56,8 +71,27 @@ export const ChatInterface: React.FC = () => {
             />
           ))}
 
+          {/* Loading indicator - now uses isLoading from ChatContext */}
+          {isLoading && (
+            <div className="flex gap-3">
+              <div className="w-9 h-9 bg-gray-800 text-white rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0">
+                AI
+              </div>
+              <div className="max-w-[70%] bg-white border border-gray-200 p-4 rounded-xl shadow-sm">
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                  <span>Loading...</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Empty state with functional examples */}
-          {(!activeConversation?.messages || activeConversation.messages.length === 0) && (
+          {(!activeConversation?.messages || activeConversation.messages.length === 0) && !isLoading && (
             <div className="text-center py-12">
               <div className="text-2xl font-semibold text-gray-800 mb-2">
                 Welcome to LegislAItive
@@ -67,8 +101,9 @@ export const ChatInterface: React.FC = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
                 <button
-                  onClick={() => handleSendMessageWithProcessing("I'd like to find my representative. Can you help me locate my local representatives?")}
-                  className="bg-white p-4 rounded-lg border border-gray-200 hover:border-teal-700 hover:shadow-md transition-all cursor-pointer text-left"
+                  onClick={() => handleSendMessage("I'd like to find my representative. Can you help me locate my local representatives?")}
+                  disabled={isLoading}
+                  className="bg-white p-4 rounded-lg border border-gray-200 hover:border-teal-700 hover:shadow-md transition-all cursor-pointer text-left disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className="font-semibold text-sm text-gray-800 mb-1">
                     Find My Representative
@@ -79,8 +114,9 @@ export const ChatInterface: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => handleSendMessageWithProcessing("Can you help me analyze a specific bill? I'm interested in understanding recent legislation.")}
-                  className="bg-white p-4 rounded-lg border border-gray-200 hover:border-teal-700 hover:shadow-md transition-all cursor-pointer text-left"
+                  onClick={() => handleSendMessage("Can you help me analyze a specific bill? I'm interested in understanding recent legislation.")}
+                  disabled={isLoading}
+                  className="bg-white p-4 rounded-lg border border-gray-200 hover:border-teal-700 hover:shadow-md transition-all cursor-pointer text-left disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className="font-semibold text-sm text-gray-800 mb-1">
                     Analyze a Bill
@@ -91,8 +127,9 @@ export const ChatInterface: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => handleSendMessageWithProcessing("I want to search for bills related to climate change and environmental policy.")}
-                  className="bg-white p-4 rounded-lg border border-gray-200 hover:border-teal-700 hover:shadow-md transition-all cursor-pointer text-left"
+                  onClick={() => handleSendMessage("I want to search for bills related to climate change and environmental policy.")}
+                  disabled={isLoading}
+                  className="bg-white p-4 rounded-lg border border-gray-200 hover:border-teal-700 hover:shadow-md transition-all cursor-pointer text-left disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className="font-semibold text-sm text-gray-800 mb-1">
                     Search Similar Bills
@@ -103,8 +140,9 @@ export const ChatInterface: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => handleSendMessageWithProcessing("Can you give me tips on how to effectively contact my representatives about issues I care about?")}
-                  className="bg-white p-4 rounded-lg border border-gray-200 hover:border-teal-700 hover:shadow-md transition-all cursor-pointer text-left"
+                  onClick={() => handleSendMessage("Can you give me tips on how to effectively contact my representatives about issues I care about?")}
+                  disabled={isLoading}
+                  className="bg-white p-4 rounded-lg border border-gray-200 hover:border-teal-700 hover:shadow-md transition-all cursor-pointer text-left disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className="font-semibold text-sm text-gray-800 mb-1">
                     Get Advocacy Tips
@@ -130,39 +168,67 @@ export const ChatInterface: React.FC = () => {
                 e.preventDefault();
                 const target = e.target as HTMLTextAreaElement;
                 const message = target.value.trim();
-                if (message && !isProcessing) {
-                  handleSendMessageWithProcessing(message);
+                if (message && !isLoading) {
+                  handleSendMessage(message);
                   target.value = '';
                 }
               }
             }}
-            disabled={isProcessing}
+            disabled={isLoading}
             rows={1}
           />
           <button
-            className={`px-4 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2 flex-shrink-0 ${
-              !isProcessing
-                ? 'bg-teal-700 text-white hover:bg-teal-800'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            }`}
+            className="px-4 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2 flex-shrink-0 bg-teal-700 text-white hover:bg-teal-800"
             onClick={(e) => {
               const textarea = e.currentTarget.parentElement?.querySelector('textarea') as HTMLTextAreaElement;
               const message = textarea?.value.trim();
-              if (message && !isProcessing) {
-                handleSendMessageWithProcessing(message);
+              if (message && !isLoading) {
+                handleSendMessage(message);
                 textarea.value = '';
               }
             }}
-            disabled={isProcessing}
+            disabled={isLoading}
           >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M2 12l3-3 3 3"/>
-              <path d="m8 12h13"/>
-            </svg>
             Send
           </button>
         </div>
       </div>
+
+      {/* Edit Title Modal */}
+      {isEditingTitle && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h3 className="text-lg font-semibold mb-4">Edit Conversation Title</h3>
+            <input
+              type="text"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              className="w-full p-3 border border-gray-200 rounded-lg mb-4 focus:outline-none focus:border-teal-700"
+              placeholder="Enter new title..."
+              autoFocus
+            />
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setIsEditingTitle(false)}
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (newTitle.trim() && activeConversation) {
+                    handleConversationEdit(activeConversation.id, newTitle.trim());
+                  }
+                  setIsEditingTitle(false);
+                }}
+                className="px-4 py-2 bg-teal-700 text-white rounded-lg hover:bg-teal-800"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

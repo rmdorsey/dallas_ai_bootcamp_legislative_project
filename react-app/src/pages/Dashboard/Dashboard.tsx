@@ -5,7 +5,12 @@ import { ChatInterface } from '../../components/chat/ChatInterface';
 import { useChat } from '../../contexts/ChatContext';
 
 export const Dashboard: React.FC = () => {
-  const { conversations, handleConversationSelect, handleNewAnalysis } = useChat();
+  const {
+    conversations,
+    handleConversationSelect,
+    handleNewAnalysis,
+    handleConversationDelete
+  } = useChat();
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 overflow-hidden">
@@ -14,6 +19,7 @@ export const Dashboard: React.FC = () => {
           conversations={conversations}
           onConversationSelect={handleConversationSelect}
           onNewAnalysis={handleNewAnalysis}
+          onConversationDelete={handleConversationDelete}
         />
         <ChatInterface />
       </div>
