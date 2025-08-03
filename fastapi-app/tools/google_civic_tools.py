@@ -14,11 +14,6 @@ def get_political_divisions_by_address(address: str) -> str:
     Returns:
         A dictionary containing the API response, or None if an error occurs.
     """
-    # """
-    # Use this tool to find all the political and administrative divisions for a given street address.
-    # It returns a list of all relevant districts, such as congressional, state senate, state house, county, and city.
-    # The input must be a single string containing a full street address.
-    # """
     if not address or not isinstance(address, str):
         return "Error: A valid street address string must be provided."
 

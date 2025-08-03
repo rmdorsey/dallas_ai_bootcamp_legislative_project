@@ -11,7 +11,9 @@ from langgraph.prebuilt import create_react_agent
 # Import your tools
 from tools.database_state_legislator_tools import find_house_rep_by_district, find_senate_rep_by_district, find_house_rep_by_name, find_senate_rep_by_name
 from tools.google_civic_tools import get_political_divisions_by_address
-
+from tools.legislative_tools import (
+    search_for_legislative_documents, find_bills_by_author_on_topic, get_bill_details, list_all_bills_by_author
+)
 # --- Create all agent components once when the server starts ---
 # This is efficient as they are not recreated on every API call.
 
@@ -25,11 +27,30 @@ model = ChatOllama(
 # Define the list of tools the agent can use
 tools = [
     find_house_rep_by_district, find_senate_rep_by_district, find_house_rep_by_name, find_senate_rep_by_name,
-    get_political_divisions_by_address
+    get_political_divisions_by_address,
+    search_for_legislative_documents,
+    find_bills_by_author_on_topic, get_bill_details, list_all_bills_by_author
 ]
 
+# ==================== NEW: Custom System Prompt ====================
+# This prompt gives the agent strict instructions on how to format its final output.
+system_prompt = """You are a helpful assistant to grassroots political activists.
+
+You have access to a variety of tools to look up information about legislation, legislators, political platforms, and political processes.
+
+When you receive a result from a tool, you MUST follow these rules:
+1.  Be very concise and only return the most relevant information.
+2.  If the user requests a list of anything, return a simple list.
+3.  Give structured responses such as lists or dictionaries when appropriate.
+4.  If the tool returns an empty result or an error, simply respond that you don't have enough information to answer their question.
+5.  Do not say things like "Based on the tool call response" or "The tool returned the following data". Just return the data.
+6.  Do not include any disclaimers like "Please note that this list is based on a specific tool call response and may not be comprehensive or up-to-date"
+"""
+# ===================================================================
+
+
 # Create the agent executor
-agent_executor = create_react_agent(model, tools=tools)
+agent_executor = create_react_agent(model, tools=tools, system_prompt=system_prompt)
 
 # --- Define the API components ---
 
@@ -76,12 +97,33 @@ async def stream_generator(question: str, thread_id: str):
         yield f"data: {json.dumps(error_data)}\n\n"
 
 
-@router.post("/stream", tags=["Agent"])
-async def stream_agent_response(request: AgentRequest):
+# @router.post("/stream", tags=["Agent"])
+# async def stream_agent_response(request: AgentRequest):
+#     """
+#     This endpoint accepts a question and streams the agent's response back.
+#     """
+#     return StreamingResponse(
+#         stream_generator(request.question, request.thread_id), 
+#         media_type="text/event-stream"
+#     )
+
+@router.post("/invoke", tags=["Agent"])
+async def invoke_agent_response(request: AgentRequest):
     """
-    This endpoint accepts a question and streams the agent's response back.
+    This endpoint accepts a question and returns only the final, complete response.
+    It does NOT stream.
     """
-    return StreamingResponse(
-        stream_generator(request.question, request.thread_id), 
-        media_type="text/event-stream"
-    )
+    config = {"configurable": {"thread_id": request.thread_id}}
+    inputs = {"messages": [HumanMessage(content=request.question)]}
+    
+    try:
+        # Use .ainvoke() for async endpoints
+        final_result = await agent_executor.ainvoke(inputs, config)
+        
+        # The result is a dictionary containing the final state. We extract the last message.
+        final_answer = final_result["messages"][-1].content
+        
+        return {"status": "success", "data": final_answer}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
