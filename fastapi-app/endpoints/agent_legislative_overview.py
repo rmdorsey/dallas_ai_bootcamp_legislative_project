@@ -10,7 +10,8 @@ from langgraph.prebuilt import create_react_agent
 
 # Import your tools
 from tools.database_state_legislator_tools import find_house_rep_by_district, find_senate_rep_by_district, find_house_rep_by_name, find_senate_rep_by_name
-from tools.google_civic_tools import get_political_divisions_by_address
+# from tools.google_civic_tools import get_political_divisions_by_address
+from tools.cicero_civic_tools import find_elected_officials_by_address
 from tools.legislative_tools import (
     search_for_legislative_documents, find_bills_by_author_on_topic, get_bill_details, list_all_bills_by_author
 )
@@ -27,7 +28,7 @@ model = ChatOllama(
 # Define the list of tools the agent can use
 tools = [
     find_house_rep_by_district, find_senate_rep_by_district, find_house_rep_by_name, find_senate_rep_by_name,
-    get_political_divisions_by_address,
+    find_elected_officials_by_address,
     search_for_legislative_documents,
     find_bills_by_author_on_topic, get_bill_details, list_all_bills_by_author
 ]
