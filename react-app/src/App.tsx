@@ -1,8 +1,9 @@
-// App.tsx - Updated with Home Page
+// App.tsx - Updated with Home Page and About Page
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import type { User } from './types';
 import { HomePage } from './components/home/HomePage';
+import { AboutPage } from './components/about/AboutPage';
 import { Login } from './components/auth/Login';
 import { BillAnalyzer } from './pages/BillAnalyzer/BillAnalyzer';
 import { Dashboard } from './pages/Dashboard/Dashboard';
@@ -36,6 +37,14 @@ const MainApp: React.FC = () => {
     navigate('/login');
   };
 
+  const handleAboutClick = () => {
+    navigate('/about');
+  };
+
+  const handleBackToHome = () => {
+    navigate('/');
+  };
+
   // Show loading while checking authentication
   if (isAuthLoading) {
     return <LoadingScreen />;
@@ -52,7 +61,10 @@ const MainApp: React.FC = () => {
           ) : isAuthenticated ? (
             <Navigate to="/mainchat" replace />
           ) : (
-            <HomePage onGetStarted={handleGetStarted} />
+            <HomePage
+              onGetStarted={handleGetStarted}
+              onAboutClick={handleAboutClick}
+            />
           )
         }
       />
@@ -66,7 +78,24 @@ const MainApp: React.FC = () => {
           ) : isAuthenticated ? (
             <Navigate to="/mainchat" replace />
           ) : (
-            <HomePage onGetStarted={handleGetStarted} />
+            <HomePage
+              onGetStarted={handleGetStarted}
+              onAboutClick={handleAboutClick}
+            />
+          )
+        }
+      />
+
+      {/* About Route */}
+      <Route
+        path="/about"
+        element={
+          isAuthLoading ? (
+            <LoadingScreen />
+          ) : isAuthenticated ? (
+            <Navigate to="/mainchat" replace />
+          ) : (
+            <AboutPage onBackToHome={handleBackToHome} />
           )
         }
       />

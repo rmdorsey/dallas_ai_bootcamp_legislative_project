@@ -5,12 +5,9 @@ import type { ConversationListProps } from '../../types';
 export const ConversationList: React.FC<ConversationListProps> = ({
   conversations,
   onConversationSelect,
-  onConversationDelete,
-  onConversationEdit
+  onConversationDelete
 }) => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingTitle, setEditingTitle] = useState<string>('');
 
   const handleDelete = async (e: React.MouseEvent, conversationId: string) => {
     e.stopPropagation(); // Prevent triggering conversation selection
@@ -26,33 +23,6 @@ export const ConversationList: React.FC<ConversationListProps> = ({
     }, 300);
   };
 
-  const handleEditStart = (e: React.MouseEvent, conversationId: string, currentTitle: string) => {
-    e.stopPropagation(); // Prevent triggering conversation selection
-    setEditingId(conversationId);
-    setEditingTitle(currentTitle);
-  };
-
-  const handleEditSave = (conversationId: string) => {
-    if (editingTitle.trim() && onConversationEdit) {
-      onConversationEdit(conversationId, editingTitle.trim());
-    }
-    setEditingId(null);
-    setEditingTitle('');
-  };
-
-  const handleEditCancel = () => {
-    setEditingId(null);
-    setEditingTitle('');
-  };
-
-  const handleEditKeyDown = (e: React.KeyboardEvent, conversationId: string) => {
-    if (e.key === 'Enter') {
-      handleEditSave(conversationId);
-    } else if (e.key === 'Escape') {
-      handleEditCancel();
-    }
-  };
-
   return (
     <div className="flex-1 overflow-y-auto px-5">
       <div className="space-y-2">
@@ -64,27 +34,12 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                 ? 'bg-green-50 border-teal-700'
                 : 'hover:bg-gray-50 border-transparent'
             }`}
-            onClick={() => editingId !== conversation.id && onConversationSelect(conversation.id)}
+            onClick={() => onConversationSelect(conversation.id)}
           >
-            <div className="pr-16"> {/* Add more padding for both buttons */}
-              {editingId === conversation.id ? (
-                <div className="mb-1">
-                  <input
-                    type="text"
-                    value={editingTitle}
-                    onChange={(e) => setEditingTitle(e.target.value)}
-                    onKeyDown={(e) => handleEditKeyDown(e, conversation.id)}
-                    onBlur={() => handleEditSave(conversation.id)}
-                    className="w-full text-sm font-semibold bg-white border border-teal-700 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-teal-100"
-                    autoFocus
-                    maxLength={50}
-                  />
-                </div>
-              ) : (
-                <div className="font-semibold text-sm text-gray-800 mb-1">
-                  {conversation.title}
-                </div>
-              )}
+            <div className="pr-8"> {/* Add padding for delete button */}
+              <div className="font-semibold text-sm text-gray-800 mb-1">
+                {conversation.title}
+              </div>
 
               <div className="text-xs text-gray-500 line-clamp-2">
                 {conversation.preview}
@@ -94,42 +49,27 @@ export const ConversationList: React.FC<ConversationListProps> = ({
               </div>
             </div>
 
-            {/* Action Buttons - Only show when not editing */}
-            {editingId !== conversation.id && (
-              <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                {/* Edit Button */}
+            {/* Delete Button - Only show if there are multiple conversations */}
+            {conversations.length > 1 && (
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
-                  onClick={(e) => handleEditStart(e, conversation.id, conversation.title)}
-                  className="w-6 h-6 rounded-full flex items-center justify-center bg-gray-100 text-gray-400 hover:bg-blue-100 hover:text-blue-500 transition-all duration-200"
-                  title="Edit conversation name"
+                  onClick={(e) => handleDelete(e, conversation.id)}
+                  disabled={deletingId === conversation.id}
+                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
+                    deletingId === conversation.id
+                      ? 'bg-red-100 text-red-500 cursor-not-allowed'
+                      : 'bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-500'
+                  }`}
+                  title="Delete conversation"
                 >
-                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                    <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                  </svg>
+                  {deletingId === conversation.id ? (
+                    <div className="w-3 h-3 border border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                  )}
                 </button>
-
-                {/* Delete Button - Only show if there are multiple conversations */}
-                {conversations.length > 1 && (
-                  <button
-                    onClick={(e) => handleDelete(e, conversation.id)}
-                    disabled={deletingId === conversation.id}
-                    className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
-                      deletingId === conversation.id
-                        ? 'bg-red-100 text-red-500 cursor-not-allowed'
-                        : 'bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-500'
-                    }`}
-                    title="Delete conversation"
-                  >
-                    {deletingId === conversation.id ? (
-                      <div className="w-3 h-3 border border-red-500 border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
-                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M18 6L6 18M6 6l12 12"/>
-                      </svg>
-                    )}
-                  </button>
-                )}
               </div>
             )}
           </div>

@@ -156,21 +156,13 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       timestamp: new Date()
     };
 
-    // Create a temporary assistant message that will be updated with streaming content
-    const assistantMessageId = (Date.now() + 1).toString();
-    const initialAssistantMessage: Message = {
-      id: assistantMessageId,
-      type: 'assistant',
-      content: '',
-      timestamp: new Date()
-    };
-
+    // Update conversation with just the user message first
     setConversations(prev =>
       prev.map(conv =>
         conv.id === activeConversationId
           ? {
               ...conv,
-              messages: [...conv.messages, newMessage, initialAssistantMessage],
+              messages: [...conv.messages, newMessage],
               preview: messageContent.substring(0, 80) + (messageContent.length > 80 ? '...' : ''),
               date: new Date().toLocaleString(),
               // Update title if it's still "New Conversation"
@@ -206,6 +198,8 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
       const decoder = new TextDecoder();
       let accumulatedContent = '';
+      let assistantMessageId: string | null = null;
+      let hasStartedResponse = false;
 
       try {
         while (true) {
@@ -229,21 +223,46 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
                 if (data.type === 'ai' || data.type === 'assistant') {
                   accumulatedContent += data.content;
 
-                  // Update the assistant message with accumulated content
-                  setConversations(prev =>
-                    prev.map(conv =>
-                      conv.id === activeConversationId
-                        ? {
-                            ...conv,
-                            messages: conv.messages.map(msg =>
-                              msg.id === assistantMessageId
-                                ? { ...msg, content: accumulatedContent }
-                                : msg
-                            )
-                          }
-                        : conv
-                    )
-                  );
+                  // Create assistant message on first response chunk
+                  if (!hasStartedResponse) {
+                    assistantMessageId = (Date.now() + 1).toString();
+                    hasStartedResponse = true;
+
+                    const assistantMessage: Message = {
+                      id: assistantMessageId,
+                      type: 'assistant',
+                      content: accumulatedContent,
+                      timestamp: new Date()
+                    };
+
+                    // Add the assistant message to the conversation
+                    setConversations(prev =>
+                      prev.map(conv =>
+                        conv.id === activeConversationId
+                          ? {
+                              ...conv,
+                              messages: [...conv.messages, assistantMessage]
+                            }
+                          : conv
+                      )
+                    );
+                  } else if (assistantMessageId) {
+                    // Update existing assistant message with accumulated content
+                    setConversations(prev =>
+                      prev.map(conv =>
+                        conv.id === activeConversationId
+                          ? {
+                              ...conv,
+                              messages: conv.messages.map(msg =>
+                                msg.id === assistantMessageId
+                                  ? { ...msg, content: accumulatedContent }
+                                  : msg
+                              )
+                            }
+                          : conv
+                      )
+                    );
+                  }
                 }
 
                 // Handle tool calls or other message types
@@ -274,20 +293,20 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       console.error('Failed to send message to API:', error);
       setError('Failed to send message. Please try again.');
 
-      // Update the assistant message with an error
+      // Add an error message to the conversation
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        type: 'assistant',
+        content: 'Sorry, I encountered an error while processing your request. Please try again.',
+        timestamp: new Date()
+      };
+
       setConversations(prev =>
         prev.map(conv =>
           conv.id === activeConversationId
             ? {
                 ...conv,
-                messages: conv.messages.map(msg =>
-                  msg.id === assistantMessageId
-                    ? {
-                        ...msg,
-                        content: 'Sorry, I encountered an error while processing your request. Please try again.'
-                      }
-                    : msg
-                )
+                messages: [...conv.messages, errorMessage]
               }
             : conv
         )
