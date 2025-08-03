@@ -107,7 +107,7 @@ async def stream_generator(question: str, thread_id: str):
 #         media_type="text/event-stream"
 #     )
 
-@router.post("/invoke", tags=["Agent"])
+@router.post("/agent_legislative_overview", tags=["Agent Legislative Overview"])
 async def invoke_agent_response(request: AgentRequest):
     """
     This endpoint accepts a question and returns only the final, complete response.
