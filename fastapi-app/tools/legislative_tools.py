@@ -43,7 +43,7 @@ def search_for_legislative_documents(query: str, chamber: Optional[str] = None) 
             "content": result.get("content")
         }
         formatted_results.append(formatted_doc)
-        print(f"--- TOOL: Found document: {formatted_doc['bill_number']} in {formatted_doc['chamber']} by {formatted_doc['author']} with content: {formatted_doc['content']} at source: {formatted_doc['source']} ---")
+        # print(f"--- TOOL: Found document: {formatted_doc['bill_number']} in {formatted_doc['chamber']} by {formatted_doc['author']} with content: {formatted_doc['content']} at source: {formatted_doc['source']} ---")
     # 3. Return the clean list as a JSON string for the agent to use.
     return json.dumps(formatted_results, indent=2)
 
