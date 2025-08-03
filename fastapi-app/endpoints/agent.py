@@ -11,7 +11,9 @@ from langgraph.prebuilt import create_react_agent
 # Import your tools
 from tools.database_state_legislator_tools import find_house_rep_by_district, find_senate_rep_by_district, find_house_rep_by_name, find_senate_rep_by_name
 from tools.google_civic_tools import get_political_divisions_by_address
-
+from tools.legislative_tools import (
+    search_for_legislative_documents, find_bills_by_author_on_topic, get_bill_details, list_all_bills_by_author
+)
 # --- Create all agent components once when the server starts ---
 # This is efficient as they are not recreated on every API call.
 
@@ -25,11 +27,28 @@ model = ChatOllama(
 # Define the list of tools the agent can use
 tools = [
     find_house_rep_by_district, find_senate_rep_by_district, find_house_rep_by_name, find_senate_rep_by_name,
-    get_political_divisions_by_address
+    get_political_divisions_by_address,
+    search_for_legislative_documents,
+    find_bills_by_author_on_topic, get_bill_details, list_all_bills_by_author
 ]
 
+# ==================== NEW: Custom System Prompt ====================
+# This prompt gives the agent strict instructions on how to format its final output.
+system_prompt = """You are a helpful assistant to grassroots political activists.
+
+You have access to a variety of tools to look up information about legislation, legislators, political platforms, and political processes.
+
+When you receive a result from a tool, you MUST follow these rules:
+1.  Be very concise and only return the most relevant information.
+2.  If the user requests a list of anything, return a simple list.
+3.  Give structured responses such as lists or dictionaries when appropriate.
+4.  If the tool returns an empty result or an error, simply respond that you don't have enough information to answer their question.
+"""
+# ===================================================================
+
+
 # Create the agent executor
-agent_executor = create_react_agent(model, tools=tools)
+agent_executor = create_react_agent(model, tools=tools, system_prompt=system_prompt)
 
 # --- Define the API components ---
 

@@ -87,7 +87,7 @@ def process_and_dedupe_results(
     return final_docs, bill_counts
 
 
-def run_search_service(query: str, author: Optional[str], bill_number: Optional[str], chamber: Optional[str], k: int) -> List[Dict[str, Any]]:
+def run_search_service(query: str, author: Optional[str]=None, bill_number: Optional[str]=None, chamber: Optional[str]=None, k: int=50) -> List[Dict[str, Any]]:
     """
     Main entry point for the semantic search service.
 
