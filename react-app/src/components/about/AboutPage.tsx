@@ -195,213 +195,397 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onGetStarted
 
           {/* Creators Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-            {/* Creator 1 - Angela Cortes */}
-            <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
-              <div className="text-center mb-6">
-                <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-teal-500/20 to-blue-500/20 flex items-center justify-center">
-                  <div className="w-24 h-24 rounded-full bg-teal-500/30 flex items-center justify-center">
-                    <span className="text-2xl font-bold text-teal-400">AC</span>
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold mb-2">Angela Cortes</h3>
-                <p className="text-teal-400 mb-4">Lead Developer</p>
-                <a
-                  href="https://www.linkedin.com/in/angela-cortes-pabon/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm"
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                  </svg>
-                  LinkedIn
-                </a>
-              </div>
-              <div className="space-y-4 text-sm text-gray-300">
-                <div>
-                  <h4 className="font-semibold text-white mb-2">Bio</h4>
-                  <p className="leading-relaxed">
-                    [Add Angela's bio here - passion for civic tech, background, what drives her work]
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-white mb-2">Experience</h4>
-                  <p className="leading-relaxed">
-                    [Add professional experience and key achievements]
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-white mb-2">Education</h4>
-                  <p className="leading-relaxed">
-                    Dallas AI Summer Bootcamp, [Add other education details]
-                  </p>
-                </div>
-              </div>
-            </div>
+            {/* Creator 1 - Matt Dorsey */}
+  <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
+    <div className="text-center mb-6">
+      <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-teal-500/20 to-blue-500/20 flex items-center justify-center overflow-hidden">
+        <img
+          src="/Mattprofile.jpeg"
+          alt="Matt Dorsey"
+          className="w-full h-full object-cover rounded-full"
+          onError={(e) => {
+            // Fallback to initials if image fails to load
+            const target = e.target as HTMLImageElement;
+            const fallback = target.nextElementSibling as HTMLElement;
+            target.style.display = 'none';
+            if (fallback) {
+              fallback.style.display = 'flex';
+            }
+          }}
+        />
+        <div className="w-24 h-24 rounded-full bg-teal-500/30 flex items-center justify-center hidden">
+          <span className="text-2xl font-bold text-teal-400">MD</span>
+        </div>
+      </div>
+      <h3 className="text-xl font-bold mb-2">Matt Dorsey</h3>
+      <p className="text-teal-400 mb-4">Lead - Developer</p>
+      <a
+        href="https://www.linkedin.com/in/rmdorsey/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm"
+      >
+        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+        LinkedIn
+      </a>
+    </div>
+    <div className="space-y-4 text-sm text-gray-300">
+      <div>
+        <h4 className="font-semibold text-white mb-2">Bio</h4>
+        <p className="leading-relaxed text-justify">
+          Matt Dorsey is a civic tech innovator passionate about using software to make government systems more transparent and accessible. With over a decade of experience in full-stack development and cybersecurity, including roles at AT&T, Sally Beauty, and the Oklahoma Supreme Court. Matt bridges deep technical expertise with a commitment to public service. He thrives at the intersection of data, law, and AI, building tools that empower citizens and modernize institutions.
+        </p>
+      </div>
+      <div>
+        <h4 className="font-semibold text-white mb-2">Experience</h4>
+        <p className="leading-relaxed">
+         <ul className="list-disc pl-5 space-y-4">
+      <li>
+        <strong>Senior Application Developer</strong> – Oklahoma Supreme Court (Jan 2025 – Present)
+        <br />
+        Enhancing and modernizing judicial technology across the full tech stack.
+      </li>
+      <li>
+        <strong>Senior Full Stack Developer</strong> – Sally Beauty (Dec 2022 – Jun 2024)
+        <br />
+        Developed scalable APIs and Angular frontends. Optimized SQL procedures and cloud deployment using Azure.
+      </li>
+      <li>
+        <strong>Full Stack Developer</strong> – Design Patent Pro (Dec 2021 – Dec 2022)
+        <br />
+        Built AI-powered IP tools using Azure Form Recognizer, Cognitive Search, Angular, and NGRX.
+      </li>
+      <li>
+        <strong>Principal, Technology Security</strong> – AT&T (Jan 2020 – Sep 2021)
+        <br />
+        Led cyber analytics dashboards using Splunk and mentored new UI/UX developers.
+      </li>
+      <li>
+        <strong>Lead UI/UX Developer</strong> – AT&T (Nov 2017 – Jan 2020)
+        <br />
+        Migrated monolith apps into micro-frontends and interviewed full-stack candidates.
+      </li>
+      <li>
+        <strong>Full Stack Developer</strong> – AT&T Partner Solutions (Dec 2015 – May 2017)
+        <br />
+        Built internal/external buy-flow applications and acted as scrum master across teams.
+      </li>
+      <li>
+        <strong>Web Developer & Sr. Training Manager</strong> – AT&T Learning Services (Apr 2011 – Dec 2015)
+        <br />
+        Built training portals and custom feedback tools; promoted from contractor to full-time.
+      </li>
+    </ul>
 
-            {/* Creator 2 */}
-            <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
-              <div className="text-center mb-6">
-                <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
-                  <div className="w-24 h-24 rounded-full bg-blue-500/30 flex items-center justify-center">
-                    <span className="text-2xl font-bold text-blue-400">[XX]</span>
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold mb-2">[Creator 2 Name]</h3>
-                <p className="text-blue-400 mb-4">[Role/Title]</p>
-                <a
-                  href="[LinkedIn URL]"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm"
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                  </svg>
-                  LinkedIn
-                </a>
-              </div>
-              <div className="space-y-4 text-sm text-gray-300">
-                <div>
-                  <h4 className="font-semibold text-white mb-2">Bio</h4>
-                  <p className="leading-relaxed">
-                    [Add Creator 2's bio here]
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-white mb-2">Experience</h4>
-                  <p className="leading-relaxed">
-                    [Add professional experience and key achievements]
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-white mb-2">Education</h4>
-                  <p className="leading-relaxed">
-                    Dallas AI Summer Bootcamp, [Add other education details]
-                  </p>
-                </div>
-              </div>
-            </div>
+        </p>
+      </div>
+      <div>
+        <h4 className="font-semibold text-white mb-2">Education</h4>
+        <p className="leading-relaxed">
+          <ul className="list-disc pl-5 space-y-4">
+      <li>
+        <strong>University of Texas at Dallas</strong>
+        <br />
+        M.S. Software Engineering (Expected May 2025)
+        <br />
+        <span>Focus: Machine Learning, NLP, Big Data, Generative AI</span>
+        <br />
+        <span>GPA: 3.75</span>
+      </li>
+      <li>
+        <strong>Dallas AI Summer Bootcamp 2025</strong>
+        <br />
+        Project: Legislative Bill Analyzer & Agentic RAG Q&A Chatbot
+        <br />
+        <span>Tools: FastAPI, LangChain, LangGraph, Ollama</span>
+      </li>
+    </ul>
+        </p>
+      </div>
+    </div>
+  </div>
 
-            {/* Creator 3 */}
-            <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
-              <div className="text-center mb-6">
-                <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
-                  <div className="w-24 h-24 rounded-full bg-purple-500/30 flex items-center justify-center">
-                    <span className="text-2xl font-bold text-purple-400">[XX]</span>
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold mb-2">[Creator 3 Name]</h3>
-                <p className="text-purple-400 mb-4">[Role/Title]</p>
-                <a
-                  href="[LinkedIn URL]"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm"
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                  </svg>
-                  LinkedIn
-                </a>
-              </div>
-              <div className="space-y-4 text-sm text-gray-300">
-                <div>
-                  <h4 className="font-semibold text-white mb-2">Bio</h4>
-                  <p className="leading-relaxed">
-                    [Add Creator 3's bio here]
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-white mb-2">Experience</h4>
-                  <p className="leading-relaxed">
-                    [Add professional experience and key achievements]
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-white mb-2">Education</h4>
-                  <p className="leading-relaxed">
-                    Dallas AI Summer Bootcamp, [Add other education details]
-                  </p>
-                </div>
-              </div>
-            </div>
+             {/* Creator 2 - Angela Cortes */}
+  <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
+    <div className="text-center mb-6">
+      <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-teal-500/20 to-blue-500/20 flex items-center justify-center overflow-hidden">
+        <img
+          src="/Angelaprofile.png"
+          alt="Angela Cortes"
+          className="w-full h-full object-cover rounded-full"
+          onError={(e) => {
+            // Fallback to initials if image fails to load
+            const target = e.target as HTMLImageElement;
+            const fallback = target.nextElementSibling as HTMLElement;
+            target.style.display = 'none';
+            if (fallback) {
+              fallback.style.display = 'flex';
+            }
+          }}
+        />
+        <div className="w-24 h-24 rounded-full bg-teal-500/30 flex items-center justify-center hidden">
+          <span className="text-2xl font-bold text-teal-400">MD</span>
+        </div>
+      </div>
+      <h3 className="text-xl font-bold mb-2">Angela Cortes</h3>
+      <p className="text-teal-400 mb-4">Developer - QA</p>
+      <a
+        href="https://www.linkedin.com/in/angela-cortes-pabon/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm"
+      >
+        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+        LinkedIn
+      </a>
+    </div>
+    <div className="space-y-4 text-sm text-gray-300">
+      <div>
+        <h4 className="font-semibold text-white mb-2">Bio</h4>
+        <p className="leading-relaxed text-justify">
+           Angela Cortes is a QA and Digital Transformation Leader focused on integrating AI into quality assurance, automation, and DevOps workflows. With over a decade of experience leading cross-functional QA teams in global organizations like Citibank and MiningTag, she blends technical expertise with a passion for community building, innovation, and mentorship. Angela is actively researching AI-assisted testing strategies and building open-source frameworks to redefine the future of software quality.
+        </p>
+      </div>
+      <div>
+        <h4 className="font-semibold text-white mb-2">Experience</h4>
+        <p className="leading-relaxed">
+          <ul className="list-disc pl-5 space-y-4">
+      <li>
+        <strong>Quality Assurance Test Lead</strong> – Citibank, Chile (Feb 2023 – Jul 2024)
+        <br />
+        Led BDD automation and Agile transformation efforts, improving release cycles and onboarding efficiency.
+      </li>
+      <li>
+        <strong>QA Test Lead (Contractor)</strong> – Tata Consultancy Services at Citibank (Aug 2021 – May 2023)
+        <br />
+        Spearheaded LATAM-wide automation strategy with Selenium and Java; boosted global team alignment and delivery.
+      </li>
+      <li>
+        <strong>QA Test Lead</strong> – Mining Tag, Chile (Sep 2019 – Aug 2021)
+        <br />
+        Established QA/DevOps practices from scratch, integrated CI/CD, and improved code quality with SonarQube.
+      </li>
+      <li>
+        <strong>QA Analyst</strong> – Surecomp, Chile (Oct 2017 – Sep 2019)
+        <br />
+        Introduced test automation and centralized case management to increase efficiency and reduce regressions.
+      </li>
+      <li>
+        <strong>Functional Analyst</strong> – Cardiovascular Foundation of Colombia (Jan 2014 – Jan 2017)
+        <br />
+        Managed documentation and QA for healthcare systems; led HL7-based integrations with robotic pharmacy systems.
+      </li>
+    </ul>
+        </p>
+      </div>
+      <div>
+        <h4 className="font-semibold text-white mb-2">Education</h4>
+        <p className="leading-relaxed">
+           <ul className="list-disc pl-5 space-y-4">
+      <li>
+        <strong>Master in Information Technology</strong> – University of Chile, Chile
+      </li>
+      <li>
+        <strong>Bachelor in Telecommunications Engineering</strong> – Santo Tomas University, Colombia
+      </li>
+      <li>
+        <strong>Certifications:</strong>
+        <ul className="list-disc pl-5 mt-1 space-y-1">
+          <li>AI-Driven Testing and Automation – The Test Tribe</li>
+          <li>Commercial Management of Telecom Projects – Santo Tomas University</li>
+          <li>ITIL Foundation</li>
+          <li>Leadership (Agile, CX, Digital Transformation) – Eclass, Chile</li>
+          <li>Selenium XPath/CSS/Locators – Coursera</li>
+        </ul>
+      </li>
+    </ul>
+        </p>
+      </div>
+    </div>
+  </div>
+            {/* Creator 3 - Aksh */}
+  <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
+    <div className="text-center mb-6">
+      <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-teal-500/20 to-blue-500/20 flex items-center justify-center overflow-hidden">
+        <img
+          src="/Akshanthmprofile.webp"
+          alt="Akshanth (Ash) Mamidala"
+          className="w-full h-full object-cover rounded-full"
+          onError={(e) => {
+            // Fallback to initials if image fails to load
+            const target = e.target as HTMLImageElement;
+            const fallback = target.nextElementSibling as HTMLElement;
+            target.style.display = 'none';
+            if (fallback) {
+              fallback.style.display = 'flex';
+            }
+          }}
+        />
+        <div className="w-24 h-24 rounded-full bg-teal-500/30 flex items-center justify-center hidden">
+          <span className="text-2xl font-bold text-teal-400">MD</span>
+        </div>
+      </div>
+      <h3 className="text-xl font-bold mb-2">Akshanth (Ash) Mamidala</h3>
+      <p className="text-teal-400 mb-4">Developer</p>
+      <a
+        href="https://www.linkedin.com/in/akshanthm/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm"
+      >
+        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+        LinkedIn
+      </a>
+    </div>
+    <div className="space-y-4 text-sm text-gray-300">
+      <div>
+        <h4 className="font-semibold text-white mb-2">Bio</h4>
+        <p className="leading-relaxed text-justify">
+          Akshanth Mamidala is a passionate software engineer with a Master’s in Computer Science from Missouri S&T. He focuses on building AI-driven applications, web tools, and data solutions that solve real-world problems. Akshanth enjoys exploring emerging technologies and contributing to open-source projects.
+        </p>
+      </div>
+      <div>
+        <h4 className="font-semibold text-white mb-2">Experience</h4>
+        <p className="leading-relaxed">
+          <ul className="list-disc pl-5 space-y-4">
+    <li>
+      <strong>System Support Analyst</strong> – Missouri S&T (May 2023 – Apr 2024)
+      <br />
+      Improved IT operations by 25% through process documentation and system optimization. Delivered support for Windows, macOS, and Linux environments, managed cloud backups, and resolved issues using remote diagnostics and help desk tools like Cherwell.
+    </li>
+  </ul>
+        </p>
+      </div>
+      <div>
+        <h4 className="font-semibold text-white mb-2">Education</h4>
+        <p className="leading-relaxed">
+          <ul className="list-disc pl-5 space-y-4">
+    <li>
+      <strong>Belhaven University</strong> – M.S. Information Technology Management (Aug 2025 expected)
+      <br />
+      Focus: Project Management, Disaster Recovery, Financial Analysis<br />
+      GPA: 3.3/4
+    </li>
+    <li>
+      <strong>Missouri University of Science and Technology</strong> – M.S. Computer Science (May 2024)
+      <br />
+      Focus: Database Systems, Machine Learning, Cloud and Big Data<br />
+      GPA: 3.4/4
+    </li>
+    <li>
+      <strong>Keshav Memorial Institute of Technology</strong> – B.Tech in Computer Science (May 2022)
+      <br />
+      Focus: Algorithms, Java, Web Technologies<br />
+      GPA: 3.2/4
+    </li>
+    <li>
+      <strong>Certifications</strong>
+      <ul className="list-disc pl-5 mt-1 space-y-1">
+        <li>AWS Certified Cloud Practitioner – Issued May 2025</li>
+        <li>AWS Certified Solutions Architect – Associate (Expected Aug 2025)</li>
+        <li>AWS Certified AI Practitioner (Expected Aug 2025)</li>
+        <li>Certified Dell Technician – Issued Dec 2023</li>
+      </ul>
+    </li>
+  </ul>
+        </p>
+      </div>
+    </div>
+  </div>
           </div>
         </div>
       </section>
 
       {/* Meet the Leader Section */}
       <section className="py-16 border-t border-gray-800">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="text-center mb-16">
-            {/* Badge */}
-            <div className="mb-8">
-              <div className="inline-flex items-center gap-2 rounded-full border border-gray-800 bg-gray-900/50 px-4 py-2 text-sm">
-                <div className="h-2 w-2 rounded-full bg-amber-400"></div>
-                <span className="text-gray-300">Meet the Leader</span>
+  <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <div className="text-center mb-16">
+      {/* Badge */}
+      <div className="mb-8">
+        <div className="inline-flex items-center gap-2 rounded-full border border-gray-800 bg-gray-900/50 px-4 py-2 text-sm">
+          <div className="h-2 w-2 rounded-full bg-blue-400"></div>
+          <span className="text-gray-300">Meet the Leader</span>
+        </div>
+      </div>
+      <h2 className="text-4xl md:text-5xl font-bold mb-6">
+        Our
+        <span className="text-blue-400"> Guiding Force</span>
+      </h2>
+      <p className="text-xl text-gray-400 leading-relaxed max-w-3xl mx-auto">
+        The visionary mentor who guided our team through the Dallas AI Summer Bootcamp journey.
+      </p>
+    </div>
+
+    {/* Leader Profile */}
+    <div className="max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        {/* Leader Image */}
+        <div className="lg:col-span-1">
+          <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8 text-center">
+            <div className="w-48 h-48 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-500/20 to-teal-500/20 flex items-center justify-center overflow-hidden">
+              <img
+                src="/Anilprofile.jpeg"
+                alt="Leader Name"
+                className="w-full h-full object-cover rounded-full"
+                onError={(e) => {
+                  // Fallback to initials if image fails to load
+                  const target = e.target as HTMLImageElement;
+                  const fallback = target.nextElementSibling as HTMLElement;
+                  target.style.display = 'none';
+                  if (fallback) {
+                    fallback.style.display = 'flex';
+                  }
+                }}
+              />
+              <div className="w-32 h-32 rounded-full bg-blue-500/30 flex items-center justify-center hidden">
+                <span className="text-4xl font-bold text-blue-400">[XX]</span>
               </div>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Our
-              <span className="text-amber-400"> Guiding Force</span>
-            </h2>
-            <p className="text-xl text-gray-400 leading-relaxed max-w-3xl mx-auto">
-              The visionary leader who guided our team through the Dallas AI Summer Bootcamp journey.
-            </p>
-          </div>
-
-          {/* Leader Profile */}
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-              {/* Leader Image */}
-              <div className="lg:col-span-1">
-                <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8 text-center">
-                  <div className="w-48 h-48 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
-                    <div className="w-32 h-32 rounded-full bg-amber-500/30 flex items-center justify-center">
-                      <span className="text-4xl font-bold text-amber-400">[XX]</span>
-                    </div>
-                  </div>
-                  <h3 className="text-2xl font-bold mb-2">[Leader Name]</h3>
-                  <p className="text-amber-400 mb-4">[Leader Title/Role]</p>
-                  <div className="flex justify-center">
-                    <a
-                      href="[LinkedIn URL]"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-                    >
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                      </svg>
-                      LinkedIn Profile
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              {/* Leader Bio Content */}
-              <div className="lg:col-span-2 space-y-8">
-                <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
-                  <h2 className="text-3xl font-bold mb-6 text-amber-400">Leadership & Vision</h2>
-                  <div className="space-y-4 text-gray-300 leading-relaxed">
-                    <p>
-                      [Add leader's bio here - their vision, leadership philosophy, and how they guided the team]
-                    </p>
-                    <p>
-                      [Include their role in the Dallas AI Summer Bootcamp and how they mentored the team]
-                    </p>
-                    <p>
-                      [Add what makes them an exceptional leader and their contribution to the project]
-                    </p>
-                  </div>
-                </div>
-
-
-              </div>
+            <h3 className="text-2xl font-bold mb-2">Anil Pantangi</h3>
+            <p className="text-blue-400 mb-4">Mentor - Delivery Executive, AI and Analytics @ Capgemini </p>
+            <div className="flex justify-center">
+              <a
+                href="https://www.linkedin.com/in/anilkpantangi/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+                LinkedIn Profile
+              </a>
             </div>
           </div>
         </div>
-      </section>
+
+        {/* Leader Bio Content */}
+        <div className="lg:col-span-2 space-y-8">
+          <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
+            <h2 className="text-3xl font-bold mb-6 text-blue-400">Leadership & Vision</h2>
+            <div className="space-y-4 text-gray-300 leading-relaxed">
+              <p>
+                Award-winning leader with 15+ year's experience in product, technology, and AI, managing large-scale enterprise platforms and consumer-grade products.
+              </p>
+              <p>
+                Expertise in AI/ML-drive automation, predictive analytics, and solution architecture, focused on driving business growth and innovation.
+              </p>
+              <p>
+               His leadership stands out for being both strategic and empowering, always guiding us with clarity while giving us the space to grow. He brought deep technical insight to our project, helping us align our architecture with real-world use cases, and encouraged thoughtful collaboration within the team. Thanks to his support, we stayed focused, confident, and committed to delivering meaningful results.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Contact Section */}
       <section className="py-16 border-t border-gray-800">
@@ -416,25 +600,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onBackToHome, onGetStarted
           <p className="text-xl text-gray-400 mb-12">
             Interested in collaborating or learning more about civic tech? I'd love to hear from you.
           </p>
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-            <a
-              href="https://www.linkedin.com/in/angela-cortes-pabon/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-full text-lg font-semibold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-              </svg>
-              Connect on LinkedIn
-            </a>
-            <button
-              onClick={onBackToHome}
-              className="px-8 py-4 border border-gray-600 rounded-full text-lg font-semibold hover:border-gray-400 transition-colors"
-            >
-              Back to LegislAItive
-            </button>
-          </div>
+
         </div>
       </section>
 
