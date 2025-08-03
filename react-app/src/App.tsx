@@ -95,7 +95,9 @@ const MainApp: React.FC = () => {
           ) : isAuthenticated ? (
             <Navigate to="/mainchat" replace />
           ) : (
-            <AboutPage onBackToHome={handleBackToHome} />
+            <AboutPage onBackToHome={handleBackToHome}
+            onGetStarted={handleGetStarted}
+              onAboutClick={handleAboutClick}/>
           )
         }
       />
