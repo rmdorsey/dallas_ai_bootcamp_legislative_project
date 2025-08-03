@@ -223,7 +223,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
       </section>
 
       {/* Problem Section */}
-      <section id="problem" className="py-32 border-t border-gray-800">
+      <section id="problem" className="py-16 border-t border-gray-800">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -321,8 +321,303 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
         </div>
       </section>
 
+      {/* Customer Journey Section */}
+<section id="customer-journey" className="py-16 border-t border-gray-800">
+  <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <div className="mx-auto max-w-4xl text-center mb-20">
+      <h2 className="text-4xl md:text-5xl font-bold mb-6">
+        From
+        <span className="text-red-400"> Outrage</span> to
+        <span className="text-teal-400"> Action</span>
+      </h2>
+      <p className="text-xl text-gray-400 leading-relaxed">
+        Follow Alex's journey from discovering taxpayer-funded lobbying to becoming
+        an effective civic advocate in just days.
+      </p>
+    </div>
 
-      <section id="features" className="py-32 border-t border-gray-800">
+    {/* Journey Timeline - Horizontal */}
+    <div className="relative overflow-x-auto pb-8">
+      {/* Central Timeline Line */}
+      <div className="absolute top-24 left-0 right-0 h-1 bg-gradient-to-r from-red-500 via-yellow-500 to-teal-500 rounded-full opacity-60"></div>
+
+      {/* Journey Steps - Horizontal Layout */}
+      <div className="flex gap-8 min-w-max px-4">
+
+        {/* Step 1: Discovery & Frustration */}
+        <div className="relative flex-shrink-0 w-80">
+          <div className="text-center">
+            {/* Timeline Node */}
+            <div className="relative w-16 h-16 bg-red-500/20 border-4 border-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-6 h-6 bg-red-500 rounded-full animate-pulse"></div>
+            </div>
+
+            <div className="inline-flex items-center gap-2 bg-red-500/20 border border-red-500/30 rounded-full px-4 py-2 mb-4">
+              <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+              <span className="text-red-300 font-semibold">The Problem</span>
+            </div>
+
+            <h3 className="text-xl font-bold mb-4">Discovery & Frustration</h3>
+            <p className="text-gray-400 leading-relaxed mb-6 text-sm">
+              Alex discovers their tax dollars are funding city lobbying efforts they disagree with.
+              Feeling betrayed and powerless, they ask: "What can I possibly do about this?"
+            </p>
+
+            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
+                  <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.732 15.5c-.77.833.192 2.5 1.732 2.5z"/>
+                  </svg>
+                </div>
+                <span className="font-semibold text-red-300 text-sm">Civic Frustration</span>
+              </div>
+              <p className="text-xs text-gray-300 italic">
+                "My own tax dollars are being used against my interests. There has to be something I can do..."
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Step 2: Finding Representatives */}
+        <div className="relative flex-shrink-0 w-80">
+          <div className="text-center">
+            {/* Timeline Node */}
+            <div className="relative w-16 h-16 bg-orange-500/20 border-4 border-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+
+            <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-2 mb-4">
+              <div className="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
+              <span className="text-orange-300 font-semibold">Step 1-2</span>
+            </div>
+
+            <h3 className="text-xl font-bold mb-4">Find Representatives</h3>
+            <p className="text-gray-400 leading-relaxed mb-6 text-sm">
+              Alex asks the chatbot: "Who is my state representative?" In seconds, they learn about
+              <strong className="text-white"> Meredith Hayes</strong> and get complete contact information.
+            </p>
+
+            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-teal-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                  <span className="text-xs font-bold text-teal-400">AI</span>
+                </div>
+                <div className="text-left">
+                  <p className="text-xs text-gray-300 mb-2">
+                    "Your Texas House representative is <strong>Meredith Hayes</strong>."
+                  </p>
+                  <div className="bg-gray-800/50 rounded-lg p-2 text-xs">
+                    <div className="space-y-1 text-gray-400">
+                      <div>📞 (512) 463-0486</div>
+                      <div>📧 meredith.hayes@house...</div>
+                      <div>🏛️ Capitol Office: 1N.3</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Step 3: Finding Solutions */}
+        <div className="relative flex-shrink-0 w-80">
+          <div className="text-center">
+            {/* Timeline Node */}
+            <div className="relative w-16 h-16 bg-yellow-500/20 border-4 border-yellow-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+
+            <div className="inline-flex items-center gap-2 bg-yellow-500/20 border border-yellow-500/30 rounded-full px-4 py-2 mb-4">
+              <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+              <span className="text-yellow-300 font-semibold">Step 3-4</span>
+            </div>
+
+            <h3 className="text-xl font-bold mb-4">Find Solutions</h3>
+            <p className="text-gray-400 leading-relaxed mb-6 text-sm">
+              Alex discovers <strong className="text-white">Senate Bill 19</strong> that addresses taxpayer-funded lobbying.
+              The chatbot translates complex legal language into plain English.
+            </p>
+
+            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                  <svg className="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                </div>
+                <span className="font-semibold text-yellow-300">Senate Bill 19</span>
+              </div>
+              <p className="text-xs text-gray-300">
+                "This bill prohibits local governments from using taxpayer funds for lobbying activities.
+                Here's what it means for Dallas residents..."
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Step 4: Building the Case */}
+        <div className="relative flex-shrink-0 w-80">
+          <div className="text-center">
+            {/* Timeline Node */}
+            <div className="relative w-16 h-16 bg-green-500/20 border-4 border-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+
+            <div className="inline-flex items-center gap-2 bg-green-500/20 border border-green-500/30 rounded-full px-4 py-2 mb-4">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-green-300 font-semibold">Step 5-6</span>
+            </div>
+
+            <h3 className="text-xl font-bold mb-4">Build the Case</h3>
+            <p className="text-gray-400 leading-relaxed mb-6 text-sm">
+              The chatbot provides compelling arguments and identifies the
+              <strong className="text-white"> Policy Advocates Foundation</strong> as an ally.
+              Alex discovers specific Dallas examples affecting property taxes.
+            </p>
+
+            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                  <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857"/>
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <p className="text-xs text-gray-300 mb-2">
+                    <strong>Dallas impact:</strong> City lobbying for real estate disclosure could raise tax bills.
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    <strong>Ally:</strong> Policy Advocates Foundation
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Step 5: The Meeting Success */}
+        <div className="relative flex-shrink-0 w-80">
+          <div className="text-center">
+            {/* Timeline Node */}
+            <div className="relative w-16 h-16 bg-blue-500/20 border-4 border-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
+              </svg>
+            </div>
+
+            <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-500/30 rounded-full px-4 py-2 mb-4">
+              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+              <span className="text-blue-300 font-semibold">The Meeting</span>
+            </div>
+
+            <h3 className="text-xl font-bold mb-4">Successful Meeting</h3>
+            <p className="text-gray-400 leading-relaxed mb-6 text-sm">
+              Armed with research and solutions, Alex meets Representative Hayes.
+              The meeting transforms from constituent complaint to valuable collaboration.
+            </p>
+
+            <div className="bg-gray-900/50 border border-blue-800/50 rounded-xl p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                  <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01"/>
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <p className="text-xs text-blue-200 font-medium mb-1">Rep. Hayes:</p>
+                  <p className="text-xs text-gray-300 italic">
+                    "This is incredibly helpful. I'm impressed with how well you know this issue."
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Step 6: Taking Action */}
+        <div className="relative flex-shrink-0 w-80">
+          <div className="text-center">
+            {/* Timeline Node */}
+            <div className="relative w-16 h-16 bg-teal-500/20 border-4 border-teal-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+              </svg>
+            </div>
+
+            <div className="inline-flex items-center gap-2 bg-teal-500/20 border border-teal-500/30 rounded-full px-4 py-2 mb-4">
+              <div className="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></div>
+              <span className="text-teal-300 font-semibold">Taking Action</span>
+            </div>
+
+            <h3 className="text-xl font-bold mb-4">Civic Advocate</h3>
+            <p className="text-gray-400 leading-relaxed mb-6 text-sm">
+              Energized by success, Alex finds upcoming committee hearings to provide testimony.
+              In just days, they've transformed from powerless taxpayer to effective civic advocate.
+            </p>
+
+            <div className="bg-gradient-to-r from-teal-500/10 to-blue-500/10 border border-teal-500/30 rounded-xl p-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 bg-teal-500/20 rounded-full flex items-center justify-center">
+                  <svg className="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
+                <span className="font-semibold text-teal-300 text-sm">Complete</span>
+              </div>
+              <p className="text-xs text-gray-300">
+                <strong>Result:</strong> From frustrated taxpayer to informed advocate with action plan and testimony opportunity.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    {/* Journey Summary */}
+    <div className="mt-20 text-center">
+      <div className="bg-gradient-to-r from-gray-900 to-black border border-gray-800 rounded-2xl p-8 lg:p-12">
+        <h3 className="text-2xl md:text-3xl font-bold mb-6">
+          The Power of
+          <span className="text-teal-400"> Informed Civic Engagement</span>
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div className="text-center">
+            <div className="text-3xl font-bold text-teal-400 mb-2">Days</div>
+            <p className="text-gray-400">Time to become an effective advocate</p>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-blue-400 mb-2">6</div>
+            <p className="text-gray-400">Steps from frustration to action</p>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-green-400 mb-2">1</div>
+            <p className="text-gray-400">Empowered citizen ready for change</p>
+          </div>
+        </div>
+        <p className="text-lg text-gray-300 max-w-3xl mx-auto">
+          This isn't just Alex's story—it's the blueprint for how AI-powered civic tools can transform
+          any concerned citizen into an effective advocate for change.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+        {/* Section features */}
+      <section id="features" className="py-16 border-t border-gray-800">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -418,7 +713,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-32 border-t border-gray-800">
+      <section id="how-it-works" className="py-16 border-t border-gray-800">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -462,7 +757,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
       </section>
 
       {/* Solution Section */}
-    <section id="solution" className="py-32 border-t border-gray-800">
+    <section id="solution" className="py-16 border-t border-gray-800">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="mx-auto max-w-4xl text-center mb-20">
                 <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -736,124 +1031,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                 </div>
             </div>
 
-            {/* NEW: Chunk Testing Framework Details */}
-            <div className="mt-20">
-                <div className="text-center mb-12">
-                    <h3 className="text-2xl md:text-3xl font-semibold mb-4">Chunk Testing Framework</h3>
-                    <p className="text-gray-400 max-w-3xl mx-auto">
-                        Our comprehensive testing framework evaluates different chunking strategies to optimize
-                        retrieval performance for legislative documents and civic data.
-                    </p>
-                </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-                    {/* Chunking Strategies */}
-                    <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
-                        <h4 className="text-xl font-semibold text-cyan-300 mb-6 flex items-center gap-2">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                            </svg>
-                            Chunking Strategies
-                        </h4>
-                        <div className="space-y-4">
-                            <div className="p-4 rounded-lg border border-cyan-500/20 bg-cyan-500/5">
-                                <h5 className="font-medium text-cyan-200 mb-2">Plank-Structured</h5>
-                                <p className="text-sm text-gray-400">Preserves document hierarchy with custom PDF preprocessing for political platforms and resolutions.</p>
-                            </div>
-                            <div className="p-4 rounded-lg border border-cyan-500/20 bg-cyan-500/5">
-                                <h5 className="font-medium text-cyan-200 mb-2">Paragraph-Based</h5>
-                                <p className="text-sm text-gray-400">Splits content by paragraph boundaries for natural semantic groupings.</p>
-                            </div>
-                            <div className="p-4 rounded-lg border border-cyan-500/20 bg-cyan-500/5">
-                                <h5 className="font-medium text-cyan-200 mb-2">N-Sentence Chunking</h5>
-                                <p className="text-sm text-gray-400">Groups content by sentence count (3-sentence default) for consistent context windows.</p>
-                            </div>
-                            <div className="p-4 rounded-lg border border-cyan-500/20 bg-cyan-500/5">
-                                <h5 className="font-medium text-cyan-200 mb-2">Token-Based</h5>
-                                <p className="text-sm text-gray-400">Fixed token limits using BERT tokenization for embedding model compatibility.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Evaluation Metrics */}
-                    <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
-                        <h4 className="text-xl font-semibold text-orange-300 mb-6 flex items-center gap-2">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                            Evaluation Metrics
-                        </h4>
-                        <div className="space-y-4">
-                            <div className="p-4 rounded-lg border border-orange-500/20 bg-orange-500/5">
-                                <h5 className="font-medium text-orange-200 mb-2">Chunk Recall</h5>
-                                <p className="text-sm text-gray-400">Measures how well the system retrieves relevant document chunks for given queries.</p>
-                            </div>
-                            <div className="p-4 rounded-lg border border-orange-500/20 bg-orange-500/5">
-                                <h5 className="font-medium text-orange-200 mb-2">Answer F1 Score</h5>
-                                <p className="text-sm text-gray-400">Evaluates precision and recall of generated answers against ground truth responses.</p>
-                            </div>
-                            <div className="p-4 rounded-lg border border-orange-500/20 bg-orange-500/5">
-                                <h5 className="font-medium text-orange-200 mb-2">Faithfulness</h5>
-                                <p className="text-sm text-gray-400">Ensures generated responses remain grounded in retrieved source material.</p>
-                            </div>
-                            <div className="p-4 rounded-lg border border-orange-500/20 bg-orange-500/5">
-                                <h5 className="font-medium text-orange-200 mb-2">Execution Time</h5>
-                                <p className="text-sm text-gray-400">Tracks processing speed for real-time performance optimization.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Framework Architecture */}
-                <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8">
-                    <h4 className="text-xl font-semibold text-purple-300 mb-6 text-center">Framework Architecture</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div className="text-center">
-                            <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                            </div>
-                            <h5 className="font-semibold mb-2">Data Loader</h5>
-                            <p className="text-sm text-gray-400">Processes legislative PDFs and documents with custom preprocessing</p>
-                        </div>
-                        <div className="text-center">
-                            <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                </svg>
-                            </div>
-                            <h5 className="font-semibold mb-2">Embeddings</h5>
-                            <p className="text-sm text-gray-400">SentenceTransformers with cosine similarity for semantic retrieval</p>
-                        </div>
-                        <div className="text-center">
-                            <div className="w-16 h-16 bg-yellow-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <svg className="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                                </svg>
-                            </div>
-                            <h5 className="font-semibold mb-2">Evaluation</h5>
-                            <p className="text-sm text-gray-400">Comprehensive metrics with ground truth comparison and benchmarking</p>
-                        </div>
-                        <div className="text-center">
-                            <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
-                                </svg>
-                            </div>
-                            <h5 className="font-semibold mb-2">Analytics</h5>
-                            <p className="text-sm text-gray-400">Performance logging and strategy comparison for optimization</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
 
 
       {/* CTA Section */}
-      <section className="py-32 border-t border-gray-800">
+      <section className="py-16 border-t border-gray-800">
         <div className="mx-auto max-w-4xl px-6 lg:px-8 text-center">
           <h2 className="text-4xl md:text-6xl font-bold mb-8">
             Ready to Transform Your
