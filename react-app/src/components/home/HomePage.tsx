@@ -135,7 +135,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
             {/* Subtitle */}
             <p className="mb-12 text-xl md:text-2xl text-gray-400 leading-relaxed max-w-3xl mx-auto">
               Transform complex legislation into clear insights with AI-powered analysis.
-              Find your representatives, understand bills, and make your voice heard in democracy.
+              Find your representatives, understand bills, and make your voice heard.
             </p>
 
             {/* Interactive Demo Preview */}
@@ -316,7 +316,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                     </svg>
                   </div>
                   <h4 className="font-semibold mb-2 text-gray-400">High Barriers to Action</h4>
-                  <p className="text-gray-400 text-sm">People face overwhelming obstacles and rationally disengage from the democratic process.</p>
+                  <p className="text-gray-400 text-sm">People face overwhelming obstacles and rationally disengage from the civic process.</p>
                 </div>
               </div>
             </div>
@@ -329,8 +329,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
   <div className="mx-auto max-w-7xl px-4 lg:px-8">
     <div className="mx-auto max-w-4xl text-center mb-12">
       <h2 className="text-3xl md:text-4xl font-bold mb-4">
-        Meet
-        <span className="text-teal-400"> Alex's</span> Journey
+        Alex
+        <span className="text-teal-400"> Civic</span> Journey
       </h2>
       <p className="text-lg text-gray-400 leading-relaxed">
         Follow Alex's journey from discovering taxpayer-funded lobbying to becoming
@@ -395,7 +395,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
           <h3 className="text-lg font-bold mb-3">Find Representatives</h3>
           <p className="text-gray-400 leading-relaxed mb-4 text-sm">
             Alex asks the chatbot: "Who is my state representative?" In seconds, they learn about
-            <strong className="text-white"> Meredith Hayes</strong> and get complete contact information.
+            <strong className="text-white"> Nate Schatzline</strong> and get their complete contact information.
           </p>
 
           <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-3">
@@ -405,15 +405,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
               </div>
               <div className="text-left">
                 <p className="text-xs text-gray-300 mb-2">
-                  "Your Texas House representative is <strong>Meredith Hayes</strong>."
+                  "Your Texas House Representative is <strong>Nate Schatzline</strong> a Republican representing Texas House of Representatives district 93. He can be contacted at P.O. Box 2910, Room E1.410, Austin, TX 78768 or (512) 463-0562."
                 </p>
-                <div className="bg-gray-800/50 rounded-lg p-2 text-xs">
-                  <div className="space-y-1 text-gray-400">
-                    <div>📞 (512) 463-0486</div>
-                    <div>📧 meredith.hayes@house...</div>
-                    <div>🏛️ Capitol Office: 1N.3</div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -437,7 +430,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
 
           <h3 className="text-lg font-bold mb-3">Find Solutions</h3>
           <p className="text-gray-400 leading-relaxed mb-4 text-sm">
-            Alex discovers <strong className="text-white">Senate Bill 19</strong> that addresses taxpayer-funded lobbying.
+            Alex discovers <strong className="text-white">House Bill 94</strong> that addresses taxpayer-funded lobbying.
             The chatbot translates complex legal language into plain English.
           </p>
 
@@ -448,11 +441,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
               </div>
-              <span className="font-semibold text-yellow-300 text-xs">Senate Bill 19</span>
+              <span className="font-semibold text-yellow-300 text-xs">House Bill 94</span>
             </div>
             <p className="text-xs text-gray-300">
-              "This bill prohibits local governments from using taxpayer funds for lobbying activities.
-              Here's what it means for Dallas residents..."
+              "This bill restricts public entities from spending public funds on lobbying activities. It prohibits the use of public funds to hire or contract with lobbyists and prohibits nonprofits that primarily represent..."
             </p>
           </div>
         </div>
@@ -720,8 +712,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
         </div>
       </section>
 
-      {/* Solution Section */}
-<section id="solution" className="py-16 border-t border-gray-800">
+      <section id="solution" className="py-16 border-t border-gray-800">
     <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -729,8 +720,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                 <span className="text-teal-400"> AI-Powered</span> Solution
             </h2>
             <p className="text-xl text-gray-400 leading-relaxed">
-                A sophisticated infrastructure combining AI orchestration, external APIs, and
-                retrieval-augmented generation to make legislation accessible to everyone.
+                To bring this chatbot to life, we've designed a modern, decoupled microservices architecture that's both powerful and efficient. Let's walk through the journey of a user's query.
             </p>
         </div>
 
@@ -738,16 +728,15 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
         <div className="mb-16">
             <div className="rounded-3xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black p-8 lg:p-12">
                 <div className="text-center mb-12">
-                    <h3 className="text-2xl md:text-3xl font-semibold mb-4">Intelligent Architecture</h3>
+                    <h3 className="text-2xl md:text-3xl font-semibold mb-4">Decoupled Microservices Architecture</h3>
                     <p className="text-gray-400 max-w-3xl mx-auto">
-                        Our system intelligently routes queries through either internal knowledge or external APIs,
-                        ensuring accurate and comprehensive responses about legislation and civic data.
+                        It all starts on our <strong>Presentation Layer</strong>, a clean and responsive React application where the user asks their question. That request immediately travels to our <strong>Backend Services Layer</strong>, a high-performance FastAPI application that acts as the central API gateway.
                     </p>
                 </div>
 
                 {/* Architecture Flow */}
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-center">
-                    {/* User Layer */}
+                    {/* Presentation Layer */}
                     <div className="lg:col-span-1">
                         <div className="text-center p-6 rounded-2xl border border-teal-500/30 bg-teal-500/10">
                             <div className="w-12 h-12 bg-teal-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -755,8 +744,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
                             </div>
-                            <h4 className="font-semibold text-teal-300">User</h4>
-                            <p className="text-xs text-gray-400 mt-2">Query Input</p>
+                            <h4 className="font-semibold text-teal-300">Presentation Layer</h4>
+                            <p className="text-xs text-gray-400 mt-2">React Frontend</p>
                         </div>
                     </div>
 
@@ -767,24 +756,17 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                         </svg>
                     </div>
 
-                    {/* Frontend & Backend */}
+                    {/* Backend Services Layer */}
                     <div className="lg:col-span-1">
                         <div className="space-y-4">
                             <div className="text-center p-4 rounded-xl border border-blue-500/30 bg-blue-500/10">
                                 <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
                                     <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                </div>
-                                <h5 className="text-sm font-semibold text-blue-300">React Frontend</h5>
-                            </div>
-                            <div className="text-center p-4 rounded-xl border border-indigo-500/30 bg-indigo-500/10">
-                                <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
-                                    <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"/>
                                     </svg>
                                 </div>
-                                <h5 className="text-sm font-semibold text-indigo-300">FastAPI Backend</h5>
+                                <h5 className="text-sm font-semibold text-blue-300">Backend Services</h5>
+                                <p className="text-xs text-gray-400 mt-1">FastAPI Gateway</p>
                             </div>
                         </div>
                     </div>
@@ -804,21 +786,28 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                                 </svg>
                             </div>
-                            <h4 className="font-semibold text-purple-300">LangGraph Agent</h4>
-                            <p className="text-xs text-gray-400 mt-2">AI Dispatcher</p>
+                            <h4 className="font-semibold text-purple-300">AI Orchestration</h4>
+                            <p className="text-xs text-gray-400 mt-2">LangGraph Agents</p>
                         </div>
                     </div>
                 </div>
 
+                {/* Agent Types Description */}
+                <div className="mt-12 text-center">
+                    <p className="text-gray-400 max-w-4xl mx-auto">
+                        From there, the query is handed off to our <strong>AI Orchestration Layer</strong>, the true brain of our system, powered by LangGraph. Here we deploy two distinct types of agents: a versatile <strong>ReAct Agent</strong> that acts as an intelligent dispatcher with access to PostgreSQL and Google Civics API, and a focused <strong>Tool-Calling Agent</strong> for deep semantic search within our ChromaDB vector store.
+                    </p>
+                </div>
+
                 {/* Processing Paths */}
                 <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Internal RAG Path */}
+                    {/* ReAct Agent Path */}
                     <div className="p-6 rounded-2xl border border-green-500/30 bg-green-500/5">
                         <h4 className="text-lg font-semibold text-green-300 mb-4 flex items-center gap-2">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            Internal RAG Workflow
+                            ReAct Agent Workflow
                         </h4>
                         <div className="space-y-3">
                             <div className="flex items-center gap-3 p-3 rounded-lg bg-green-500/10">
@@ -826,8 +815,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                                     <span className="text-xs font-bold text-green-400">1</span>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium">Vector Database</p>
-                                    <p className="text-xs text-gray-400">Similarity search on internal knowledge</p>
+                                    <p className="text-sm font-medium">PostgreSQL Database</p>
+                                    <p className="text-xs text-gray-400">Legislator information queries</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 p-3 rounded-lg bg-green-500/10">
@@ -835,8 +824,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                                     <span className="text-xs font-bold text-green-400">2</span>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium">Ollama + LLaMA3</p>
-                                    <p className="text-xs text-gray-400">Local inference with embeddings</p>
+                                    <p className="text-sm font-medium">Google Civics API</p>
+                                    <p className="text-xs text-gray-400">Live representative districts</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 p-3 rounded-lg bg-green-500/10">
@@ -844,20 +833,20 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                                     <span className="text-xs font-bold text-green-400">3</span>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium">Context Synthesis</p>
-                                    <p className="text-xs text-gray-400">Combines retrieved data with query</p>
+                                    <p className="text-sm font-medium">Intelligent Dispatch</p>
+                                    <p className="text-xs text-gray-400">Multi-tool orchestration</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* External API Path */}
+                    {/* Tool-Calling Agent Path */}
                     <div className="p-6 rounded-2xl border border-cyan-500/30 bg-cyan-500/5">
                         <h4 className="text-lg font-semibold text-cyan-300 mb-4 flex items-center gap-2">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
-                            External API Workflow
+                            Tool-Calling Agent
                         </h4>
                         <div className="space-y-3">
                             <div className="flex items-center gap-3 p-3 rounded-lg bg-cyan-500/10">
@@ -865,8 +854,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                                     <span className="text-xs font-bold text-cyan-400">1</span>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium">Google Civics API</p>
-                                    <p className="text-xs text-gray-400">Representative & electoral data</p>
+                                    <p className="text-sm font-medium">ChromaDB Vector Store</p>
+                                    <p className="text-xs text-gray-400">Full legislative bill texts</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 p-3 rounded-lg bg-cyan-500/10">
@@ -874,8 +863,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                                     <span className="text-xs font-bold text-cyan-400">2</span>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium">Wikipedia & Ballotpedia</p>
-                                    <p className="text-xs text-gray-400">Legislative & political context</p>
+                                    <p className="text-sm font-medium">Semantic Search</p>
+                                    <p className="text-xs text-gray-400">Deep content analysis</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 p-3 rounded-lg bg-cyan-500/10">
@@ -883,20 +872,20 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                                     <span className="text-xs font-bold text-cyan-400">3</span>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium">Data Integration</p>
-                                    <p className="text-xs text-gray-400">Combines external sources</p>
+                                    <p className="text-sm font-medium">Expert Analysis</p>
+                                    <p className="text-xs text-gray-400">Focused single-tool operation</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Chunk Testing Framework */}
+                    {/* Inference Layer */}
                     <div className="p-6 rounded-2xl border border-orange-500/30 bg-orange-500/5">
                         <h4 className="text-lg font-semibold text-orange-300 mb-4 flex items-center gap-2">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7"/>
                             </svg>
-                            Chunk Testing Framework
+                            Inference & Generation
                         </h4>
                         <div className="space-y-3">
                             <div className="flex items-center gap-3 p-3 rounded-lg bg-orange-500/10">
@@ -904,8 +893,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                                     <span className="text-xs font-bold text-orange-400">1</span>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium">Strategy Testing</p>
-                                    <p className="text-xs text-gray-400">Multiple chunking approaches</p>
+                                    <p className="text-sm font-medium">Llama3 Model</p>
+                                    <p className="text-xs text-gray-400">Served via Ollama</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 p-3 rounded-lg bg-orange-500/10">
@@ -913,8 +902,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                                     <span className="text-xs font-bold text-orange-400">2</span>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium">Embedding Evaluation</p>
-                                    <p className="text-xs text-gray-400">Cosine similarity & retrieval metrics</p>
+                                    <p className="text-sm font-medium">Context Synthesis</p>
+                                    <p className="text-xs text-gray-400">Coherent response generation</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 p-3 rounded-lg bg-orange-500/10">
@@ -922,12 +911,19 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                                     <span className="text-xs font-bold text-orange-400">3</span>
                                 </div>
                                 <div>
-                                    <p className="text-sm font-medium">Performance Analytics</p>
-                                    <p className="text-xs text-gray-400">F1 scores & execution metrics</p>
+                                    <p className="text-sm font-medium">Human-Readable Output</p>
+                                    <p className="text-xs text-gray-400">Ready for citizen advocates</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                {/* Final Architecture Note */}
+                <div className="mt-12 text-center">
+                    <p className="text-gray-400 max-w-4xl mx-auto">
+                        The entire system is containerized with <strong>Docker</strong>, making it scalable, portable, and ready to empower citizen advocates with accessible legislative information.
+                    </p>
                 </div>
             </div>
         </div>
@@ -946,8 +942,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
 
             <div className="text-center p-4 rounded-xl border border-gray-800 hover:border-gray-600 transition-colors">
                 <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-3">
-                    <svg className="w-6 h-6 text-green-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                    <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"/>
                     </svg>
                 </div>
                 <p className="text-sm font-medium">FastAPI</p>
@@ -957,11 +953,11 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
             <div className="text-center p-4 rounded-xl border border-gray-800 hover:border-gray-600 transition-colors">
                 <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-3">
                     <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7"/>
                     </svg>
                 </div>
                 <p className="text-sm font-medium">LangGraph</p>
-                <p className="text-xs text-gray-400">AI Agent</p>
+                <p className="text-xs text-gray-400">AI Agents</p>
             </div>
 
             <div className="text-center p-4 rounded-xl border border-gray-800 hover:border-gray-600 transition-colors">
@@ -970,8 +966,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
                     </svg>
                 </div>
-                <p className="text-sm font-medium">Vector DB</p>
-                <p className="text-xs text-gray-400">RAG Store</p>
+                <p className="text-sm font-medium">ChromaDB</p>
+                <p className="text-xs text-gray-400">Vector Store</p>
             </div>
 
             <div className="text-center p-4 rounded-xl border border-gray-800 hover:border-gray-600 transition-colors">
@@ -980,18 +976,18 @@ export const HomePage: React.FC<HomePageProps> = ({ onGetStarted, onAboutClick }
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
                 </div>
-                <p className="text-sm font-medium">LLaMA3</p>
+                <p className="text-sm font-medium">Llama3</p>
                 <p className="text-xs text-gray-400">LLM Model</p>
             </div>
 
             <div className="text-center p-4 rounded-xl border border-gray-800 hover:border-gray-600 transition-colors">
                 <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-3">
                     <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                     </svg>
                 </div>
-                <p className="text-sm font-medium">External APIs</p>
-                <p className="text-xs text-gray-400">Data Sources</p>
+                <p className="text-sm font-medium">Docker</p>
+                <p className="text-xs text-gray-400">Containerization</p>
             </div>
         </div>
     </div>
