@@ -21,7 +21,7 @@ async def healthz():
 # Include routers for each endppoint
 # app.include_router(helloworld_router, prefix="/hello_world", tags=["Hello World"])
 # app.include_router(bills_router, prefix="/bills", tags=["Bills"])
-# app.include_router(chunk_recall, prefix="/chunck", tags=["Chunck Recall"])
+app.include_router(chunk_recall, prefix="/chunck", tags=["Chunck Recall"])
 # app.include_router(state_legislators_router, prefix="/state_legislators", tags=["State Legislators"])
 # app.include_router(legislative_router, prefix="/legislative", tags=["Legislative"])
 app.include_router(agent_legislative_overview_router, prefix="/agent_legislative_overview", tags=["Agent Legislative Overview"])
