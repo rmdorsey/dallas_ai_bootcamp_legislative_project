@@ -84,13 +84,36 @@ export const Login: React.FC<LoginProps> = ({
     handleDemoClick();
   };
 
+  // Function to navigate back to home and scroll to specific section
+  const navigateToHomeSection = (sectionId: string) => {
+    if (onHomeClick) {
+      onHomeClick(); // Navigate to home page
+      // Small delay to ensure the page has switched, then scroll to section
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  };
+
+  // Handle About click with scroll to top
+  const handleAboutClick = () => {
+    onAboutClick();
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Shared Navigation */}
       <NavigationBar
         onGetStarted={handleGetStarted}
-        onAboutClick={onAboutClick}
+        onAboutClick={handleAboutClick}
         onHomeClick={onHomeClick}
+        onSectionClick={navigateToHomeSection}
       />
 
       {/* Background Gradient - similar to HomePage */}

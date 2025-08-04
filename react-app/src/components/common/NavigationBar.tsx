@@ -5,12 +5,14 @@ interface NavigationBarProps {
   onGetStarted: () => void;
   onAboutClick: () => void;
   onHomeClick?: () => void; // Optional for Login page
+  onSectionClick?: (sectionId: string) => void; // New prop for section navigation
 }
 
 export const NavigationBar: React.FC<NavigationBarProps> = ({
   onGetStarted,
   onAboutClick,
-  onHomeClick
+  onHomeClick,
+  onSectionClick
 }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -18,9 +20,32 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
 
   const handleLogoClick = () => {
     if (onHomeClick) {
-      onHomeClick(); // Use onHomeClick if provided (Login page)
+      onHomeClick(); // Use onHomeClick if provided (Login page or About page)
     } else {
       scrollToTop(); // Use scrollToTop if not provided (HomePage)
+    }
+  };
+
+  const handleAboutClick = () => {
+    onAboutClick(); // Navigate to About page
+    // Use setTimeout to ensure navigation completes before scrolling
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
+  const handleSectionClick = (sectionId: string) => {
+    // Always use the callback if provided (works for both HomePage and AboutPage)
+    if (onSectionClick) {
+      onSectionClick(sectionId);
+    } else {
+      // Fallback for backwards compatibility if no callback provided
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
     }
   };
 
@@ -36,23 +61,44 @@ export const NavigationBar: React.FC<NavigationBarProps> = ({
               legisl<span className="text-teal-400">AI</span>tive
             </button>
             <div className="hidden md:flex items-center gap-6 text-sm">
-              <a href="#problem" className="text-gray-400 hover:text-white transition-colors">
-                Problem
-              </a>
-              <a href="#customer-journey" className="text-gray-400 hover:text-white transition-colors">
-                Customer Journey
-              </a>
-              <a href="#features" className="text-gray-400 hover:text-white transition-colors">
-                Features
-              </a>
-              <a href="#how-it-works" className="text-gray-400 hover:text-white transition-colors">
-                How it Works
-              </a>
-               <a href="#solution" className="text-gray-400 hover:text-white transition-colors">
-                Solution
-              </a>
               <button
-                onClick={onAboutClick}
+                onClick={() => handleSectionClick('problem')}
+                className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+              >
+                Problem
+              </button>
+              <button
+                onClick={() => handleSectionClick('customer-journey')}
+                className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+              >
+                Customer Journey
+              </button>
+              <button
+                onClick={() => handleSectionClick('features')}
+                className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+              >
+                Features
+              </button>
+              <button
+                onClick={() => handleSectionClick('how-it-works')}
+                className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+              >
+                How it Works
+              </button>
+              <button
+                onClick={() => handleSectionClick('solution')}
+                className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+              >
+                Solution
+              </button>
+              <button
+                onClick={() => handleSectionClick('architecture-details')}
+                className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+              >
+                Architecture
+              </button>
+              <button
+                onClick={handleAboutClick}
                 className="text-gray-400 hover:text-white transition-colors cursor-pointer"
               >
                 About
