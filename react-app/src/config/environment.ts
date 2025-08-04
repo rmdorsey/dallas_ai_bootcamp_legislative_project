@@ -25,15 +25,15 @@ const getMode = (): string => {
 export const environment = {
   development: {
     FASTAPI_BASE_URL: 'http://localhost:8000',
-    FASTAPI_AGENT_ENDPOINT: '/agent/stream'
+    FASTAPI_AGENT_ENDPOINT: '/agent_legislative_overview/agent_legislative_overview'
   },
   docker: {
     FASTAPI_BASE_URL: 'http://fastapi:8000',
-    FASTAPI_AGENT_ENDPOINT: '/agent/stream'
+    FASTAPI_AGENT_ENDPOINT: '/agent_legislative_overview/agent_legislative_overview'
   },
   production: {
     FASTAPI_BASE_URL: getEnvVar('VITE_FASTAPI_URL', 'http://localhost:8000'),
-    FASTAPI_AGENT_ENDPOINT: '/agent/stream'
+    FASTAPI_AGENT_ENDPOINT: '/agent_legislative_overview/agent_legislative_overview'
   }
 };
 

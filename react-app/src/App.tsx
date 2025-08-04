@@ -1,9 +1,11 @@
-// App.tsx - Updated with Home Page and About Page
+// App.tsx - Updated with Home Page, About Page, and Architecture Page (URL only)
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import type { User } from './types';
 import { HomePage } from './components/home/HomePage';
 import { AboutPage } from './components/about/AboutPage';
+import { ArchitecturePage } from './components/arch/arch';
+import { BootcampInsightsPage } from './components/learnings/feedback';// Keep this import
 import { Login } from './components/auth/Login';
 import { BillAnalyzer } from './pages/BillAnalyzer/BillAnalyzer';
 import { Dashboard } from './pages/Dashboard/Dashboard';
@@ -95,12 +97,42 @@ const MainApp: React.FC = () => {
           ) : isAuthenticated ? (
             <Navigate to="/mainchat" replace />
           ) : (
-            <AboutPage onBackToHome={handleBackToHome}
-            onGetStarted={handleGetStarted}
-              onAboutClick={handleAboutClick}/>
+            <AboutPage
+              onBackToHome={handleBackToHome}
+              onGetStarted={handleGetStarted}
+              onAboutClick={handleAboutClick}
+            />
           )
         }
       />
+
+      {/* Architecture Route - Accessible only via direct URL */}
+      <Route
+        path="/arch"
+        element={
+          isAuthLoading ? (
+            <LoadingScreen />
+          ) : isAuthenticated ? (
+            <Navigate to="/mainchat" replace />
+          ) : (
+            <ArchitecturePage onBack={handleBackToHome} />
+          )
+        }
+      />
+
+        {/* Bootcamp Insights Route - Accessible only via direct URL */}
+<Route
+  path="/feedback"
+  element={
+    isAuthLoading ? (
+      <LoadingScreen />
+    ) : isAuthenticated ? (
+      <Navigate to="/mainchat" replace />
+    ) : (
+      <BootcampInsightsPage onBack={handleBackToHome} />
+    )
+  }
+/>
 
       {/* Login Route */}
       <Route

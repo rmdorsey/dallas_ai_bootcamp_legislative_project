@@ -5,12 +5,12 @@ export const mockBills: Bill[] = [
   {
     id: '1',
     name: 'HB121',
-    summary: 'Prohibits use of public funds for lobbying activities by state agencies and local governments',
+    summary: 'AN ACT relating to restrictions on taxpayer-funded lobbying and requiring disclosure of lobbying expenditures by government entities',
     similarity: 98
   },
   {
     id: '2',
-    name: 'SB7',
+    name: 'HB 94',
     summary: 'Restricts taxpayer-funded lobbying and requires disclosure of lobbying expenditures',
     similarity: 91
   },
@@ -49,50 +49,34 @@ export const mockConversations: Conversation[] = [
         timestamp: new Date(),
         hasAddressInput: true
       },
-      {
+        {
         id: '4',
-        type: 'assistant',
-        content: 'Thank you. Searching the official database...',
+        type: 'user',
+        content: 'My adddres is: My address is 3665 Western Center Blvd, Fort Worth, TX.',
         timestamp: new Date()
       },
       {
         id: '5',
         type: 'assistant',
-        content: 'Your Texas House representative is Meredith Hayes. I\'ve also found her contact information. Would you like me to display it?',
+        content: 'Your Texas House Representative is Nate Schatzline a Republican representing Texas House of Representatives district 93. He can be contacted at P.O. Box 2910, Room E1.410, Austin, TX 78768 or (512) 463-0562.',
         timestamp: new Date()
       },
-      {
+        {
         id: '6',
         type: 'user',
-        content: 'Yes, please',
+        content: 'Has representative Schatzline worked on any legislation related to ending tax-payer funded lobbying?',
         timestamp: new Date()
       },
-      {
+{
         id: '7',
-        type: 'assistant',
-        content: 'Here is the contact information for Representative Meredith Hayes:\n\nOffice: (512) 463-0486\nEmail: meredith.hayes@house.texas.gov\nOffice Address: Texas State Capitol, Room E1.412\n1100 Congress Ave, Austin, TX 78701',
-        timestamp: new Date()
-      },
-      {
-        id: '8',
-        type: 'user',
-        content: 'Have there been any bills in past sessions to stop taxpayer-funded lobbying?',
-        timestamp: new Date()
-      },
-      {
-        id: '9',
-        type: 'assistant',
-        content: 'Searching the legislative corpus... One moment.',
-        timestamp: new Date()
-      },
-      {
-        id: '10',
         type: 'assistant',
         content: 'Found relevant bills:',
         timestamp: new Date(),
         hasBillsTable: true,
         bills: mockBills
       }
+
+
     ]
   },
   {

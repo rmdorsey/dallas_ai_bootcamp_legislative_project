@@ -1,10 +1,13 @@
-// components/auth/Login.tsx
+// components/auth/Login.tsx - Updated with shared navigation and footer
 import React, { useState } from 'react';
+import { NavigationBar } from '../common/NavigationBar';
+import { Footer } from '../common/Footer';
 
 interface LoginProps {
   onDemoLogin: () => void;
   onGoogleLogin: () => void;
   onHomeClick?: () => void;
+  onAboutClick: () => void;
 }
 
 // Environment variable helper function
@@ -28,7 +31,12 @@ const getEnvVariable = (name: string, defaultValue: string): string => {
   }
 };
 
-export const Login: React.FC<LoginProps> = ({ onDemoLogin, onGoogleLogin, onHomeClick }) => {
+export const Login: React.FC<LoginProps> = ({
+  onDemoLogin,
+  onGoogleLogin,
+  onHomeClick,
+  onAboutClick
+}) => {
   const [showModal, setShowModal] = useState(false);
   const [passcode, setPasscode] = useState('');
   const [error, setError] = useState('');
@@ -70,23 +78,43 @@ export const Login: React.FC<LoginProps> = ({ onDemoLogin, onGoogleLogin, onHome
       setIsLoading(false);
     }
   };
+
+  const handleGetStarted = () => {
+    // Same as demo login for now
+    handleDemoClick();
+  };
+
+  // Function to navigate back to home and scroll to specific section
+  const navigateToHomeSection = (sectionId: string) => {
+    if (onHomeClick) {
+      onHomeClick(); // Navigate to home page
+      // Small delay to ensure the page has switched, then scroll to section
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  };
+
+  // Handle About click with scroll to top
+  const handleAboutClick = () => {
+    onAboutClick();
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Fixed Navigation - Same as HomePage */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-gray-800/50 bg-black/80 backdrop-blur-xl">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center">
-              <button
-                onClick={onHomeClick}
-                className="text-2xl font-bold hover:text-teal-400 transition-colors cursor-pointer"
-              >
-                legisl<span className="text-teal-400">AI</span>tive
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      {/* Shared Navigation */}
+      <NavigationBar
+        onGetStarted={handleGetStarted}
+        onAboutClick={handleAboutClick}
+        onHomeClick={onHomeClick}
+        onSectionClick={navigateToHomeSection}
+      />
 
       {/* Background Gradient - similar to HomePage */}
       <div className="absolute inset-0 bg-gradient-to-br from-teal-500/20 via-black to-black"></div>
@@ -365,6 +393,9 @@ export const Login: React.FC<LoginProps> = ({ onDemoLogin, onGoogleLogin, onHome
           </div>
         </div>
       )}
+
+      {/* Shared Footer */}
+      <Footer />
     </div>
   );
 };

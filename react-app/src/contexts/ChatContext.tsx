@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Conversation, Message } from '../types';
+import { mockConversations } from '../data/mockData'; // Import mock conversations
 
 interface ChatContextType {
   conversations: Conversation[];
@@ -45,22 +46,24 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   // Get active conversation
   const activeConversation = conversations.find(conv => conv.id === activeConversationId) || null;
 
-  // Initialize with a default conversation on mount
+  // Initialize with mock conversations on mount
   useEffect(() => {
-    // Start with mock data for now, but you can modify this to load from API
-    // if you implement conversation persistence in your FastAPI backend
+    // Load mock conversations as default to show interesting content with bills table
     if (conversations.length === 0) {
-      const defaultConversation: Conversation = {
-        id: 'default-thread-id',
-        title: 'New Conversation',
-        preview: 'Start a new analysis...',
-        date: new Date().toLocaleString(),
-        isActive: true,
-        messages: []
-      };
+      console.log('🚀 Loading mock conversations with bills table...');
 
-      setConversations([defaultConversation]);
-      setActiveConversationId('default-thread-id');
+      // Load the mock conversations from mockData.ts
+      // The first conversation already contains a bills table
+      const conversationsWithActiveFlag = mockConversations.map((conv, index) => ({
+        ...conv,
+        isActive: index === 0 // Make the first conversation (with bills table) active
+      }));
+
+      setConversations(conversationsWithActiveFlag);
+      setActiveConversationId(conversationsWithActiveFlag[0].id);
+
+      console.log('✅ Loaded mock conversations:', conversationsWithActiveFlag);
+      console.log('📋 Active conversation ID:', conversationsWithActiveFlag[0].id);
     }
   }, []);
 
@@ -141,9 +144,14 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     setActiveConversationId(newConversation.id);
   }, []);
 
-  // Handle sending a message with streaming response
+  // Handle sending a message with invoke endpoint (non-streaming)
   const handleSendMessage = useCallback(async (messageContent: string) => {
     if (!activeConversationId) return;
+
+    console.log('🚀 Starting message send process...');
+    console.log('📝 Message content:', messageContent);
+    console.log('🔗 Thread ID:', activeConversationId);
+    console.log('🌐 API URL:', API_URL);
 
     setIsLoading(true);
     setError(null);
@@ -155,6 +163,8 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       content: messageContent,
       timestamp: new Date()
     };
+
+    console.log('👤 Adding user message:', newMessage);
 
     // Update conversation with just the user message first
     setConversations(prev =>
@@ -175,129 +185,125 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     );
 
     try {
-      // Send request to FastAPI streaming endpoint
-      const response = await fetch(`${API_URL}/agent/stream`, {
+      const requestBody = {
+        question: messageContent,
+        thread_id: activeConversationId
+      };
+
+      console.log('📤 Sending request to:', `${API_URL}/agent_legislative_overview/agent_legislative_overview`);
+      console.log('📦 Request body:', requestBody);
+
+      // Send request to FastAPI invoke endpoint (non-streaming)
+      const response = await fetch(`${API_URL}/agent_legislative_overview/agent_legislative_overview`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          question: messageContent,
-          thread_id: activeConversationId
-        })
+        body: JSON.stringify(requestBody)
       });
 
+      console.log('📥 Response status:', response.status);
+      console.log('📋 Response headers:', Object.fromEntries(response.headers.entries()));
+
       if (!response.ok) {
+        console.error('❌ HTTP error:', response.status, response.statusText);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const reader = response.body?.getReader();
-      if (!reader) {
-        throw new Error('No response body reader available');
+      // For /agent/invoke, we expect a JSON response, not streaming
+      const responseData = await response.json();
+
+      console.log('📊 Full response data:', responseData);
+      console.log('📊 Response type:', typeof responseData);
+      console.log('📊 Response keys:', Object.keys(responseData));
+
+      // Extract the assistant's response content
+      let assistantContent = '';
+
+      // Check different possible response structures - prioritize 'data' field
+      if (responseData.data) {
+        assistantContent = responseData.data;
+        console.log('✅ Found content in responseData.data');
+      } else if (responseData.content) {
+        assistantContent = responseData.content;
+        console.log('✅ Found content in responseData.content');
+      } else if (responseData.response) {
+        assistantContent = responseData.response;
+        console.log('✅ Found content in responseData.response');
+      } else if (responseData.message) {
+        assistantContent = responseData.message;
+        console.log('✅ Found content in responseData.message');
+      } else if (responseData.output) {
+        assistantContent = responseData.output;
+        console.log('✅ Found content in responseData.output');
+      } else if (typeof responseData === 'string') {
+        assistantContent = responseData;
+        console.log('✅ Response is a string');
+      } else {
+        console.warn('⚠️ Could not find content in response, using full response as string');
+        assistantContent = JSON.stringify(responseData, null, 2);
       }
 
-      const decoder = new TextDecoder();
-      let accumulatedContent = '';
-      let assistantMessageId: string | null = null;
-      let hasStartedResponse = false;
+      console.log('🤖 Assistant content:', assistantContent);
 
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
+      if (!assistantContent) {
+        console.error('❌ No content found in response');
+        throw new Error('No content received from the API');
+      }
 
-          if (done) break;
+      // Create assistant message
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        type: 'assistant',
+        content: assistantContent,
+        timestamp: new Date()
+      };
 
-          const chunk = decoder.decode(value);
-          const lines = chunk.split('\n');
+      console.log('🤖 Adding assistant message:', assistantMessage);
 
-          for (const line of lines) {
-            if (line.startsWith('data: ')) {
-              try {
-                const data = JSON.parse(line.slice(6));
-
-                if (data.type === 'error') {
-                  throw new Error(data.content);
-                }
-
-                // Accumulate content from assistant messages
-                if (data.type === 'ai' || data.type === 'assistant') {
-                  accumulatedContent += data.content;
-
-                  // Create assistant message on first response chunk
-                  if (!hasStartedResponse) {
-                    assistantMessageId = (Date.now() + 1).toString();
-                    hasStartedResponse = true;
-
-                    const assistantMessage: Message = {
-                      id: assistantMessageId,
-                      type: 'assistant',
-                      content: accumulatedContent,
-                      timestamp: new Date()
-                    };
-
-                    // Add the assistant message to the conversation
-                    setConversations(prev =>
-                      prev.map(conv =>
-                        conv.id === activeConversationId
-                          ? {
-                              ...conv,
-                              messages: [...conv.messages, assistantMessage]
-                            }
-                          : conv
-                      )
-                    );
-                  } else if (assistantMessageId) {
-                    // Update existing assistant message with accumulated content
-                    setConversations(prev =>
-                      prev.map(conv =>
-                        conv.id === activeConversationId
-                          ? {
-                              ...conv,
-                              messages: conv.messages.map(msg =>
-                                msg.id === assistantMessageId
-                                  ? { ...msg, content: accumulatedContent }
-                                  : msg
-                              )
-                            }
-                          : conv
-                      )
-                    );
-                  }
-                }
-
-                // Handle tool calls or other message types
-                if (data.tool_calls) {
-                  // You can handle tool calls here if needed
-                  console.log('Tool calls:', data.tool_calls);
-                }
-
-              } catch (parseError) {
-                console.error('Failed to parse SSE data:', parseError);
+      // Add the assistant message to the conversation
+      setConversations(prev =>
+        prev.map(conv =>
+          conv.id === activeConversationId
+            ? {
+                ...conv,
+                messages: [...conv.messages, assistantMessage]
               }
-            }
-          }
-        }
-      } finally {
-        reader.releaseLock();
-      }
+            : conv
+        )
+      );
 
-      // Auto-scroll to bottom after response completes
+      console.log('✅ Message processing completed successfully');
+
+      // Auto-scroll to bottom after response
       setTimeout(() => {
         const chatContainer = document.querySelector('.chat-messages-container');
         if (chatContainer) {
           chatContainer.scrollTop = chatContainer.scrollHeight;
+          console.log('📜 Auto-scrolled to bottom');
         }
       }, 100);
 
     } catch (error) {
-      console.error('Failed to send message to API:', error);
-      setError('Failed to send message. Please try again.');
+      console.error('❌ Failed to send message to API:', error);
+
+      const errorText = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorName = error instanceof Error ? error.name : 'Error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+
+      console.error('❌ Error details:', {
+        name: errorName,
+        message: errorText,
+        stack: errorStack
+      });
+
+      setError(`Failed to send message: ${errorText}`);
 
       // Add an error message to the conversation
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: 'Sorry, I encountered an error while processing your request. Please try again.',
+        content: `Sorry, I encountered an error while processing your request: ${errorText}. Please try again.`,
         timestamp: new Date()
       };
 
@@ -313,22 +319,26 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       );
     } finally {
       setIsLoading(false);
+      console.log('🏁 Message send process completed');
     }
   }, [activeConversationId]);
 
-  // Handle address submission (can reuse the streaming logic)
+  // Handle address submission (can reuse the invoke logic)
   const handleAddressSubmit = useCallback(async (address: string) => {
     if (!activeConversationId) return;
 
-    // Use the same streaming logic but with a formatted address question
+    // Use the same invoke logic but with a formatted address question
     const addressQuestion = `My address is: ${address}. Please find my representative information.`;
     await handleSendMessage(addressQuestion);
   }, [activeConversationId, handleSendMessage]);
 
   // Handle bill actions
   const handleBillAction = useCallback(async (billId: string, action: 'view' | 'analyze') => {
+    console.log(`🏛️ Bill action: ${action} for bill ${billId}`);
+
     if (action === 'analyze') {
       // Navigate to the Bill Analyzer page
+      console.log('📊 Navigating to bill analyzer...');
       navigate('/bill-analyzer');
       return;
     }

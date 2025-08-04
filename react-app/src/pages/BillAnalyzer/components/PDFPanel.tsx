@@ -1,7 +1,6 @@
 // pages/BillAnalyzer/components/PDFPanel.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import type { BillAnalyzerData } from '../../../types';
-import { PDFToolbar } from './PDFToolbar';
 import { PDFViewer } from './PDFViewer';
 
 interface PDFPanelProps {
@@ -13,27 +12,12 @@ export const PDFPanel: React.FC<PDFPanelProps> = ({
   bill,
   totalPages = 12
 }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [zoomLevel, setZoomLevel] = useState(100);
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  const handleZoomChange = (newZoom: number) => {
-    setZoomLevel(newZoom);
-  };
+  // Default values for PDF display
+  const currentPage = 1;
+  const zoomLevel = 100;
 
   return (
     <div className="w-1/2 bg-white flex flex-col">
-      <PDFToolbar
-        currentPage={currentPage}
-        totalPages={totalPages}
-        zoomLevel={zoomLevel}
-        onPageChange={handlePageChange}
-        onZoomChange={handleZoomChange}
-      />
-
       <PDFViewer
         bill={bill}
         currentPage={currentPage}
