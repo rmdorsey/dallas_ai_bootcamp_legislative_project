@@ -1,6 +1,7 @@
 # fastapi-app/tools/legislative_tools.py
 
 import json
+import re
 from typing import Optional, List, Dict, Any
 from langchain.tools import tool
 
@@ -9,62 +10,76 @@ from services.legislative_search_service import run_search_service
 from services.legislative_query_service import run_query_service
 
 # --- Tools Based on Semantic Search ---
-
 @tool
 def search_for_legislative_documents(query: str, chamber: Optional[str] = None) -> str:
-    """Searches for and retrieves relevant legislative documents based on a user's topic.
+    """
+    Finds and ranks legislative bills based on a user's natural language description of a topic.
 
-    Use this tool to find specific bills and their content when a user asks a question about a particular subject. The tool returns the most relevant text snippets from matching bills.
+    This is the best tool to use when a user wants to discover bills related to a specific issue,
+    policy, or concept. It is ideal for open-ended questions like "Are there any bills about..."
+    or "Show me legislation related to...". The tool returns a list of bills, with the most
+    relevant ones appearing first.
+
+    The 'query' should be a clear, descriptive topic. High-quality examples include:
+    - "bills about property tax relief for seniors"
+    - "legislation concerning taxpayer-funded lobbying"
+    - "any proposed changes to congressional redistricting"
+
+    You can optionally filter the search to a specific legislative chamber ('House' or 'Senate')
+    if the user's request specifies it.
 
     Args:
-        query (str): The topic or question to search for within the documents.
-        chamber (Optional[str]): The legislative chamber to filter by ('House' or 'Senate').
+        query (str): A detailed description of the topic or issue to find bills about.
+        chamber (Optional[str]): The legislative chamber to filter by. Can be 'House' or 'Senate'.
 
     Returns:
-        str: A list of relevant legislative bill documents. Use the information in these documents to formulate a direct and helpful summary that answers the user's original question. Do not describe the data structure or format in your answer.
+        str: A JSON string representing a list of relevant bills. Each item in the list
+        contains the bill number, chamber, a relevance score, and a snippet of the most
+        relevant text found.
     """
-    print(f"--- TOOL: Searching for legislative documents with query: '{query}' ---")
+    print(f"--- TOOL: Finding relevant bills for query: '{query}'... ---")
+    
+    # Call the underlying service function
+    results = run_search_service(query=query, chamber=chamber)
+    
+    # Return the results as a JSON string for the agent to process
+    return json.dumps(results, indent=2)
 
-    # 1. Call your existing service to get the full, detailed results.
-    # We can hardcode 'k' to a reasonable number for tool use.
-    full_results = run_search_service(query=query, chamber=chamber, k=25)
-    print(f"*****Found {len(full_results)} documents matching the query.")
-    # 2. Process the results to create a new list with only the desired fields.
-    formatted_results = []
-    for result in full_results:
-        metadata = result.get("metadata", {})
-        
-        # Create a new dictionary with only the keys you want
-        formatted_doc = {
-            "chamber": metadata.get("chamber"),
-            "bill_number": metadata.get("bill_number"),
-            "author": metadata.get("author"),
-            "source": metadata.get("source"),
-            "content": result.get("content")
-        }
-        formatted_results.append(formatted_doc)
-        # print(f"--- TOOL: Found document: {formatted_doc['bill_number']} in {formatted_doc['chamber']} by {formatted_doc['author']} with content: {formatted_doc['content']} at source: {formatted_doc['source']} ---")
-    # 3. Return the clean list as a JSON string for the agent to use.
-    return json.dumps(formatted_results, indent=2)
 
 @tool
 def find_bills_by_author_on_topic(author_name: str, topic: str) -> str:
-    """Finds bills sponsored by a specific author that are related to a certain topic.
+    """
+    Finds and ranks legislative bills on a specific topic that are authored by a specific legislator.
 
-    Use this tool when a user's query combines an author and a topic, for example, 'what has Jane Smith sponsored regarding healthcare?'
+    Use this tool when the user's request includes both a topic and the name of a bill's author.
+    This tool is highly specific and should only be used when both pieces of information are present.
 
-    If the user uses the full name this tool should only use the last name for the function argument.
-    example: 'Are there any bills about tax-payer funded lobbying by Nate Schatzline?"  Just use 'Schatzline' as the author_name.
+    IMPORTANT: For the 'author_name' argument, you MUST provide only the legislator's last name.
+    If the user provides a full name or a title, extract only the last name before calling the tool.
+
+    Example Scenarios:
+    - User asks: "Are there any bills by Nate Schatzline about tax-payer funded lobbying?"
+      - Call with: author_name="Schatzline", topic="tax-payer funded lobbying"
+    - User asks: "Please show me some bills about property tax relief authored by Mayes Middleton."
+      - Call with: author_name="Middleton", topic="property tax relief"
+    - User asks: "I want to see bills about congressional redistricting from Representative Phelan."
+      - Call with: author_name="Phelan", topic="congressional redistricting"
 
     Args:
-        author_name (str): The last name of the legislator.
-        topic (str): The subject or topic to search for within the author's bills.
+        author_name (str): The last name of the legislator who authored the bills.
+        topic (str): A detailed description of the topic or issue to find bills about.
 
     Returns:
-        str: A JSON string containing a ranked list of relevant bills sponsored by that author.
+        str: A JSON string representing a list of relevant bills. Each item in the list
+        contains the bill number, chamber, a relevance score, and a snippet of the most
+        relevant text found.
     """
-    print(f"--- TOOL: Searching for bills by '{author_name}' on topic '{topic}'... ---")
+    print(f"--- TOOL: Finding bills by author '{author_name}' on topic: '{topic}'... ---")
+    
+    # Call the underlying service function, mapping the tool's parameters to the service's arguments
     results = run_search_service(query=topic, author=author_name)
+    
+    # Return the results as a JSON string for the agent to process
     return json.dumps(results, indent=2)
 
 
@@ -72,62 +87,109 @@ def find_bills_by_author_on_topic(author_name: str, topic: str) -> str:
 
 @tool
 def get_bill_details(bill_number: str, chamber: str) -> str:
-    """Retrieves the full text for a specific bill given its number and chamber.
+    """
+    Retrieves the full text for a specific bill to enable detailed analysis.
 
-    Use this tool when you need to read, analyze, or summarize a specific bill and you already know its identifier (e.g., 'House Bill 198'). Do not use this for searching topics.
+    Use this tool when a user asks for a summary, the intent, or specific details of a bill
+    and you already know its number and chamber. This tool's purpose is to fetch all the raw
+    text of the bill; the agent is then responsible for analyzing that text to answer the
+    user's question (e.g., summarizing, finding intent, etc.).
 
-    If the user includes HB or SB in the bill number, just use the number without the prefix.
-    Example: 'What does HB 198 say?' Just use '198' as the bill_number.
+    IMPORTANT: If the user includes 'HB' (House Bill) or 'SB' (Senate Bill) in their query,
+    use only the number for the 'bill_number' argument and set the 'chamber' argument
+    to 'House' or 'Senate' accordingly.
 
-    HB should be used for House Bills and SB for Senate Bills.
+    Example Scenarios:
+    - User asks: "What does HB 198 say?"
+      - Call with: bill_number="198", chamber="House"
+    - User asks: "Can you give me a summary of Senate Bill 45?"
+      - Call with: bill_number="45", chamber="Senate"
 
     Args:
         bill_number (str): The number of the bill (e.g., '198').
         chamber (str): The legislative chamber of the bill ('House' or 'Senate').
 
     Returns:
-        str: A JSON string containing a list of all text chunks for the specified bill.
+        str: The complete, combined text of the specified legislative bill.
     """
     print(f"--- TOOL: Getting all details for {chamber} Bill {bill_number}... ---")
 
-    filter_dict = {"$and": [{"bill_number": int(bill_number)}, {"chamber": chamber}]}
+    # --- FIX IS HERE ---
+    # Make the tool more resilient by cleaning the input from the agent.
+    # This removes "HB", "SB", and any surrounding whitespace, leaving only the number.
+    cleaned_bill_number = re.sub(r'(?i)HB|SB', '', bill_number).strip()
+    print(f"--- Cleaned bill number to: '{cleaned_bill_number}' ---")
+
+
+    filter_conditions = [{"chamber": {"$eq": chamber}}]
+
+    # Use a robust filter to handle potential string vs. integer mismatches for the bill number.
+    try:
+        bill_num_int = int(cleaned_bill_number)
+        filter_conditions.append({
+            "$or": [
+                {"bill_number": {"$eq": cleaned_bill_number}},
+                {"bill_number": {"$eq": bill_num_int}}
+            ]
+        })
+    except ValueError:
+        # If the bill number is not a clean integer (e.g., 'HB-40'), filter by string only.
+        filter_conditions.append({"bill_number": {"$eq": cleaned_bill_number}})
+
+    filter_dict = {"$and": filter_conditions}
+    
     results = run_query_service(filter_dict=filter_dict)
-    return json.dumps(results, indent=2)
+
+    if not results:
+        return f"No documents found for {chamber} Bill {bill_number}."
+
+    # Combine all the text chunks into a single string for the agent to analyze.
+    full_text = "\n\n".join([doc.get("content", "") for doc in results])
+    
+    return full_text
 
 @tool
 def list_all_bills_by_author(author_name: str) -> str:
-    """Lists the titles and numbers of all bills sponsored by a specific legislator.
+    """
+    Retrieves a list of all legislative bills authored by a specific legislator.
 
-    Use this tool when a user asks to see all the legislation authored by a particular legislator. Return the full list of bills.
+    Use this tool when a user asks for a complete list of bills by a particular author.
+    This tool is for listing bills, not for searching within them.
 
-    If the user uses the full name this tool should only use the last name for the function argument.
-    example: 'Give me legislation authored by Nate Schatzline."  Just use 'Schatzline' as the author_name.
+    IMPORTANT: For the 'author_name' argument, you MUST provide only the legislator's last name.
+    If the user provides a full name or a title, extract only the last name.
+
+    Example Scenarios:
+    - User asks: "What bills has Representative Phelan authored?"
+      - Call with: author_name="Phelan"
+    - User asks: "List all of Nate Schatzline's bills."
+      - Call with: author_name="Schatzline"
 
     Args:
         author_name (str): The last name of the legislator.
 
     Returns:
-        str: A JSON string containing a list of all bill numbers and information for that author. Do not describe the data structure or format in your answer. Do not say things like "Based on the tool call response".
+        str: A JSON string containing a list of all bills authored by the specified legislator.
+        Each item includes the bill number, chamber, and title.
     """
-    print(f"--- TOOL: Listing all bills by author '{author_name}'... ---")
-    filter_dict = {"author": author_name}
-    full_results = run_query_service(filter_dict=filter_dict)
+    print(f"--- TOOL: Listing all bills for author '{author_name}'... ---")
+    
+    results = run_query_service(filter_dict={"author": author_name})
 
-    # Process the results to return only a summary list, as promised in the docstring.
-    summary_list = []
-    seen_bills = set()
-    for doc in full_results:
-        content = doc.get("content")
+    if not results:
+        return f"No bills found for author '{author_name}'."
+
+    # Deduplicate the results to get a unique list of bills
+    unique_bills = {}
+    for doc in results:
         metadata = doc.get("metadata", {})
-        bill_num = metadata.get("bill_number")
-        chamber = metadata.get("chamber")
+        bill_key = (metadata.get("bill_number"), metadata.get("chamber"))
         
-        if bill_num and chamber and (bill_num, chamber) not in seen_bills:
-            summary_list.append({
-                "bill_number": bill_num,
-                "chamber": chamber,
-                "content": content
-            })
-            seen_bills.add((bill_num, chamber))
+        if bill_key not in unique_bills:
+            unique_bills[bill_key] = {
+                "bill_number": metadata.get("bill_number"),
+                "chamber": metadata.get("chamber"),
+                "title": metadata.get("title", "No title available")
+            }
             
-    return json.dumps(summary_list, indent=2)
+    return json.dumps(list(unique_bills.values()), indent=2)

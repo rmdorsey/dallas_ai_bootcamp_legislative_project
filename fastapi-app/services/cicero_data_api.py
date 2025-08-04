@@ -35,7 +35,7 @@ def get_representative_by_address(address: str, district_type: str):
         # Raise an exception for bad status codes (4xx or 5xx)
         response.raise_for_status()
 
-        print("✅ Successfully retrieved data from Google Civic API.")
+        print("✅ Successfully retrieved data from Cicero Civic API.")
         return response.json()
 
     except requests.exceptions.HTTPError as http_err:
