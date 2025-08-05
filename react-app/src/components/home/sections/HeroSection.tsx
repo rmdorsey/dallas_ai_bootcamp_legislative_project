@@ -32,13 +32,7 @@ export const HeroSection: React.FC = () => {
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
-          {/* Badge */}
-          <div className="mb-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-gray-800 bg-gray-900/50 px-4 py-2 text-sm">
-              <div className="h-2 w-2 rounded-full bg-green-400"></div>
-              <span className="text-gray-300">Making Democracy Accessible</span>
-            </div>
-          </div>
+
 
           {/* Main Headline */}
           <h1 className="mb-8 text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">

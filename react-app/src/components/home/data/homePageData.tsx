@@ -32,10 +32,10 @@ export const journeySteps = [
     id: 'representatives',
     title: 'Find Representatives',
     badge: { text: 'Step 1-2', color: 'orange', bgColor: 'orange-500/20', borderColor: 'orange-500/30', textColor: 'orange-300' },
-    description: 'Alex asks the chatbot: "Who is my state representative?" In seconds, they learn about Nate Schatzline and get complete contact information.',
+    description: 'Alex asks the chatbot: "Who is my state representative?" In seconds, they learn about Meredith Hayes and get complete contact information.',
     icon: 'location',
     chatResponse: {
-      text: '"Your Texas House representative is Nate Schatzline."',
+      text: '"Your Texas House representative is Meredith Hayes."',
       details: {
         phone: '(XXX) XXX-XXXX',
         email: 'mail@house...',
