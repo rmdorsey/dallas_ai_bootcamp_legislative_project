@@ -146,6 +146,7 @@ const MainApp: React.FC = () => {
             <Login
               onDemoLogin={handleDemoLogin}
               onGoogleLogin={handleGoogleLogin}
+              onHomeClick={handleBackToHome}
               onAboutClick={handleAboutClick}
             />
           )
