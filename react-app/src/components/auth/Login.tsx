@@ -87,14 +87,22 @@ export const Login: React.FC<LoginProps> = ({
   // Function to navigate back to home and scroll to specific section
   const navigateToHomeSection = (sectionId: string) => {
     if (onHomeClick) {
-      onHomeClick(); // Navigate to home page
-      // Small delay to ensure the page has switched, then scroll to section
+      onHomeClick(); // Navigate to home page first
+      // Longer delay to ensure the page has fully switched and elements are rendered
       setTimeout(() => {
         const element = document.getElementById(sectionId);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          // If element still not found, try again after a bit more time
+          setTimeout(() => {
+            const retryElement = document.getElementById(sectionId);
+            if (retryElement) {
+              retryElement.scrollIntoView({ behavior: 'smooth' });
+            }
+          }, 200);
         }
-      }, 100);
+      }, 300);
     }
   };
 
