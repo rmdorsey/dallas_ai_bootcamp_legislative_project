@@ -104,6 +104,16 @@ export const ArchitectureDetails: React.FC = () => {
     }
   ];
 
+  const getColorClasses = (color: string) => {
+    const colorMap = {
+      teal: 'bg-teal-500/10 border-teal-500/30 text-teal-400',
+      blue: 'bg-blue-500/10 border-blue-500/30 text-blue-400',
+      cyan: 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400',
+      orange: 'bg-orange-500/10 border-orange-500/30 text-orange-400'
+    };
+    return colorMap[color as keyof typeof colorMap] || colorMap.teal;
+  };
+
   return (
     <section id="architecture-details" className="py-20 border-t border-gray-800">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -132,12 +142,85 @@ export const ArchitectureDetails: React.FC = () => {
                 className="mx-auto max-w-full h-auto rounded-xl border border-gray-700 shadow-2xl"
               />
             </div>
-
-
           </div>
         </div>
 
+        {/* Interactive Layer Details */}
+        <div className="mb-20">
+          <h3 className="text-2xl md:text-3xl font-semibold mb-8 text-center">Architecture Layers</h3>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {layers.map((layer) => (
+              <div
+                key={layer.id}
+                className={`rounded-2xl border p-6 cursor-pointer transition-all duration-300 hover:scale-105 ${
+                  activeLayer === layer.id
+                    ? `${getColorClasses(layer.color)} shadow-lg`
+                    : 'border-gray-800 bg-gray-900/50 hover:border-gray-700'
+                }`}
+                onClick={() => setActiveLayer(activeLayer === layer.id ? null : layer.id)}
+              >
+                <div className="flex items-center mb-4">
+                  <div className={`p-3 rounded-xl ${getColorClasses(layer.color)} mr-4`}>
+                    {layer.icon}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-lg">{layer.title}</h4>
+                    <p className="text-sm text-gray-400">{layer.subtitle}</p>
+                  </div>
+                </div>
 
+                <p className="text-gray-300 mb-4 text-sm leading-relaxed">
+                  {layer.description}
+                </p>
+
+                {activeLayer === layer.id && (
+                  <div className="mt-4 pt-4 border-t border-gray-700">
+                    <h5 className="font-medium mb-3 text-white">Key Features:</h5>
+                    <ul className="space-y-2">
+                      {layer.details.map((detail, index) => (
+                        <li key={index} className="text-sm text-gray-300 flex items-center">
+                          <div className={`w-2 h-2 rounded-full ${getColorClasses(layer.color)} mr-3`} />
+                          {detail}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* AI Agents Section */}
+        <div className="mb-20">
+          <h3 className="text-2xl md:text-3xl font-semibold mb-8 text-center">Intelligent Agent System</h3>
+          <div className="grid gap-8 md:grid-cols-2">
+            {agents.map((agent, index) => (
+              <div
+                key={index}
+                className={`rounded-2xl border p-8 ${getColorClasses(agent.color)}`}
+              >
+                <div className="mb-6">
+                  <h4 className="text-2xl font-bold mb-2">{agent.name}</h4>
+                  <p className="text-lg font-medium opacity-80 mb-4">{agent.type}</p>
+                  <p className="text-gray-300 leading-relaxed">{agent.description}</p>
+                </div>
+
+                <div>
+                  <h5 className="font-semibold mb-4 text-white">Available Tools:</h5>
+                  <div className="space-y-3">
+                    {agent.tools.map((tool, toolIndex) => (
+                      <div key={toolIndex} className="flex justify-between items-center p-3 rounded-lg bg-black/20">
+                        <span className="font-medium">{tool.name}</span>
+                        <span className="text-sm opacity-75">{tool.purpose}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
