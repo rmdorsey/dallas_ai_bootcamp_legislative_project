@@ -47,6 +47,36 @@ export const ProblemSection: React.FC = () => {
     return icons[iconName as keyof typeof icons] || icons['question-mark-circle'];
   };
 
+  const getColorClasses = (color: string) => {
+    const colorMap = {
+      'blue-500': {
+        bg: 'bg-blue-500/20',
+        text: 'text-blue-400',
+        title: 'text-blue-300',
+        number: 'bg-blue-500/30 text-blue-300 border-blue-400/50'
+      },
+      'blue-600': {
+        bg: 'bg-blue-600/20',
+        text: 'text-blue-300',
+        title: 'text-blue-200',
+        number: 'bg-blue-600/30 text-blue-200 border-blue-300/50'
+      },
+      'gray-600': {
+        bg: 'bg-gray-600/20',
+        text: 'text-gray-400',
+        title: 'text-gray-400',
+        number: 'bg-gray-600/30 text-gray-300 border-gray-400/50'
+      },
+      'gray-700': {
+        bg: 'bg-gray-700/20',
+        text: 'text-gray-400',
+        title: 'text-gray-400',
+        number: 'bg-gray-700/30 text-gray-300 border-gray-400/50'
+      }
+    };
+    return colorMap[color as keyof typeof colorMap] || colorMap['blue-500'];
+  };
+
   return (
     <section id="problem" className="py-16 border-t border-gray-800">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -73,37 +103,67 @@ export const ProblemSection: React.FC = () => {
 
           <div className="relative">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {cycleSteps.map((step, index) => (
-                <div key={step.title} className="relative z-10">
-                  <div className="p-6 rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black hover:border-gray-600 transition-all duration-300">
-                    <div className={`w-12 h-12 bg-${step.color}/20 rounded-xl flex items-center justify-center mb-4`}>
-                      <svg className={`w-6 h-6 text-${step.color.replace('-500', '-400').replace('-600', '-300').replace('-700', '-400')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        {getIcon(step.icon)}
-                      </svg>
+              {cycleSteps.map((step, index) => {
+                const colors = getColorClasses(step.color);
+                return (
+                  <div
+                    key={step.title}
+                    className="relative z-10"
+                    style={{
+                      animationDelay: `${index * 200}ms`
+                    }}
+                  >
+                    <div className="p-6 rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 to-black hover:border-gray-600 transition-all duration-300 hover:scale-105 animate-fade-in-up">
+                      {/* Step Number */}
+                      <div className={`absolute -top-3 -right-3 w-8 h-8 rounded-full border-2 ${colors.number} flex items-center justify-center text-sm font-bold`}>
+                        {index + 1}
+                      </div>
+
+                      <div className={`w-12 h-12 ${colors.bg} rounded-xl flex items-center justify-center mb-4`}>
+                        <svg className={`w-6 h-6 ${colors.text}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          {getIcon(step.icon)}
+                        </svg>
+                      </div>
+
+                      <h4 className={`font-semibold mb-2 ${colors.title}`}>{step.title}</h4>
+                      <p className="text-gray-400 text-sm leading-relaxed">{step.description}</p>
                     </div>
-                    <h4 className={`font-semibold mb-2 text-${step.color.replace('-500', '-300').replace('-600', '-200').replace('-700', '-400')}`}>{step.title}</h4>
-                    <p className="text-gray-400 text-sm">{step.description}</p>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
-            {/* Arrows positioned behind cards */}
+            {/* Connecting Arrows */}
             <div className="hidden lg:block absolute top-1/2 left-0 right-0 transform -translate-y-1/2 z-0">
               <div className="flex justify-between items-center h-full px-6">
                 {Array.from({ length: cycleSteps.length - 1 }).map((_, index) => (
                   <div
                     key={index}
                     className="flex-1 flex justify-end pr-3"
-                    style={{ marginLeft: index === 0 ? 'calc(25% - 1.5rem)' : '0' }}
+                    style={{
+                      marginLeft: index === 0 ? 'calc(25% - 1.5rem)' : '0',
+                      animationDelay: `${(index + 1) * 400}ms`
+                    }}
                   >
-                    <div className="text-gray-600">
+                    <div className="text-gray-600 animate-fade-in">
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/>
                       </svg>
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Cycle completion arrow (from last to first) */}
+            <div className="hidden lg:block absolute top-full left-1/2 transform -translate-x-1/2 mt-8 animate-fade-in" style={{ animationDelay: '1600ms' }}>
+              <div className="text-center">
+                <div className="text-gray-600 mb-2">
+                  <svg className="w-8 h-8 mx-auto transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+                <p className="text-sm text-gray-500 font-medium">The cycle continues...</p>
               </div>
             </div>
           </div>
