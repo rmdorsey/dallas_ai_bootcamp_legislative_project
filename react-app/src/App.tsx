@@ -5,7 +5,7 @@ import type { User } from './types';
 import { HomePage } from './components/home/HomePage';
 import { AboutPage } from './components/about/AboutPage';
 import { ArchitecturePage } from './components/arch/arch';
-import { BootcampInsightsPage } from './components/learnings/feedback';// Keep this import
+import { BootcampInsightsPage } from './components/learnings/feedback';
 import { Login } from './components/auth/Login';
 import { BillAnalyzer } from './pages/BillAnalyzer/BillAnalyzer';
 import { Dashboard } from './pages/Dashboard/Dashboard';
@@ -120,19 +120,19 @@ const MainApp: React.FC = () => {
         }
       />
 
-        {/* Bootcamp Insights Route - Accessible only via direct URL */}
-<Route
-  path="/feedback"
-  element={
-    isAuthLoading ? (
-      <LoadingScreen />
-    ) : isAuthenticated ? (
-      <Navigate to="/mainchat" replace />
-    ) : (
-      <BootcampInsightsPage onBack={handleBackToHome} />
-    )
-  }
-/>
+      {/* Bootcamp Insights Route - Accessible only via direct URL */}
+      <Route
+        path="/feedback"
+        element={
+          isAuthLoading ? (
+            <LoadingScreen />
+          ) : isAuthenticated ? (
+            <Navigate to="/mainchat" replace />
+          ) : (
+            <BootcampInsightsPage onBack={handleBackToHome} />
+          )
+        }
+      />
 
       {/* Login Route */}
       <Route
@@ -146,6 +146,7 @@ const MainApp: React.FC = () => {
             <Login
               onDemoLogin={handleDemoLogin}
               onGoogleLogin={handleGoogleLogin}
+              onAboutClick={handleAboutClick}
             />
           )
         }
