@@ -16,6 +16,8 @@ def find_elected_officials_by_address(address: str, district_type: str) -> str:
     - 'NATIONAL_LOWER': For the U.S. House of Representatives (Congresspersons).
     - 'NATIONAL_UPPER': For U.S. Senators.
 
+    Include the contact information of the elected officials in the response, such as phone numbers and email addresses, to facilitate direct communication.
+
     Example Scenarios:
     - User asks: "Who is my state representative at 301 Trail View Ln, Garland, TX 75043?"
       - Call with: address="301 Trail View Ln, Garland, TX 75043", district_type="STATE_LOWER"
