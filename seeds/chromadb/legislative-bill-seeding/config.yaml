@@ -14,4 +14,5 @@ embedding:
 # UPDATED: Configuration for the source directory containing PDFs
 source_directory:
   # path: "docks/"
-  path: "docs/_89_1_house_senate_bills/"
+  # path: "docs/_89_1_house_senate_bills/"
+  path: "docs/new_docs/"

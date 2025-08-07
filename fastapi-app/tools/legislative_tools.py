@@ -21,9 +21,21 @@ def search_for_legislative_documents(query: str, chamber: Optional[str] = None) 
     relevant ones appearing first.
 
     The 'query' should be a clear, descriptive topic. High-quality examples include:
-    - "bills about property tax relief for seniors"
-    - "legislation concerning taxpayer-funded lobbying"
-    - "any proposed changes to congressional redistricting"
+    - "legislation creating a criminal offense for real property theft and fraud"
+    - "laws to stop someone from stealing a house with a fake or fraudulent deed"
+    - "bills requiring photo identification for filing real property documents with the county clerk"
+    - "legislation to create an Independent Citizen Redistricting Commission for Texas"
+    - "proposals for a non-partisan or citizen-led process for drawing legislative district maps"
+    - "how to prevent gerrymandering and partisan influence in Texas redistricting"
+    - "independent commission for redistricting with conflict of interest rules for members and criteria for map drawing like population equality and compactness"
+    - "legislation requiring outdoor warning sirens for flood-prone areas"
+    - "laws to improve flood alert systems in Texas communities"
+    - "grant program for municipalities to install flood sirens"
+    - "outdoor warning siren installation maintenance operation flood-prone area grant program backup power"
+    - "legislation restricting lobbying funds for MUDs, community colleges, and transit authorities"
+    - "bills that cut off state funding for public entities that hire lobbyists"
+    - "how to stop publicly owned utilities and universities from using tax money for lobbying"
+    - "ban taxpayer-funded lobbying special purpose district regional mobility authority penalty state funds"
 
     You can optionally filter the search to a specific legislative chamber ('House' or 'Senate')
     if the user's request specifies it.

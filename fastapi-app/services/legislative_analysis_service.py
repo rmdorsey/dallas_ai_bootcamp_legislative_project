@@ -35,7 +35,7 @@ def create_dynamic_retriever(
     article_title: Optional[str]=None, 
     article_number: Optional[str]=None, 
     section_number: Optional[str]=None,
-    k: int = 50
+    k: int = 25
 ) -> any:
     """
     Creates a LangChain retriever with a dynamic metadata filter and document limit.
@@ -62,7 +62,7 @@ def create_dynamic_retriever(
 
     return vectorstore.as_retriever(search_kwargs=search_kwargs)
 
-def run_search_service_on_single_bill(query: str, bill_number: int, chamber: str, article_title: Optional[str]=None, article_number: Optional[str]=None, section_number: Optional[str]=None, k: int=50) -> List[Dict[str, Any]]:
+def run_search_service_on_single_bill(query: str, bill_number: int, chamber: str, article_title: Optional[str]=None, article_number: Optional[str]=None, section_number: Optional[str]=None, k: int=25) -> List[Dict[str, Any]]:
     """
     Main entry point for the semantic search service.
 
