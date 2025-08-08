@@ -9,7 +9,7 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
   zoomLevel
 }) => {
   // PDF file path - you can make this dynamic based on bill.id or bill.name
-  const pdfUrl = '/SB00015I.pdf';
+  const pdfUrl = '/SB00015E.pdf';
 
   // Construct PDF URL with page parameter for browsers that support it
   const pdfUrlWithPage = `${pdfUrl}#page=${currentPage}&zoom=${zoomLevel}`;
