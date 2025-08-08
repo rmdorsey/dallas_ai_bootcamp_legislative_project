@@ -188,10 +188,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M2 12l3-3 3 3"/>
-              <path d="m8 12h13"/>
-            </svg>
+            
             Send
           </button>
         </div>

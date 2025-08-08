@@ -10,7 +10,9 @@ interface SidebarProps {
   onConversationSelect: (conversationId: string) => void;
   onNewAnalysis: () => void;
   onConversationDelete?: (conversationId: string) => void;
-  onConversationEdit?: (conversationId: string, newTitle: string) => void; // Added edit prop
+  onConversationEdit?: (conversationId: string, newTitle: string) => void;
+  onHomeNavigate?: () => void; // New prop for home navigation
+  onLogout?: () => void; // New prop for logout functionality
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -18,17 +20,38 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onConversationSelect,
   onNewAnalysis,
   onConversationDelete,
-  onConversationEdit
+  onConversationEdit,
+  onHomeNavigate,
+  onLogout
 }) => {
+  const handleLogoClick = () => {
+    // Call both home navigation and logout when logo is clicked
+    if (onHomeNavigate) {
+      onHomeNavigate();
+    }
+    if (onLogout) {
+      onLogout();
+    }
+  };
+
   return (
     <div className="w-80 bg-white border-r border-gray-200 flex flex-col shadow-sm">
-      <SidebarHeader />
+      {/* Combined Header with Logo and Slogan - clickable to return home and logout */}
+      <div className="p-5 border-b border-gray-200">
+        <button
+          onClick={handleLogoClick}
+          className="text-2xl font-bold hover:text-teal-400 transition-colors cursor-pointer w-full text-left mb-1"
+        >
+          legisl<span className="text-teal-400">AI</span>tive
+        </button>
+        <p className="text-sm text-gray-600">Legislation Made Legible</p>
+      </div>
       <NewAnalysisButton onClick={onNewAnalysis} />
       <ConversationList
         conversations={conversations}
         onConversationSelect={onConversationSelect}
         onConversationDelete={onConversationDelete}
-        onConversationEdit={onConversationEdit} // Pass edit handler
+        onConversationEdit={onConversationEdit}
       />
     </div>
   );
