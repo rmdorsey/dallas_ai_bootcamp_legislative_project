@@ -1,7 +1,5 @@
-// components/chat/ChatInput.tsx - Updated with advanced bill search
+// components/chat/ChatInput.tsx - Simplified without BillSearchButton
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { BillSearchButton } from './BillSearchButton'; // Import the new component
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -15,9 +13,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   placeholder = "Type your message..."
 }) => {
   const [message, setMessage] = useState('');
-  const [showBillSearch, setShowBillSearch] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const navigate = useNavigate();
 
   // Auto-resize textarea
   useEffect(() => {
@@ -46,52 +42,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     }
   };
 
-  // Handle bill selection from the advanced search
-  const handleBillSelected = (bill: any, content: string) => {
-    console.log('Selected bill:', bill);
-    console.log('Bill content:', content);
-
-    // You can either:
-    // 1. Navigate to bill analyzer with the selected bill
-    navigate(`/bill-analyzer?bill=${encodeURIComponent(bill.originalName)}`);
-
-    // 2. Or send the bill info as a message to the chat
-    // onSendMessage(`Analyzing bill: ${bill.title} (${bill.originalName})`);
-
-    // Close the bill search
-    setShowBillSearch(false);
-  };
-
   return (
     <div className="border-t border-gray-200 bg-white p-4">
-      {/* Advanced Bill Search Interface */}
-      {showBillSearch && (
-        <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center space-x-2">
-              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <h3 className="font-semibold text-sm text-blue-800">Advanced Bill Search</h3>
-            </div>
-            <button
-              onClick={() => setShowBillSearch(false)}
-              className="text-blue-600 hover:text-blue-800 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Use the new BillSearchButton component */}
-          <BillSearchButton
-            onBillSelected={handleBillSelected}
-            billFilenames={[]} // Add your known bill filenames here if you have them
-          />
-        </div>
-      )}
-
       {/* Main Chat Input */}
       <form onSubmit={handleSubmit} className="flex items-end space-x-3">
         <div className="flex-1 relative">
@@ -107,22 +59,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             style={{ minHeight: '48px' }}
           />
         </div>
-
-        {/* Advanced Bill Search Button */}
-        <button
-          type="button"
-          onClick={() => setShowBillSearch(!showBillSearch)}
-          className={`flex items-center justify-center w-12 h-12 rounded-lg border-2 transition-all duration-200 ${
-            showBillSearch
-              ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700 shadow-lg'
-              : 'bg-white text-blue-600 border-blue-300 hover:bg-blue-50 hover:border-blue-500 shadow-sm'
-          }`}
-          title="Search for bills to analyze (Advanced)"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </button>
 
         {/* Send Button */}
         <button

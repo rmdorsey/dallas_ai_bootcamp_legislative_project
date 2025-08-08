@@ -65,28 +65,35 @@ export const BillAnalyzer: React.FC<BillAnalyzerProps> = ({
 
     try {
       // Extract bill number and chamber from bill data
-      const billName = billData.name; // e.g., "HB112"
-      let extractedBillNumber = '';
-      let chamber = '';
+const billName = billData.name; // e.g., "HB112"
+let extractedBillNumber = '';
+let chamber = '';
 
-      if (billName.startsWith('S.B.') || billName.startsWith('SB')) {
-        extractedBillNumber = billName.replace(/S\.?B\.?\s*/i, '').trim();
-        chamber = 'Senate';
-      } else if (billName.startsWith('H.B.') || billName.startsWith('HB')) {
-        extractedBillNumber = billName.replace(/H\.?B\.?\s*/i, '').trim();
-        chamber = 'House';
-      } else {
-        // Try to extract number from any format
-        const numberMatch = billName.match(/\d+/);
-        extractedBillNumber = numberMatch ? numberMatch[0] : '112';
-        chamber = billName.toLowerCase().includes('s') ? 'Senate' : 'House';
-      }
+if (billName.startsWith('S.B.') || billName.startsWith('SB')) {
+  const rawNumber = billName.replace(/S\.?B\.?\s*/i, '').trim();
+  extractedBillNumber = rawNumber.replace(/\D/g, ''); // Remove all non-digits
+  chamber = 'Senate';
+} else if (billName.startsWith('H.B.') || billName.startsWith('HB')) {
+  const rawNumber = billName.replace(/H\.?B\.?\s*/i, '').trim();
+  extractedBillNumber = rawNumber.replace(/\D/g, ''); // Remove all non-digits
+  chamber = 'House';
+} else {
+  // Try to extract number from any format
+  const numberMatch = billName.match(/\d+/);
+  extractedBillNumber = numberMatch ? numberMatch[0] : '';
+  chamber = billName.toLowerCase().includes('s') ? 'Senate' : 'House';
+}
 
-      const requestBody = {
-        bill_number: extractedBillNumber,
-        chamber: chamber,
-        query: messageContent
-      };
+// Ensure we have a valid numeric bill number
+if (!extractedBillNumber || !/^\d+$/.test(extractedBillNumber)) {
+  extractedBillNumber = '112'; // fallback default
+}
+
+const requestBody = {
+  bill_number: extractedBillNumber,
+  chamber: chamber,
+  query: messageContent
+};
 
       console.log('📦 Request body:', requestBody);
       console.log('📤 Sending request to:', `${API_URL}/agent_legislative_analysis/agent_legislative_analysis`);

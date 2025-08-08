@@ -1,22 +1,45 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { Search, FileText, ChevronRight, Loader2 } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
 
-const BillSearchButton = ({ billFilenames = [], onBillSelected }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedBill, setSelectedBill] = useState(null);
-  const [showResults, setShowResults] = useState(false);
-  const [availableBills, setAvailableBills] = useState([]);
-  const [billsLoaded, setBillsLoaded] = useState(false);
-  const [loadingBills, setLoadingBills] = useState(false);
+// Define interfaces for type safety
+interface Bill {
+  id: number;
+  filename: string;
+  originalName: string;
+  title: string;
+  summary: string;
+  score?: number;
+}
+
+interface BillSearchButtonProps {
+  billFilenames?: string[];
+  onBillSelected?: (bill: Bill, content: string | null) => void;
+}
+
+// Extend Window interface to include fs
+declare global {
+  interface Window {
+    fs: {
+      readFile: (path: string, options?: { encoding?: string }) => Promise<string | Uint8Array>;
+    };
+  }
+}
+
+const BillSearchButton = ({ billFilenames = [], onBillSelected }: BillSearchButtonProps) => {
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchResults, setSearchResults] = useState<Bill[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
+  const [showResults, setShowResults] = useState<boolean>(false);
+  const [availableBills, setAvailableBills] = useState<Bill[]>([]);
+  const [billsLoaded, setBillsLoaded] = useState<boolean>(false);
+  const [loadingBills, setLoadingBills] = useState<boolean>(false);
 
   // Load bills from the actual folder
   const loadBillsFromFolder = useCallback(async () => {
     if (billsLoaded || loadingBills) return;
 
     setLoadingBills(true);
-    const bills = [];
+    const bills: Bill[] = [];
     const basePath = 'react-app/src/assets/docs/_89_1_house_senate_bills/';
 
     try {
@@ -96,7 +119,7 @@ const BillSearchButton = ({ billFilenames = [], onBillSelected }) => {
   }, [billFilenames, billsLoaded, loadingBills]);
 
   // Function to search bills using regex
-  const searchBills = useCallback(async (query) => {
+  const searchBills = useCallback(async (query: string) => {
     if (!query || query.trim().length < 2) {
       setSearchResults([]);
       setShowResults(false);
@@ -132,7 +155,7 @@ const BillSearchButton = ({ billFilenames = [], onBillSelected }) => {
 
           return score > 0 ? { ...bill, score } : null;
         })
-        .filter(Boolean)
+        .filter((bill): bill is Bill & { score: number } => bill !== null)
         .sort((a, b) => b.score - a.score)
         .slice(0, 3);
 
@@ -150,20 +173,20 @@ const BillSearchButton = ({ billFilenames = [], onBillSelected }) => {
     loadBillsFromFolder();
   }, [loadBillsFromFolder]);
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
     searchBills(value);
   };
 
-  const handleBillSelect = async (bill) => {
+  const handleBillSelect = async (bill: Bill) => {
     setSelectedBill(bill);
     setSearchTerm(bill.title);
     setShowResults(false);
 
     try {
       // Read the actual bill content
-      const content = await window.fs.readFile(bill.filename, { encoding: 'utf8' });
+      const content = await window.fs.readFile(bill.filename, { encoding: 'utf8' }) as string;
       console.log('Selected bill content:', content);
 
       // Call the callback if provided
@@ -181,15 +204,15 @@ const BillSearchButton = ({ billFilenames = [], onBillSelected }) => {
     }
   };
 
-  const highlightMatch = (text, query) => {
+  const highlightMatch = (text: string, query: string): React.ReactNode => {
     if (!query || query.length < 2) return text;
-    
+
     try {
       const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const regex = new RegExp(`(${escapedQuery})`, 'gi');
       const parts = text.split(regex);
-      
-      return parts.map((part, index) => 
+
+      return parts.map((part: string, index: number) =>
         regex.test(part) ? (
           <span key={index} className="bg-yellow-200 text-yellow-900 px-1 rounded">
             {part}
@@ -206,7 +229,7 @@ const BillSearchButton = ({ billFilenames = [], onBillSelected }) => {
       <div className="relative">
         {/* Search Input */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">🔍</span>
           <input
             type="text"
             value={searchTerm}
@@ -216,14 +239,14 @@ const BillSearchButton = ({ billFilenames = [], onBillSelected }) => {
             disabled={loadingBills}
           />
           {(isLoading || loadingBills) && (
-            <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 animate-spin" />
+            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg animate-spin">⟳</span>
           )}
         </div>
 
         {/* Loading Bills Status */}
         {loadingBills && (
           <div className="mt-2 text-sm text-gray-600 flex items-center">
-            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            <span className="text-lg animate-spin mr-2">⟳</span>
             Loading bills from folder...
           </div>
         )}
@@ -244,7 +267,7 @@ const BillSearchButton = ({ billFilenames = [], onBillSelected }) => {
               </div>
             ) : (
               <div className="divide-y divide-gray-200">
-                {searchResults.map((bill, index) => (
+                {searchResults.map((bill) => (
                   <button
                     key={bill.id}
                     onClick={() => handleBillSelect(bill)}
@@ -253,7 +276,7 @@ const BillSearchButton = ({ billFilenames = [], onBillSelected }) => {
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center mb-1">
-                          <FileText className="h-4 w-4 text-blue-600 mr-2 flex-shrink-0" />
+                          <span className="text-blue-600 mr-2 text-lg">📄</span>
                           <h3 className="text-sm font-medium text-gray-900 truncate">
                             {highlightMatch(bill.title, searchTerm)}
                           </h3>
@@ -268,7 +291,7 @@ const BillSearchButton = ({ billFilenames = [], onBillSelected }) => {
                           {bill.summary}
                         </p>
                       </div>
-                      <ChevronRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <span className="text-gray-400 text-lg">›</span>
                     </div>
                   </button>
                 ))}
@@ -282,7 +305,7 @@ const BillSearchButton = ({ billFilenames = [], onBillSelected }) => {
       {selectedBill && (
         <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
           <div className="flex items-center">
-            <FileText className="h-5 w-5 text-green-600 mr-2" />
+            <span className="text-green-600 mr-2 text-lg">📄</span>
             <div>
               <h3 className="text-sm font-medium text-green-900">
                 Selected: {selectedBill.title}

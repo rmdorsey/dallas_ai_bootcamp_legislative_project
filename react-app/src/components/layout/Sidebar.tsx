@@ -1,7 +1,6 @@
 // components/layout/Sidebar.tsx
 import React from 'react';
 import type { Conversation } from '../../types';
-import { SidebarHeader } from '../sidebar/SidebarHeader';
 import { NewAnalysisButton } from '../sidebar/NewAnalysisButton';
 import { ConversationList } from '../sidebar/ConversationList';
 
