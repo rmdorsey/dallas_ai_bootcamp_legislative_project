@@ -20,7 +20,7 @@ class LegislativeAnalysisTools(BaseTool):
     # --- Tool Metadata ---
     name: str = "search_legislative_text"
     description: str = """
-Performs a semantic search for relevant text within a pre-configured legislative bill.
+Performs a semantic search for relevant text within a legislative bill.
 
 This is the primary tool to use when you need to find information inside the bill that
 answers a user's question or relates to a specific topic. It is ideal for locating
