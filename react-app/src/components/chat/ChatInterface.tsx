@@ -1,5 +1,6 @@
 // components/chat/ChatInterface.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useChat } from '../../contexts/ChatContext';
 import { Message } from './Message';
@@ -17,6 +18,58 @@ export const ChatInterface: React.FC = () => {
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [newTitle, setNewTitle] = useState('');
+
+  // Bill search states
+  const [showBillSearch, setShowBillSearch] = useState(false);
+  const [billQuery, setBillQuery] = useState('');
+  const [isLoadingBill, setIsLoadingBill] = useState(false);
+  const navigate = useNavigate();
+
+  // Add ref for the scrollable container
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when messages change or when loading starts/stops
+  useEffect(() => {
+    const scrollToBottom = () => {
+      if (chatContainerRef.current) {
+        const container = chatContainerRef.current;
+        container.scrollTop = container.scrollHeight;
+      }
+    };
+
+    // Small delay to ensure DOM has updated
+    const timer = setTimeout(scrollToBottom, 100);
+    return () => clearTimeout(timer);
+  }, [activeConversation?.messages, isLoading]);
+
+  const handleBillSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!billQuery.trim()) return;
+
+    setIsLoadingBill(true);
+
+    try {
+      // Navigate to BillAnalyzer with the bill query
+      navigate(`/bill-analyzer?bill=${encodeURIComponent(billQuery.trim())}`);
+
+      // Reset and close
+      setBillQuery('');
+      setShowBillSearch(false);
+    } catch (error) {
+      console.error('Error navigating to bill analyzer:', error);
+    } finally {
+      setIsLoadingBill(false);
+    }
+  };
+
+  const handleBillKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleBillSearch(e);
+    }
+  };
 
   return (
     <div className="flex-1 flex flex-col bg-white min-h-0">
@@ -44,6 +97,64 @@ export const ChatInterface: React.FC = () => {
               {activeConversation?.title ? 'Civic advocacy and legislative research' : 'Start a new analysis'}
             </div>
           </div>
+
+          {/* Bill Search Button - Center */}
+          <div className="flex-1 flex justify-center px-8">
+            {!showBillSearch ? (
+              <button
+                onClick={() => setShowBillSearch(true)}
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-teal-700 text-white text-sm font-medium rounded-lg hover:from-teal-700 hover:to-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition-all duration-300 shadow-sm"
+              >
+                {/* Search Icon */}
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span>Analyze Bill</span>
+              </button>
+            ) : (
+              <div className="flex items-center space-x-2 bg-white border border-gray-300 rounded-lg p-2 shadow-sm">
+                <form onSubmit={handleBillSearch} className="flex items-center space-x-2">
+                  <input
+                    type="text"
+                    value={billQuery}
+                    onChange={(e) => setBillQuery(e.target.value)}
+                    onKeyPress={handleBillKeyPress}
+                    placeholder="Enter bill number or topic..."
+                    className="px-3 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent w-64"
+                    disabled={isLoadingBill}
+                    autoFocus
+                  />
+
+                  <button
+                    type="submit"
+                    disabled={!billQuery.trim() || isLoadingBill}
+                    className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-teal-600 to-teal-700 text-white text-sm rounded hover:from-teal-700 hover:to-teal-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                  >
+                    {isLoadingBill ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                      </svg>
+                    )}
+                  </button>
+                </form>
+
+                <button
+                  onClick={() => {
+                    setShowBillSearch(false);
+                    setBillQuery('');
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </div>
+
           <div className="flex items-center gap-3">
             <span className="text-sm text-gray-600">
               Welcome, {user?.name}
@@ -60,7 +171,10 @@ export const ChatInterface: React.FC = () => {
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-5 bg-gray-50 chat-messages-container min-h-0">
+      <div
+        ref={chatContainerRef}
+        className="flex-1 overflow-y-auto p-5 bg-gray-50 chat-messages-container min-h-0"
+      >
         <div className="space-y-5 min-h-full">
           {activeConversation?.messages.map((message) => (
             <Message
@@ -154,6 +268,9 @@ export const ChatInterface: React.FC = () => {
               </div>
             </div>
           )}
+
+          {/* Invisible div to scroll to */}
+          <div ref={messagesEndRef} />
         </div>
       </div>
 

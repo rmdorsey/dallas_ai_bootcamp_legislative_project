@@ -1,10 +1,10 @@
 // pages/BillAnalyzer/BillAnalyzer.tsx
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import type { Message, SuggestionButton } from '../../types';
 import { BillAnalyzerHeader } from './components/BillAnalyzerHeader';
 import { ChatPanel } from './components/ChatPanel';
 import { PDFPanel } from './components/PDFPanel';
-import { mockBillData, mockSuggestions, mockBillAnalyzerMessages } from './data/mockData';
+import { mockSuggestions } from './data/mockData';
 
 interface BillAnalyzerProps {
   onBack: () => void;
@@ -16,16 +16,39 @@ const API_URL = import.meta.env.VITE_FASTAPI_URL || 'http://localhost:8000';
 export const BillAnalyzer: React.FC<BillAnalyzerProps> = ({
   onBack
 }) => {
-  const [messages, setMessages] = useState<Message[]>(mockBillAnalyzerMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [billNumber, setBillNumber] = useState<string>('');
 
-  // In a real app, you'd fetch bill data based on billId
-  const billData = mockBillData;
+  // Extract bill number from URL parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const billParam = urlParams.get('bill') || 'HB112'; // Default fallback
+    setBillNumber(billParam);
 
-  const handleSendMessage = useCallback(async (messageContent: string, useMockResponse?: boolean) => {
+    // Initialize with welcome message
+    const welcomeMessage: Message = {
+      id: '1',
+      type: 'assistant',
+      content: `Welcome to the Bill Analyzer! I have loaded ${billParam}. You can ask me to summarize sections, define terms, or explain what the bill does. What would you like to know?`,
+      timestamp: new Date()
+    };
+    setMessages([welcomeMessage]);
+  }, []);
+
+  // Create bill data object from URL parameter
+  const billData = {
+    id: billNumber,
+    name: billNumber,
+    fullTitle: `Legislative Bill ${billNumber}`,
+    session: '88th Legislature, Regular Session, 2023',
+    legislature: '88th Legislature • Regular Session',
+    content: []
+  };
+
+  const handleSendMessage = useCallback(async (messageContent: string) => {
     console.log('🏛️ Starting bill analysis message send process...');
     console.log('📝 Message content:', messageContent);
-    console.log('🎭 Use mock response:', useMockResponse);
     console.log('📋 Bill data:', billData.name);
     console.log('🌐 API URL:', API_URL);
 
@@ -40,78 +63,27 @@ export const BillAnalyzer: React.FC<BillAnalyzerProps> = ({
     setMessages(prev => [...prev, newMessage]);
     setIsLoading(true);
 
-    // Check if this should use mock response for "Summarize the whole bill"
-    if (useMockResponse || messageContent.toLowerCase().includes('summarize the whole bill')) {
-      console.log('🎭 Using mock summary response');
-
-      // Create mock summary response with markdown formatting
-      const mockSummaryResponse = `**What does this change?**
-
-This bill restricts public entities from spending public funds on lobbying activities. It prohibits the use of public funds to hire or contract with lobbyists and prohibits nonprofits that primarily represent public entities from receiving public funds if they hire or contract with lobbyists.
-
-**Who does this affect?**
-
-• Public entities, including:
-  • Political subdivisions that impose taxes
-  • Public institutions of higher education
-  • Community college districts
-  • Publicly owned utilities
-  • River authorities and water supply corporations
-• Nonprofits that primarily represent public entities
-• Taxpayers or residents of public entities
-
-**Why is this important?**
-
-This bill aims to prevent the misuse of public funds for lobbying activities, which could be seen as a form of voter suppression. By restricting the use of public funds for lobbying, this bill seeks to promote transparency and accountability in government spending.
-
-Note: The answer is based on the information returned by the \`search_legislative_text\` tool. If more context or details are needed, please provide them.`;
-
-      // Simulate loading delay
-      setTimeout(() => {
-        const aiResponse: Message = {
-          id: (Date.now() + 1).toString(),
-          type: 'assistant',
-          content: mockSummaryResponse,
-          timestamp: new Date()
-        };
-
-        console.log('🎭 Adding mock summary response:', aiResponse);
-        setMessages(prev => [...prev, aiResponse]);
-        setIsLoading(false);
-        console.log('✅ Mock summary response completed successfully');
-      }, 1500);
-
-      return; // Exit early for mock response
-    }
-
     try {
       // Extract bill number and chamber from bill data
-      // For "S.B. 7" -> bill_number: "7", chamber: "Senate"
-      // For "H.B. 121" -> bill_number: "121", chamber: "House"
-      const billName = billData.name; // "S.B. 7"
-      let billNumber = '';
+      const billName = billData.name; // e.g., "HB112"
+      let extractedBillNumber = '';
       let chamber = '';
 
-      if (billName.startsWith('S.B.')) {
-        billNumber = billName.replace('S.B. ', '').trim();
+      if (billName.startsWith('S.B.') || billName.startsWith('SB')) {
+        extractedBillNumber = billName.replace(/S\.?B\.?\s*/i, '').trim();
         chamber = 'Senate';
-      } else if (billName.startsWith('H.B.')) {
-        billNumber = billName.replace('H.B. ', '').trim();
-        chamber = 'House';
-      } else if (billName.startsWith('SB')) {
-        billNumber = billName.replace('SB', '').trim();
-        chamber = 'Senate';
-      } else if (billName.startsWith('HB')) {
-        billNumber = billName.replace('HB', '').trim();
+      } else if (billName.startsWith('H.B.') || billName.startsWith('HB')) {
+        extractedBillNumber = billName.replace(/H\.?B\.?\s*/i, '').trim();
         chamber = 'House';
       } else {
-        // Default fallback
-        billNumber = '7';
-        chamber = 'Senate';
+        // Try to extract number from any format
+        const numberMatch = billName.match(/\d+/);
+        extractedBillNumber = numberMatch ? numberMatch[0] : '112';
+        chamber = billName.toLowerCase().includes('s') ? 'Senate' : 'House';
       }
 
       const requestBody = {
-        bill_number: billNumber,
+        bill_number: extractedBillNumber,
         chamber: chamber,
         query: messageContent
       };
